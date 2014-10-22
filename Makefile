@@ -1,4 +1,4 @@
-SOURCES    = build.fan
+SOURCES    = build.fan fan/*
 DOC	   = doc/*
 OTHER      = Makefile
 EXECBIN    = fan
