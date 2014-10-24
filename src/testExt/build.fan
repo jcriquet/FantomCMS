@@ -6,7 +6,7 @@ class Build : build::BuildPod
     podName   = "testExt"
     summary   = ""
     srcDirs   = [`fan/`, `fan/ui/`]
-    outPodDir = `/dev/fcms/lib/fan/`
+    outPodDir = `../../lib/fan/`
     depends   = ["sys 1.0",
                  "fui 1.0",
                  "fwt 1.0",

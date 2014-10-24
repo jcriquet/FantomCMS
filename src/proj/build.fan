@@ -4,7 +4,7 @@ class Build : BuildPod {
     podName   = "proj"
     summary   = ""
     srcDirs   = [`fan/`]
-    outPodDir = `/dev/fcms/lib/fan/`
+    outPodDir = `../../lib/fan/`
     depends   = ["sys 1.0",
                  "sql 1.0",
                  "util 1.0",
