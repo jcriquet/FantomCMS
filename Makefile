@@ -1,11 +1,13 @@
+build : proj fui testExt
+
 run : build
 	- bin/fcms
 
 proj :
-	- fan src/proj/build.fan
+	- bin/fan src/proj/build.fan
 
 fui :
-	- fan src/fui/build.fan
+	- bin/fan src/fui/build.fan
 
 testExt :
-	- fan src/testExt/build.fan
+	- bin/fan src/testExt/build.fan
