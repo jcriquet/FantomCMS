@@ -1,17 +1,13 @@
-SOURCES    = build.fan fan/*
-DOC	   = doc/*
-OTHER      = Makefile
-EXECBIN    = fan
-SRCFILES   = ${SOURCES} ${DOC} ${OTHER}
-
-build :
-	- fan build.fan
+build : proj fui testExt
 
 run : build
-	- fan FantomCMS::FantomCMS
+	- bin/fcms
 
-# To add a commit, use the m variable. Example:
-# make ci m="this is a commit"
-ci :
-	- git add ${SRCFILES}
-	- git commit -m "$m"
+proj :
+	- bin/fan src/proj/build.fan
+
+fui :
+	- bin/fan src/fui/build.fan
+
+testExt :
+	- bin/fan src/testExt/build.fan

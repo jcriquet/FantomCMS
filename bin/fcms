@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#
+# skyspark
+#
+
+. "${0%/*}/fanlaunch"
+fanlaunch Fan proj "$@"
