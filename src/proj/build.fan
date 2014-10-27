@@ -2,6 +2,7 @@ using build
 class Build : BuildPod {
   new make() {
     podName   = "proj"
+    version   = Version( [ 1, 0, 0 ] )
     summary   = ""
     srcDirs   = [`fan/`]
     outPodDir = `../../lib/fan/`

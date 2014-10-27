@@ -1,13 +1,17 @@
-build : proj fui testExt
+build : proj fui testExt loginExt
 
 run : build
 	- bin/fcms
 
 proj :
-	- bin/fan src/proj/build.fan
+	- cd src/proj; ../../bin/fan build.fan
 
 fui :
-	- bin/fan src/fui/build.fan
+	- cd src/fui; ../../bin/fan build.fan
 
 testExt :
-	- bin/fan src/testExt/build.fan
+	- cd src/testExt; ../../bin/fan build.fan
+
+loginExt :
+	- cd src/loginExt; ../../bin/fan build.fan
+

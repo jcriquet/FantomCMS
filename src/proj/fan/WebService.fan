@@ -4,6 +4,7 @@ using webmod
 
 const class WebService : WispService {
   new make() : super( |WispService me| {
+    me.port = 8080
     podMap := Str:PodMod[:]
     Env.cur.findAllPodNames.each |pod| { podMap[ pod ] = PodMod( pod ) }
     
