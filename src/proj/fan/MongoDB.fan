@@ -94,11 +94,10 @@ class MongoDB
       result = collection.findAll(query)
     }else if (limit > 0){
       result = collection.findAll(query, null, 0, limit)
-      echo(result.toStr)
     }else{
       throw DBErr("limit", "Bad limit provided to get")
     }
-    DBEntry[]? toReturn
+    DBEntry[] toReturn := [,]
     if(result != null && !result.isEmpty)
     {
       result.each |a|
@@ -191,8 +190,8 @@ class MongoDB
 class DBEntry
 {
   Str app
-  private Str:Str? entryData
-  private Str? bsonData
+  Str:Str? entryData
+  Str? bsonData
   ObjectId? _id
 
   new make(Str app)
@@ -208,7 +207,7 @@ class DBEntry
   
   Void addTagMap(Str:Str? vals)
   {
-    vals.each |Str key, Str val| 
+    vals.each |val, key| 
     {   
       this.entryData[key] = val
     }
@@ -250,14 +249,18 @@ class DBEntry
   static DBEntry getFromMap([Str:Obj?] map)
   {
     toReturn := DBEntry (map["app"])
-    map.each |K, V| 
+    map.each |V, K| 
     {   
-      if(K == "app" || K == "bsonData")
-      toReturn.addTag(K, V)
+      if(K == "app" || K == "bsonData" || K == "_id") return
+      else toReturn.addTag(K, V)
     }
     if(map.containsKey("bsonData"))
     {
       toReturn.bsonData = map.get("bsonData")
+    }
+    if(map.containsKey("_id"))
+    {
+      toReturn._id = map["_id"]
     }
     return toReturn
   }
@@ -268,9 +271,9 @@ class DBEntry
     toReturn := [
       "app"       : this.app,
       ]
-    this.entryData.each |K, V| 
+    this.entryData.each |V, K| 
     {   
-      toReturn[V] = K
+      toReturn[K] = V
     }
     if(this.bsonData != null) toReturn["bsonData"] = this.bsonData
     return toReturn
