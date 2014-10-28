@@ -8,6 +8,10 @@ class Build : BuildPod {
     outPodDir = `../../lib/fan/`
     depends   = ["sys 1.0",
                  "sql 1.0",
+                 "inet 1.0",
+                 "concurrent 1.0",
+                 "afMongo 0+",
+                 "afBson 1.0",
                  "util 1.0",
                  "web 1.0",
                  "webmod 1.0",
