@@ -6,6 +6,7 @@ proj.pod
 fui.pod
 testExt.pod
 loginExt.pod
+securityExt.pod
 
 #################
 ## Eclipse
