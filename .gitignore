@@ -5,6 +5,8 @@
 proj.pod
 fui.pod
 testExt.pod
+loginExt.pod
+src/loginExt/
 
 #################
 ## Eclipse

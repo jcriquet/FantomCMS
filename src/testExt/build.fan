@@ -1,9 +1,8 @@
 using build
-class Build : build::BuildPod
-{
-  new make()
-  {
+class Build : build::BuildPod {
+  new make() {
     podName   = "testExt"
+    version   = Version( [ 1, 0, 0 ] )
     summary   = ""
     srcDirs   = [`fan/`, `fan/ui/`]
     outPodDir = `../../lib/fan/`
