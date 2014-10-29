@@ -190,23 +190,24 @@ class MongoDB
 class DBEntry
 {
   Str app
-  Str:Str? entryData
+  Str:Str? entryData := [:]
   Str? bsonData
   ObjectId? _id
 
   new make(Str app)
   {
     this.app = app
-    this.entryData = [:]
   }
   
-  Void addTag(Str key, Str val)
+  Void addTag(Str key, Str? val)
   {
     this.entryData[key] = val
   }
   
   Void addTagMap(Str:Str? vals)
   {
+    // Why not do it like this?
+    //   this.entryData.addAll( vals )
     vals.each |val, key| 
     {   
       this.entryData[key] = val
@@ -284,7 +285,7 @@ class DBEntry
     return BsonReader(toProcess.toBuf.in).readDocument
   }
 
-  static private Str writeBson([Obj:Obj?] o)
+  static private Str writeBson(Obj:Obj? o)
   {
     Buf b := Buf()
     BsonWriter(b.out).writeDocument(o)
