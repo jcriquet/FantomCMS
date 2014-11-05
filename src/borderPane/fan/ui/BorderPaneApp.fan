@@ -2,20 +2,17 @@ using fui
 using fwt
 using gfx
 
-class borderPane : App {
+class BorderPaneApp : App {
   new make() : super() {
     content = BorderPane {
       GridPane {
         it.halignPane = Halign.center
         it.valignPane = Valign.center
         BorderPane {
-          it.bg = Color.gray
-          GridPane {
-            Label { 
-              text = "hello" 
-            },
+          Label {
+            text = "hello"
           },
-        },  
+        },
       },
     }
   }
