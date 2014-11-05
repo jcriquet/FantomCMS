@@ -3,8 +3,8 @@ using fwt
 using gfx
 using [java]BCrypt
 
-class BCrypt() extends java.lang.Object
-
+//class BCrypt() extends java.lang.Object
+//
 @Js
 class SecurityApp : App {
   
