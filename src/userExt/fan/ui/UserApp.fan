@@ -1,44 +1,41 @@
 using fui
 using fwt
 using gfx
+using webfwt
 
 @Js
 class UserApp : App {
   
   new make() : super() {
-    content = BorderPane {
-      it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
-      GridPane {
-        it.halignPane = Halign.center
-        it.valignPane = Valign.center
-        BorderPane {
-          it.bg = Color.gray
-          it.border = Border.fromStr( "3 solid #000000 15" )
-          it.insets = Insets( 10, 16 )
-          GridPane {
-            numCols = 3
-            Label { 
-              text = "Username" 
+    content = SashPane {
+      it.weights = [25, 75]
+      BorderPane {
+        it.bg = Color.red
+        EdgePane {
+          top = GridPane {
+            numCols = 1
+            Label {
+              text = "test"
             },
-            Text {
-            
-            },
-            Button {
-              text = "Log in"
-            },
-            Label { 
-              text = "Password"
-            },
-            Text {
-              password = true;
-            },
-            Button {
-              mode = ButtonMode.check;
-              text = "Remember me";
-            },
-          },
-        },  
+            Label {
+              text = "test2"
+            }
+          }
+        },
       },
+      EdgePane {
+        top = EdgePane {
+          left = Label {
+            text = "Header Name"
+          }
+          right = Label {
+            text = "Search"
+          }
+        }
+        center = BorderPane {
+          it.bg = Color.blue
+        }
+      }
     }
   }
   
