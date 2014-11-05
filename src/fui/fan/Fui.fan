@@ -6,7 +6,7 @@ class Fui {
   [Str:AppSpec]? appMap
   Uri? baseUri
   
-  Uri appUri( Str appName ) { baseUri + "proj/$appName".toUri }
+  Uri appUri( Str appName ) { baseUri + "app/$appName".toUri }
   
   static Fui cur() { Actor.locals[ "fui.cur" ] }
 }

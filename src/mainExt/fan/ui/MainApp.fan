@@ -8,37 +8,38 @@ using webfwt
 @Js
 class MainApp : App {
   
-  EdgePane mainEdgePane
+  ContentPane mainPane
 
   new make() : super() {
     content = EdgePane{
-      mainEdgePane = it
 
-      top = ConstrainedBorderPane(Win.cur.viewport.w, (Win.cur.viewport.h * 0.2F).toInt){
-        it.bg = Color.black
+      top = ConstrainedBorderPane(Win.cur.viewport.w, (Win.cur.viewport.h * 0.1F).toInt){
+        it.bg = getOption("bgcolor")
+        Button{ it.text = "test" ; it.onAction.add { setContent("login") } },
       }
 
       center = ContentPane{
-        GridPane{
-          it.numCols = 5
-          Label{ text = "hi" },
-          Label{ text = "hi" },
-          Label{ text = "hi" },
-          Label{ text = "hi" },
-          Label{ text = "hi" },
-        },
+        this.mainPane = it
       }
 
-      bottom = ContentPane{
-        
+      bottom = ConstrainedBorderPane(Win.cur.viewport.w, (Win.cur.viewport.h * 0.1F).toInt){
+        it.bg = getOption("bgcolor")
       }
     }
   }
   
+  Void setContent(Str appName){
+    App toOpen := (App)Type.find(Fui.cur.appMap.get(appName).qname).make
+    Win.cur.hisPushState(appName, Fui.cur.appUri(appName), [:])
+    this.mainPane.content = toOpen
+    this.relayout
+    this.loadState("")
+    toOpen.onLoadState(State())
+  }
   
   // getOption checks the database for config options
   // TODO: interface with db
-  Obj getOption(Str obj, Str opt) {
+  Obj getOption(Str opt) {
     switch(opt) {
       case "bgcolor":
       // sweet gradient
