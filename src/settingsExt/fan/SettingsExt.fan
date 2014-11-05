@@ -6,7 +6,7 @@ using web
   name = "settings"
   app = settingsExt::SettingsApp#
 }
-const class LoginExt : Ext, Weblet {
+const class SettingsExt : Ext, Weblet {
   
   override Void onGet() {
     type := req.modRel.path.first
