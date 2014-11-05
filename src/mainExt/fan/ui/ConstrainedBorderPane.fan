@@ -6,22 +6,20 @@ using dom
 class ConstrainedBorderPane : BorderPane {
   BorderPane bp
   ConstraintPane cp
+  Int h
+  Int w
+  Bool percents
 
-  new make(Int w, Int h, Bool percents := false) : super(){
+  new make(Int w, Int h) : super(){
+    this.w = w
+    this.h = h
     this.bp = this
     this.content = ConstraintPane{
       this.cp = it
-      if(!percents){
-        it.minh = h
-        it.maxh = h
-        it.minw = w
-        it.maxw = w
-      }else{
-        it.minh = (Win.cur.viewport.h * (h/100)).toInt
-        it.maxh = (Win.cur.viewport.h * (h/100)).toInt
-        it.minw = (Win.cur.viewport.w * (w/100)).toInt
-        it.maxw = (Win.cur.viewport.w * (w/100)).toInt
-      }
     }
+  }
+  
+  override Size prefSize(Hints hints := Hints.defVal){
+    return Size( w, h )
   }
 }

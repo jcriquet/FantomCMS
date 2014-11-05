@@ -8,28 +8,29 @@ using webfwt
 @Js
 class MainApp : App {
   
-  ConstrainedBorderPane topPane
-  ConstrainedBorderPane centerPane
-  ConstrainedBorderPane bottomPane
-
   EdgePane mainEdgePane
 
   new make() : super() {
     content = EdgePane{
       mainEdgePane = it
-      it.top = ConstrainedBorderPane(100,10,true){
-        topPane = it
+
+      top = ConstrainedBorderPane(Win.cur.viewport.w, (Win.cur.viewport.h * 0.2F).toInt){
         it.bg = Color.black
       }
 
-      it.center = ConstrainedBorderPane(100,90,true){
-        centerPane = it
-        it.bg = Color.gray
+      center = ContentPane{
+        GridPane{
+          it.numCols = 5
+          Label{ text = "hi" },
+          Label{ text = "hi" },
+          Label{ text = "hi" },
+          Label{ text = "hi" },
+          Label{ text = "hi" },
+        },
       }
 
-      it.bottom = ConstrainedBorderPane(100,10,true){
-        bottomPane = it
-        it.bg = Color.black
+      bottom = ContentPane{
+        
       }
     }
   }
