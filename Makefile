@@ -1,4 +1,4 @@
-build : proj fui testExt loginExt securityExt
+build : proj fui testExt loginExt securityExt borderPane
 
 run : build
 	- bin/fcms
@@ -16,3 +16,5 @@ loginExt :
 	- cd src/loginExt; ../../bin/fan build.fan
 securityExt :
 	- cd src/securityExt; ../../bin/fan build.fan
+borderPane :
+	-- cd src/borderPane; ../../bin/fan build.fan
