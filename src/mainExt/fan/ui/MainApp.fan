@@ -1,5 +1,4 @@
 using fui
-using FCMSCommon
 using dom
 using fwt
 using gfx
@@ -13,7 +12,6 @@ class MainApp : App {
 
   new make() : super() {
     content = EdgePane{
-
       top = ConstrainedBorderPane(Win.cur.viewport.w, (Win.cur.viewport.h * 0.1F).toInt){
         it.bg = getOption("bgcolor")
         Button{ it.text = "test" ; it.onAction.add { setContent("login") } },
