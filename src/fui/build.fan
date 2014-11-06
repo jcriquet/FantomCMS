@@ -10,6 +10,7 @@ class Build : build::BuildPod {
                  "concurrent 1.0",
                  "dom 1.0",
                  "fwt 1.0",
+                 "gfx 1.0",
                  "proj 1.0",
                  "sql 1.0",
                  "util 1.0",
