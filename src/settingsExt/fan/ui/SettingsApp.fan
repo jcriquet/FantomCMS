@@ -7,7 +7,12 @@ using webfwt
 
 @Js
 class SettingsApp : App {
-  private Text userText := Text()
+  private Text dbAddress:= Text()
+  private Text dbPort := Text()
+  private Text dbUsername := Text()
+  private Text dbPassword := Text {
+    password = true
+  }
   private Text servPort := Text()
   
   private Widget dbWidget() {
@@ -16,23 +21,19 @@ class SettingsApp : App {
       Label {
         text = "Server Address"
       },
-      Text {
-            
-      },
+      dbAddress,
       Label {
         text = "Port Number"
       },
-      servPort,
+      dbPort,
       Label {
         text = "User Name"
       },
-      userText,
+      dbUsername,
       Label {
         text = "Password"
       },
-      Text {
-        password = true
-      },
+      dbPassword,
       Button {
         text = "Cancel"
       },
@@ -49,9 +50,7 @@ class SettingsApp : App {
       Label {
         text = "Port Number"
       },
-      Text {
-        
-      },
+      servPort,
       Button {
         text = "Cancel"
       },
@@ -70,7 +69,7 @@ class SettingsApp : App {
     it.onSelect.add |e| {
       apiCall( `http://localhost:8080/api/settings` ).get |res| {
         jsonMap := (Str:Obj?) JsonInStream( res.content.in ).readJson
-        userText.text = (Str) jsonMap[ "user" ]
+        dbUsername.text = (Str) jsonMap[ "user" ]
       }
       apiCall( `http://localhost:8080/api/settings` ).postForm( ["user":"jono"] ) {}
       //ajaxcall( `some/uri/here.place` ) |Str receivedData| {
@@ -99,12 +98,11 @@ class SettingsApp : App {
   }
   
   override Void onSaveState( State state ) {
-    state[ "username" ] = userText.text
-    state[ "port number"]
+    state[ "username" ] = dbUsername.text
   }
   
   override Void onLoadState( State state ) {
     list.onSelect.fire( Event { it.data = listMap.keys[ list.selectedIndex ] } )
-    userText.text = state[ "username" ] ?: ""
+    dbUsername.text = state[ "dbUsername" ] ?: ""
   }
 }
