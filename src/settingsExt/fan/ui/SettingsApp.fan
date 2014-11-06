@@ -8,6 +8,8 @@ using webfwt
 @Js
 class SettingsApp : App {
   private Text userText := Text()
+  private Text servPort := Text()
+  
   private Widget dbWidget() {
     return GridPane {
       numCols = 2
@@ -20,9 +22,7 @@ class SettingsApp : App {
       Label {
         text = "Port Number"
       },
-      Text {
-        
-      },
+      servPort,
       Label {
         text = "User Name"
       },
@@ -100,6 +100,7 @@ class SettingsApp : App {
   
   override Void onSaveState( State state ) {
     state[ "username" ] = userText.text
+    state[ "port number"]
   }
   
   override Void onLoadState( State state ) {
