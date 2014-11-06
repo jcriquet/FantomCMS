@@ -1,4 +1,4 @@
-build : proj fui testExt loginExt securityExt
+build : proj fui homescreenExt mainExt
 
 run : build
 	- bin/fcms
@@ -9,10 +9,14 @@ proj :
 fui :
 	- cd src/fui; ../../bin/fan build.fan
 
-testExt :
-	- cd src/testExt; ../../bin/fan build.fan
+homescreenExt :
+	- cd src/homescreenExt; ../../bin/fan build.fan
+
+mainExt :
+	- cd src/mainExt; ../../bin/fan build.fan
 
 loginExt :
 	- cd src/loginExt; ../../bin/fan build.fan
+
 securityExt :
 	- cd src/securityExt; ../../bin/fan build.fan

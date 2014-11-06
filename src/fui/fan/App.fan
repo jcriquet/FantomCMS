@@ -15,22 +15,17 @@ abstract class App : StatePane {
   
   Str name() { spec.name }
   
+  /*
   Void onReady() {
-    Win.cur.onEvent( "hashchange", false ) { _reload }
-    Win.cur.onEvent( "beforeunload", false ) |e| {
-      msg := onBeforeLeave
-      if ( msg != null ) e.meta[ "beforeunloadMsg" ] = msg
-    }
-    Actor.locals[ "appLoaded" ] = true
-    //Win.cur.onEvent( "error", false ) { _reload }
-    json := Env.cur.vars[ "fui.appState" ]
+    json := Env.cur.vars[ "fui.appState" ] // Don't think we need this
     if ( Win.cur.uri.frag == null && json != null ) {
       key := _genKey
       Win.cur.sessionStorage[ key ] = json
       Win.cur.hyperlink( "#$key".toUri )
     }
-    else _reload
+    else reload
   }
+  */
   
   HttpReq apiCall( Uri relPath, Str? app := null ) {
     if ( app == null ) app = name
@@ -54,12 +49,12 @@ abstract class App : StatePane {
     Win.cur.hyperlink( "#$key".toUri )
   }
   
-  private Str _genKey() { StrBuf().add( ( DateTime.nowTicks/1000000000 ).and( 4294967295 ).toHex( 8 ) ).addChar( 45 ).add( Int.random( 0..4294967295 ).and( 4294967295 ).toHex( 8 ) ).toStr }
-  private Void _reload() {
-    frag := Win.cur.uri.frag ?: ""
+  Void reload() {
     inModify = false
     inLoad = true
-    onLoadState( loadState( frag ).ro )
+    onLoadState( loadState( Win.cur.uri.frag ?: "" ).ro )
     inLoad = false
   }
+  
+  private Str _genKey() { StrBuf().add( ( DateTime.nowTicks/1000000000 ).and( 4294967295 ).toHex( 8 ) ).addChar( 45 ).add( Int.random( 0..4294967295 ).and( 4294967295 ).toHex( 8 ) ).toStr }
 }
