@@ -39,7 +39,7 @@ class DatabasePane : SettingsPane {
           contentData[ "username" ] = dbUsername.text
           if ( dbPasswordChanged ) contentData[ "password" ] = dbPassword.text
           contentData[ "database" ] = dbDatabase.text
-          app.apiCall( `http://localhost:8080/api/settings` ).postForm( contentData.dup[ "option" ] = listName ) {}
+          app.apiCall( Fui.cur.baseUri + `api/settings` ).postForm( contentData.dup[ "option" ] = listName ) {}
           app.modifyState
         }
       }, 
