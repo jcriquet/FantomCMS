@@ -18,8 +18,7 @@ class SettingsApp : App {
     it.items = listMap.keys
     it.onSelect.add |e| {
       selected := list.selected[0]
-      a := Fui.cur.baseUri + "api/settings?option=$selected".toUri
-      apiCall( a ).get |res| {
+      apiCall( Fui.cur.baseUri + "api/settings?option=$selected".toUri ).get |res| {
         list.selected[0] = selected
         contentData = ( (Str:Obj?) JsonInStream( res.content.in ).readJson ).map |Obj? o->Str| { o?.toStr ?: "" }
         listMap[ selected ].getData
@@ -51,10 +50,10 @@ class SettingsApp : App {
   }
   
   override Void onLoadState( State state ) {
-    list.selectedIndex = state[ "listSelected" ] ?: 0
+    list.selectedIndex = state[ "listSelected" ]
     contentData = ( ([Str:Obj?]?) state[ "contentData" ] )?.map |Obj? o->Str| { o?.toStr ?: "" }
     if ( contentData != null ) listMap[ list.selected[0] ].onLoadState( state )
-    pageContent.content = listMap[ list.selected[0] ]
+    if ( list.selectedIndex != null ) pageContent.content = listMap[ list.selected[0] ]
     pageContent.relayout
   }
 }

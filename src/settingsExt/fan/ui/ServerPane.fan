@@ -21,7 +21,7 @@ class ServerPane : SettingsPane {
         onAction.add {
           if ( servPort.text.toInt( 10, false ) == null ) servPort.text = contentData[ "server.port" ]
           contentData[ "server.port" ] = servPort.text
-          app.apiCall( `http://localhost:8080/api/settings` ).postForm( contentData.dup[ "option" ] = listName ) {}
+          app.apiCall( Fui.cur.baseUri + `api/settings` ).postForm( contentData.dup[ "option" ] = listName ) {}
           app.modifyState
         }
       },
