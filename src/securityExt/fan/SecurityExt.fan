@@ -6,6 +6,7 @@ using web
   name = "security"
   app = securityExt::SecurityApp#
 }
-const class SecurityExt : Ext, Weblet {
+
+const class SecurityExt : Ext {
 
 }
