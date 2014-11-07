@@ -7,21 +7,26 @@ using webfwt
 
 @Js
 class SettingsApp : App {
-  private Text dbAddress:= Text()
+  static const Int DEFAULTSERVPORT := 8080
+  private Text dbHost:= Text()
   private Text dbPort := Text()
   private Text dbUsername := Text()
   private Text dbPassword := Text {
     password = true
+    onModify.add { dbPasswordChanged = true }
+    it.onFocus.add { if ( !dbPasswordChanged ) dbPassword.text = "" }
   }
+  private Bool dbPasswordChanged
   private Text servPort := Text()
+  private [Str:Str]? contentData
   
   private Widget dbWidget() {
     return GridPane {
       numCols = 2
       Label {
-        text = "Server Address"
+        text = "Host"
       },
-      dbAddress,
+      dbHost,
       Label {
         text = "Port Number"
       },
@@ -39,7 +44,15 @@ class SettingsApp : App {
       },
       Button {
         text = "Apply"
-        onAction.add { modifyState }
+        onAction.add {
+          contentData[ "host" ] = dbHost.text
+          if ( dbPort.text.toInt( 10, false ) == null ) dbPort.text = contentData[ "port" ]
+          contentData[ "port" ] = dbPort.text
+          contentData[ "username" ] = dbUsername.text
+          if ( dbPasswordChanged ) contentData[ "password" ] = dbPassword.text
+          apiCall( `http://localhost:8080/api/settings` ).postForm( contentData.dup[ "option" ] = (Str) list.selected[0] ) {}
+          modifyState
+        }
       },
     }
   }
@@ -56,6 +69,12 @@ class SettingsApp : App {
       },
       Button {
         text = "Apply"
+        onAction.add {
+          if ( servPort.text.toInt( 10, false ) == null ) servPort.text = contentData[ "server.port" ]
+          contentData[ "server.port" ] = servPort.text
+          apiCall( `http://localhost:8080/api/settings` ).postForm( contentData.dup[ "option" ] = (Str) list.selected[0] ) {}
+          modifyState
+        }
       },
     }
   }
@@ -67,16 +86,20 @@ class SettingsApp : App {
   private TreeList list := TreeList {
     it.items = listMap.keys
     it.onSelect.add |e| {
-      apiCall( `http://localhost:8080/api/settings` ).get |res| {
-        jsonMap := (Str:Obj?) JsonInStream( res.content.in ).readJson
-        dbUsername.text = (Str) jsonMap[ "user" ]
+      selected := list.selected[0]
+      apiCall( "http://localhost:8080/api/settings?option=$selected".toUri ).get |res| {
+        list.selected[0] = selected
+        contentData = ( (Str:Obj?) JsonInStream( res.content.in ).readJson ).map |Obj? o->Str| { o?.toStr ?: "" }
+        switch ( (Str) selected ) {
+          case "Database":
+            dbHost.text = contentData[ "host" ] ?: ""
+            dbPort.text = contentData[ "port" ] ?: ""
+            dbUsername.text = contentData[ "username" ] ?: ""
+          case "Server":
+            servPort.text = contentData[ "server.port" ]
+        }
+        modifyState
       }
-      apiCall( `http://localhost:8080/api/settings` ).postForm( ["user":"jono"] ) {}
-      //ajaxcall( `some/uri/here.place` ) |Str receivedData| {
-      //  
-      //}
-      pageContent.content = listMap[ e.data ]
-      pageContent.relayout
     }
   }
   
@@ -94,15 +117,37 @@ class SettingsApp : App {
       },
     }
     relayout
-    list.selectedIndex = 0
   }
   
   override Void onSaveState( State state ) {
-    state[ "username" ] = dbUsername.text
+    state[ "listSelected" ] = list.selectedIndex
+    state[ "contentData" ] = contentData
+    switch ( (Str) list.selected[0] ) {
+      case "Database":
+        if ( dbHost.text != contentData[ "host" ] ) state[ "host" ] = dbHost.text
+        if ( dbPort.text != contentData[ "port" ] ) state[ "port" ] = dbPort.text
+        if ( dbUsername.text != contentData[ "username" ] ) state[ "username" ] = dbUsername.text
+      case "Server":
+        if ( servPort.text != contentData[ "server.port" ] ) state[ "server.port" ] = servPort.text
+    }
   }
   
   override Void onLoadState( State state ) {
-    list.onSelect.fire( Event { it.data = listMap.keys[ list.selectedIndex ] } )
-    dbUsername.text = state[ "dbUsername" ] ?: ""
+    list.selectedIndex = state[ "listSelected" ] ?: 0
+    contentData = ( ([Str:Obj?]?) state[ "contentData" ] )?.map |Obj? o->Str| { o?.toStr ?: "" }
+    if ( contentData != null ) {
+      switch ( (Str) list.selected[0] ) {
+        case "Database":
+          dbHost.text = state[ "host" ] ?: contentData[ "host" ]
+          dbPort.text = state[ "port" ] ?: contentData[ "port" ]
+          dbUsername.text = state[ "username" ] ?: contentData[ "username" ]
+          dbPassword.text = "asdfasdfasdf"
+          dbPasswordChanged = false
+        case "Server":
+          servPort.text = state[ "server.port" ] ?: contentData[ "server.port" ]
+      }
+    }
+    pageContent.content = listMap[ list.selected[0] ]
+    pageContent.relayout
   }
 }

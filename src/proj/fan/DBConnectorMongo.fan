@@ -38,7 +38,7 @@ class DBConnector {
       address = "mongodb://$username:$password@$host:$port/$authDatabase".toUri
     else
       address = "mongodb://$host:$port".toUri
-    cm = ConnectionManagerPooled( ActorPool(), address )
+    cm = ConnectionManagerPooled.makeFromUri( ActorPool(), address )
     mc = MongoClient( cm )
     db = mc[ databaseName ]
   }
@@ -77,7 +77,7 @@ class DBConnector {
   DBEntry[] get( Str name, Str:Str? query, Int limit := 0 ) {
     collection := getCollection( name )
     result := limit > 0 ? collection.findAll( query, null, 0, limit ) : collection.findAll( query )
-    return result.map |map| { DBEntry( map ) }
+    return result.map |map| { DBEntry.makeFromMap( map ) }
   }
   
   /// delete will remove an object from the database. You should get
@@ -136,7 +136,7 @@ class DBEntry {
   
   /// getFromMap is a static method getting an entry from
   /// a map.
-  static new makeFromMap( Str:Obj? map ) {
+  static DBEntry makeFromMap( Str:Obj? map ) {
     newMap := map.dup
     toReturn := DBEntry( (Str) map["app"] )
     if ( newMap.containsKey( "_id" ) ) toReturn._id = newMap.remove( "_id" )
