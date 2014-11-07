@@ -32,12 +32,12 @@ const class SettingsExt : Ext, Weblet {
   
   override Void onPost() {
     form := req.form.rw
-    echo( form )
+    //echo( form )
     switch ( form[ "option" ] ) {
       case "Database":
         file := Env.cur.homeDir + `etc/db/config.props`
-        props := file.readProps
-        keys := ["host", "port", "username", "password"]
+        props := file.exists ? file.readProps : Str:Str[:]
+        keys := ["host", "port", "username", "password", "database"]
         keys.each |key| { if ( form.containsKey( key ) ) props[ key ] = form[ key ] }
         file.create.writeProps( props )
       case "Server":
