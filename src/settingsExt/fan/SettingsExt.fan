@@ -35,13 +35,13 @@ const class SettingsExt : Ext, Weblet {
     echo( form )
     switch ( form[ "option" ] ) {
       case "Database":
-        file := `etc/db/config.props`.toFile
+        file := Env.cur.homeDir + `etc/db/config.props`
         props := file.readProps
         keys := ["host", "port", "username", "password"]
         keys.each |key| { if ( form.containsKey( key ) ) props[ key ] = form[ key ] }
         file.create.writeProps( props )
       case "Server":
-        file := `etc/proj/config.props`.toFile
+        file := Env.cur.homeDir + `etc/proj/config.props`
         props := file.readProps
         if ( form.containsKey( "server.port" ) ) props[ "server.port" ] = form[ "server.port" ]
         file.create.writeProps( props )
