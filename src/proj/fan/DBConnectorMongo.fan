@@ -10,20 +10,27 @@ using afBson
 using concurrent
 using inet
 
-class DBConnector {
+const class DBConnector {
+  static const DBConnector cur := DBConnector(
+    Env.cur.config( Pod.find( "db" ), "host" ) ?: "",
+    Env.cur.config( Pod.find( "db" ), "port" )?.toInt ?: 0,
+    Env.cur.config( Pod.find( "db" ), "database" ) ?: "fantomcms",
+    Env.cur.config( Pod.find( "db" ), "username" ),
+    Env.cur.config( Pod.find( "db" ), "password" ) )
+  
   // Fields
   /// Store the full URI we use to connect to the MongoDB
   const Uri address
   
   /// The ConnectionManagerPooled that will manage our connections to the MongoDB
-  private ConnectionManagerPooled cm
+  private const ConnectionManagerPooled? cm
   
   /// The MongoClient that this Database Connector will use to communicate with
   /// the server.
-  private MongoClient mc
+  private const MongoClient? mc
   
   /// The Database object that we will primarily be working with.
-  private Database db
+  private const Database? db
   
   // Constructor
   /// Can be provided with a username, password, and database to be used to connect
@@ -38,9 +45,11 @@ class DBConnector {
       address = "mongodb://$username:$password@$host:$port/$authDatabase".toUri
     else
       address = "mongodb://$host:$port".toUri
-    cm = ConnectionManagerPooled.makeFromUri( ActorPool(), address )
-    mc = MongoClient( cm )
-    db = mc[ databaseName ]
+    try {
+      cm = ConnectionManagerPooled( ActorPool(), address )
+      mc = MongoClient( cm )
+      db = mc[ databaseName ]
+    } catch ( Err e ) {}
   }
   
   // Public
@@ -51,7 +60,8 @@ class DBConnector {
   // that all the collections we need for the app have been
   // created on the Mongo server.
   Void startup( Str[] collections ) {
-    echo("\nChecking that all required collections exist on server... ")
+    if ( db == null ) { echo( "\nDatabase could not load.  Please check the configuration." ); return }
+    echo( "\nChecking that all required collections exist on server... " )
     collections.each |Str name| {
       if ( collectionExists( name ) ) {
         echo( "${name}...exists." )
@@ -77,7 +87,7 @@ class DBConnector {
   DBEntry[] get( Str name, Str:Str? query, Int limit := 0 ) {
     collection := getCollection( name )
     result := limit > 0 ? collection.findAll( query, null, 0, limit ) : collection.findAll( query )
-    return result.map |map| { DBEntry.makeFromMap( map ) }
+    return result.map |map| { DBEntry( map ) }
   }
   
   /// delete will remove an object from the database. You should get
@@ -136,9 +146,9 @@ class DBEntry {
   
   /// getFromMap is a static method getting an entry from
   /// a map.
-  static DBEntry makeFromMap( Str:Obj? map ) {
+  static new makeFromMap( Str:Obj? map ) {
     newMap := map.dup
-    toReturn := DBEntry( (Str) map["app"] )
+    toReturn := DBEntry( (Str) newMap.remove( "app" ) )
     if ( newMap.containsKey( "_id" ) ) toReturn._id = newMap.remove( "_id" )
     if ( newMap.containsKey( "bsonData" ) ) toReturn.bsonData = newMap.remove( "bsonData" )
     toReturn.setAll( newMap )
@@ -161,10 +171,13 @@ class DBEntry {
 
   /// getMap returns the map representing this object.
   Str:Str getMap() {
+    toReturn := entryData.dup
+    /*
     toReturn := [
       "app"       : app,
       ]
     toReturn.addAll( entryData )
+    */
     if (this.bsonData != null) toReturn["bsonData"] = bsonData
     return toReturn
   }

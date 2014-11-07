@@ -3,10 +3,11 @@ using util
 using web
 
 @ExtMeta {
-  name = "main"
-  app = mainExt::MainApp#
+  name = "home"
+  app = homeExt::HomeApp#
 }
-const class MainExt : Ext, Weblet {
+
+const class HomeExt : Ext, Weblet {
   
   override Void onGet() {
     type := req.modRel.path.first

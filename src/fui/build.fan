@@ -5,6 +5,7 @@ class Build : build::BuildPod {
     version   = Version( [ 1, 0, 0 ] )
     summary   = ""
     srcDirs   = [`fan/`]
+    resDirs   = [`res/img/`]
     outPodDir = `../../lib/fan/`
     depends   = ["sys 1.0",
                  "concurrent 1.0",
