@@ -32,8 +32,9 @@ class DatabasePane : SettingsPane {
       Button {
         text = "Apply"
         onAction.add {
+          echo( contentData )
           contentData[ "host" ] = dbHost.text
-          if ( dbPort.text.toInt( 10, false ) == null ) dbPort.text = contentData[ "port" ]
+          if ( dbPort.text.toInt( 10, false ) == null ) dbPort.text = contentData[ "port" ] ?: "0"
           contentData[ "port" ] = dbPort.text
           contentData[ "username" ] = dbUsername.text
           if ( dbPasswordChanged ) contentData[ "password" ] = dbPassword.text
