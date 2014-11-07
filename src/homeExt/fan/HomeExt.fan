@@ -3,11 +3,11 @@ using util
 using web
 
 @ExtMeta {
-  name = "homescreen"
-  app = homescreenExt::HomescreenApp#
+  name = "home"
+  app = homeExt::HomeApp#
 }
 
-const class HomescreenExt : Ext, Weblet {
+const class HomeExt : Ext, Weblet {
   
   override Void onGet() {
     type := req.modRel.path.first

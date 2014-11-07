@@ -4,7 +4,7 @@ using inet
 using gfx
 
 @Js
-class HomescreenAppIcon : fui::AppIcon
+class HomeAppIcon : fui::AppIcon
 {
   new make(Str appName, Uri? iconUri := null) : super(appName, iconUri){
   }

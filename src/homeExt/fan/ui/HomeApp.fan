@@ -7,7 +7,7 @@ using util
 using webfwt
 
 @Js
-class HomescreenApp : App {
+class HomeApp : App {
 
   new make() : super() {
     content = BorderPane{
@@ -15,7 +15,7 @@ class HomescreenApp : App {
       it.content = GridPane{
         it.numCols = Fui.cur.appMap.size
         Fui.cur.appMap.each |AppSpec appSpec, Str appName | {   
-          add(HomescreenAppIcon(appName))
+          add(HomeAppIcon(appName))
         }
       }
     }
@@ -25,7 +25,7 @@ class HomescreenApp : App {
   // TODO: interface with db
   Obj getOption(Str opt) {
     switch(opt) {
-      case "homescreen_cols":
+      case "home_cols":
       return 5
     }
     throw Err("Option not found")
