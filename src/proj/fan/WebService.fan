@@ -5,6 +5,7 @@ using webmod
 const class WebService : WispService {
   new make() : super( |WispService me| {
     me.port = 8080
+    
     podMap := Str:PodMod[:]
     Env.cur.findAllPodNames.each |pod| { podMap[ pod ] = PodMod( pod ) }
     
@@ -14,6 +15,8 @@ const class WebService : WispService {
       name := ( type.facets.find |f| { f is ExtMeta } as ExtMeta )?.name
       if ( type.fits( Ext# ) && name != null ) exts[ name ] = type
     }
+    
+    DBConnector.cur.startup( exts.keys )
     
     root = RouteMod { it.routes = [
         "pod" : RouteMod { it.routes = podMap },
