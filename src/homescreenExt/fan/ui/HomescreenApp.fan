@@ -8,15 +8,15 @@ using webfwt
 
 @Js
 class HomescreenApp : App {
-  GridPane mainGrid
 
   new make() : super() {
-    content = GridPane{
-      mainGrid = it
-
-      it.numCols = getOption("homescreen_cols")
-      Fui.cur.appMap.each |AppSpec appSpec, Str appName | {   
-        mainGrid.add(AppIcon(appName, HomescreenApp#.method("launchApp").func))
+    content = BorderPane{
+      it.bg = Gradient("0% 50%, 100% 50%, #f00 0.1, #00f 0.9")
+      it.content = GridPane{
+        it.numCols = Fui.cur.appMap.size
+        Fui.cur.appMap.each |AppSpec appSpec, Str appName | {   
+          add(HomescreenAppIcon(appName))
+        }
       }
     }
   }
@@ -29,9 +29,5 @@ class HomescreenApp : App {
       return 5
     }
     throw Err("Option not found")
-  }
-  
-  Void launchApp(){
-    Win.cur.alert("hi")
   }
 }
