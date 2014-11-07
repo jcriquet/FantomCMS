@@ -15,7 +15,7 @@ class UserApp : App {
           top = GridPane {
             numCols = 1
             Label {
-              text = "test"
+              text = "Latest yeah"
             },
             Label {
               text = "test2"
