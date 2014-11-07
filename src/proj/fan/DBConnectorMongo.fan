@@ -16,7 +16,7 @@ const class DBConnector {
     Env.cur.config( Pod.find( "db" ), "port" )?.toInt ?: 0,
     Env.cur.config( Pod.find( "db" ), "database" ) ?: "fantomcms",
     Env.cur.config( Pod.find( "db" ), "username" ),
-    Env.cur.config( Pod.find( "db" ), "password" ) )//"162.243.155.57", 27017, "jeremytest" )
+    Env.cur.config( Pod.find( "db" ), "password" ) )
   
   // Fields
   /// Store the full URI we use to connect to the MongoDB

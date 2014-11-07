@@ -26,10 +26,12 @@ const class WebService : WispService {
     
     DBConnector.cur.startup( exts.keys )
     
+    appMod := AppMod( exts )
     root = RouteMod { it.routes = [
+        "index" : IndexMod( appMod ),
         "pod" : RouteMod { it.routes = podMap },
         "api" : ApiMod( exts ),
-        "app" : AppMod( exts )
+        "app" : appMod
       ] }
   } ) {
   }
