@@ -2,24 +2,16 @@ using fui
 using fwt
 using gfx
 
+@Js
 class BorderPaneApp : App {
   new make() : super() {
     content = BorderPane {
-      GridPane {
-        it.halignPane = Halign.center
-        it.valignPane = Valign.center
-        BorderPane {
-          Label {
-            text = "hello"
-          },
-        },
-      },
+      it.bg = Color.green
+//      EdgePane {
+//        center = Label {
+//          text = "Hello"
+//        }
+//      },
     }
-  }
-  
-  override Void onSaveState( State state ) {
-  }
-  
-  override Void onLoadState( State state ) {
   }
 }

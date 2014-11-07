@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-build : proj fui loginExt securityExt borderPane homescreenExt mainExt
-=======
-build : db proj fui mainExt homescreenExt loginExt settingsExt securityExt pagesExt
->>>>>>> master
+build : db proj fui mainExt homescreenExt loginExt settingsExt securityExt pagesExt borderPaneExt
 
 run : build
 	- bin/fcms
@@ -30,5 +26,5 @@ settingsExt :
 
 securityExt :
 	- cd src/securityExt; ../../bin/fan build.fan
-borderPane :
+borderPaneExt :
 	-- cd src/borderPane; ../../bin/fan build.fan
