@@ -4,7 +4,15 @@ using webmod
 
 const class WebService : WispService {
   new make() : super( |WispService me| {
-    me.port = 8080
+    port := Env.cur.config( typeof.pod, "server.port" )?.toInt
+    if ( port == null ) {
+      port = 8080
+      file := Env.cur.homeDir + `etc/proj/config.props`
+      echo( file.normalize.pathStr )
+      props := file.exists ? file.readProps : Str:Str[:]
+      file.create.writeProps( props[ "server.port" ] = port.toStr )
+    }
+    me.port = port
     
     podMap := Str:PodMod[:]
     Env.cur.findAllPodNames.each |pod| { podMap[ pod ] = PodMod( pod ) }
@@ -18,10 +26,12 @@ const class WebService : WispService {
     
     DBConnector.cur.startup( exts.keys )
     
+    appMod := AppMod( exts )
     root = RouteMod { it.routes = [
+        "index" : IndexMod( appMod ),
         "pod" : RouteMod { it.routes = podMap },
         "api" : ApiMod( exts ),
-        "app" : AppMod( exts )
+        "app" : appMod
       ] }
   } ) {
   }

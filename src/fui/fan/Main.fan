@@ -11,13 +11,28 @@ class Main : ContentPane {
   App? curApp { private set }
 
   new make() : super() {
+    vars := Env.cur.vars
+    fui := Fui( this ) {
+      appMap = ( (Str:Obj?) JsonInStream( vars[ "fui.apps" ].in ).readJson ).map |Str:Str map->AppSpec| { AppSpec( map[ "name" ], map[ "qname" ] ) }
+      baseUri = vars[ "fui.baseUri" ].toUri
+    }
+
+    Actor.locals[ "fui.cur" ] = fui
     content = EdgePane {
-      top = BorderPane {
-        bg = getOption("bgcolor")
-        border = Border.fromStr( "0,0,3 outset #444444" )
-        Button { text = "test" ; it.onAction.add { goto( `fui://app/login` ) } },
-      }
+
+      // Header
+      top = HeaderPane()
+      //BorderPane {
+        //bg = getOption("bgcolor")
+        //border = Border.fromStr( "0,0,3 outset #444444" )
+        //HeaderPane(),
+        //Button { text = "test" ; it.onAction.add { goto( `fui://app/login` ) } },
+      //}
+      
+      // App Container
       center = appContainer
+      
+      // Footer
       bottom = BorderPane {
         bg = getOption("bgcolor")
         border = Border.fromStr( "3,0,0 outset #444444")
@@ -68,13 +83,8 @@ class Main : ContentPane {
   }
   
   Void main() {
-    vars := Env.cur.vars
-    fui := Fui {
-      appMap = ( (Str:Obj?) JsonInStream( vars[ "fui.apps" ].in ).readJson ).map |Str:Str map->AppSpec| { AppSpec( map[ "name" ], map[ "qname" ] ) }
-      baseUri = vars[ "fui.baseUri" ].toUri
-    }
-    Actor.locals[ "fui.cur" ] = fui
-    _setContent( fui.appMap[ vars[ "fui.app" ] ] )
+    fui := Fui.cur
+    _setContent( fui.appMap[ Env.cur.vars[ "fui.app" ] ] )
     window := Window { it.content = this }.open
     Win.cur.onEvent( "hashchange", false ) { curApp.reload }
     Win.cur.onEvent( "popstate", false ) { _reload }

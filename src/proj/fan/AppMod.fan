@@ -12,7 +12,7 @@ const class AppMod : WebMod {
   }
   
   override Void onGet() {
-    appStr := req.modRel.path[ 0 ]
+    appStr := req.modRel.path.getSafe( 0 ) ?: "home"
 //    queryRow := Database.query( "SELECT TRUE FROM webserv.project_ext WHERE project_id = '$projStr' AND ext_name = '$appStr'" ).getSafe( 0 )
     
     notFound := !appMap.containsKey( appStr )// || queryRow == null
@@ -47,5 +47,18 @@ const class AppMod : WebMod {
     out.body
     out.bodyEnd
     out.htmlEnd
+  }
+}
+
+const class IndexMod : WebMod {
+  const AppMod appMod
+  
+  new make( AppMod appMod ) : super() {
+    this.appMod = appMod
+  }
+  
+  override Void onGet() {
+    req.mod = appMod
+    appMod.onGet
   }
 }

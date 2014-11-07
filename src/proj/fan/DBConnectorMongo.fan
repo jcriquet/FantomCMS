@@ -11,21 +11,26 @@ using concurrent
 using inet
 
 const class DBConnector {
-  static const DBConnector cur := DBConnector( "162.243.155.57", 27017, "jeremytest" )
+  static const DBConnector cur := DBConnector(
+    Env.cur.config( Pod.find( "db" ), "host" ) ?: "",
+    Env.cur.config( Pod.find( "db" ), "port" )?.toInt ?: 0,
+    Env.cur.config( Pod.find( "db" ), "database" ) ?: "fantomcms",
+    Env.cur.config( Pod.find( "db" ), "username" ),
+    Env.cur.config( Pod.find( "db" ), "password" ) )
   
   // Fields
   /// Store the full URI we use to connect to the MongoDB
   const Uri address
   
   /// The ConnectionManagerPooled that will manage our connections to the MongoDB
-  private const ConnectionManagerPooled cm
+  private const ConnectionManagerPooled? cm
   
   /// The MongoClient that this Database Connector will use to communicate with
   /// the server.
-  private const MongoClient mc
+  private const MongoClient? mc
   
   /// The Database object that we will primarily be working with.
-  private const Database db
+  private const Database? db
   
   // Constructor
   /// Can be provided with a username, password, and database to be used to connect
@@ -40,9 +45,11 @@ const class DBConnector {
       address = "mongodb://$username:$password@$host:$port/$authDatabase".toUri
     else
       address = "mongodb://$host:$port".toUri
-    cm = ConnectionManagerPooled( ActorPool(), address )
-    mc = MongoClient( cm )
-    db = mc[ databaseName ]
+    try {
+      cm = ConnectionManagerPooled( ActorPool(), address )
+      mc = MongoClient( cm )
+      db = mc[ databaseName ]
+    } catch ( Err e ) {}
   }
   
   // Public
@@ -53,7 +60,8 @@ const class DBConnector {
   // that all the collections we need for the app have been
   // created on the Mongo server.
   Void startup( Str[] collections ) {
-    echo("\nChecking that all required collections exist on server... ")
+    if ( db == null ) { echo( "\nDatabase could not load.  Please check the configuration." ); return }
+    echo( "\nChecking that all required collections exist on server... " )
     collections.each |Str name| {
       if ( collectionExists( name ) ) {
         echo( "${name}...exists." )
