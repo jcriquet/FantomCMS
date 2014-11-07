@@ -2,10 +2,7 @@
 ## Project Pods
 #################
 
-proj.pod
-fui.pod
-testExt.pod
-loginExt.pod
+lib/fan/
 
 #################
 ## Eclipse

@@ -1,0 +1,126 @@
+"Seems really ambitious but you also seem like you know what you're talking about. I can see this going either way, but your presentation was solid. Good luck."
+"Informative presentation,  very polished sprint plans.  Contained all required information. Project seems feasible."
+"You had all the content you needed.
+Your presentation made your project ideas clear to me.
+The presentation was delivered well.
+The project seems to be of an appropriate difficulty."
+"Content: Followed presentation format correctly.
+Clarity: Very Clear
+Delivery: The speakers did a great job explaining the high level goals and sprints for their website.
+Feasible project: Yes"
+"Understandable, easy to remember. Okay delivery."
+"Cole Grim is a cool name. Seems kinda hard. Not really sure what they are doing."
+"Feasible but not very useful? It all depends on actualized implementation.  If they do it right and keep up with their ambitions it can be good, but very quickly moves to the realm of meh projects."
+"I've used one or two systems with the same basic idea. It wasn't the best experience - hopefully your product is better. The limitation of this kind of environment is that it's at least partially dependent on the internet speed, and while RAM and memory and CPU are pretty cheap, internet speed isn't and is simply not available in lots of places; if you don't make activities on the net an intrinsic part of this environment, there'd be no point pulling the desktop-like environment into the browser instead of letting them remain separate. Feasibility: okay; feasibility of a usable product: low."
+"Seems ambitious. Not entirely sure what this is?"
+"Lots of user stories, great idea to sort of 'label' big idea behind each sprint. Good presentation."
+"Web content management system apps, looks good and they have SCRUM experience, looks good."
+"The use of fantom seems unnecessary but the idea is great"
+"Will this take off of a wiki page? Was curious if you will be able to store any type of file in your content management system?"
+"I've heard a lot about this Fantom thing. Sounds very promising.
+
+Idea seems a bit lofty for one quarter's project."
+"Implementing a CMS sounds like a large project but hopefully fantom makes the task more manageable."
+"Strong presentation delivery.
+Project appears overly ambitious."
+"This sounds like a fun project to work on, and will be useful in the real world. Good job presenting."
+"It seems like a really challenging project. I am sure there are other content management software that could do same functions, which often required a lot of work to complete. I saw server management for web on sprint1. It may be a little bit too ambitious."
+"The presentation had all of the information needed on the slides. How feasible it was I rate a little low due to it looking difficult."
+"Seemed like they knew what they were doing."
+"They presented well and the slides looked good however they didnt really cover exactly what their product did."
+"seems too ambitious"
+"They covered what their product was about clearly. They spoke in a way that was easy to understand. Slides had all required information. The idea seems achievable in the time allowed. They gave a good presentation."
+"Seems good, maybe not enough time to make a Fantom version of Wordpress, but good presentation overal."
+"Since you will build a whole new content management system in Fantom, once completed, this will be a revolutionary project for that language.
+
+The presentation was clear."
+"This was a project that would build websites. I honestly did not understand exactly what this group wanted to do."
+"Sounds like a good project. Looking forward to what this project will develop into."
+"Don't know anything able Fantom but overall you project seems like it is doable after looking at your sprint plan"
+"To write one that is comprehensive requires a bit of effort. 
+they seemed a little disorganized - lacking in explanation as to technologies used."
+"Great project. Ambitious and well spread-out between the 3 sprints."
+"self"
+"This project is about creating a website using fantom language for facilities to use. This presentation has too much information for user stories but there is no description about the general or goal of this project. The speaker is interactive.This project is doable."
+"Content
+Yes, everything that was required was present.
+Clarity
+Good.
+Delivery
+Good.
+Feasibility
+Seems pretty ambitious to good a good job."
+"This is a good idea! Will it have a lot of stuff in the homepage!"
+"Seems like a lot to due so I'm not sure if you guys will have time to implement it all. I thought your presentation was good though."
+"interesting project, fantom language is new and fresh, gets interesting with each slide, feasible, sprint plans are there."
+"Good slid show, you hit every point."
+"They gave an interesting presentation and made their points extremely clear and to the point."
+"Content: Did the presentation address all salient topics?
+Yes.
+Clarity: Could you tell somebody else what the project was about?
+Sort of. They want to build a Web CMS from the ground up. 
+Delivery: Audible? Intelligible? Engaging?
+Yes.
+Feasible? 
+No. The project is too ambitious. The team seems to have way too many unrelated goals to make a polished product by the end of the quarter. They should focused on a smaller set of features that are polished."
+"Their project was very interesting. It was one of the better presentations. The release plans were good and the presentation was very audible. I think the release plans are good."
+"Current CMS are pretty advanced, how will yours be better?"
+"Very ambitious project idea, but this will allow you have a very sound working back end by the time of completion."
+"seems like it would be a useful app for pushing the front of inernet on mobile devices."
+"Not quite sure what the project is about, so the presentation could've been more clear about that aspect.  Otherwise, decent presentation."
+"Project seems like you are taking on a lot, even if you plan to extend into 116/117. CMSs have a lot of little features that are still very much needed by users and implementing/testing them all could take a lot of time."
+"This is a very interesting and important project because everybody in the world uses some sort of html webpage, so building a new kind will allow users to have another option."
+"This is an idea that could be built upon in cmps 116 and 117. I like that you are using fantom. Good luck with your project!"
+"I don't know anything about fantom but a new wcms editor that has different features from the ones out there already would be cool."
+"Not the most original idea. Discussed all the content in depth, clear, but project seemed a little ambitious."
+"Mobile browsing is a step backwards."
+"I think your project seems like a good idea."
+"Not really sure why we need this."
+"I like the idea and think it's doable in the scope"
+"Great slides, but I had a hard time hearing the presentation."
+"My lack computer knowledge prevents me from being able to wrap my mind around something like a content management system. What kind of context is this for? Is it just for managing my own personal files in particular? Feasible but I'm still having trouble understanding it's purposes."
+"Yes, the team addressed all of the salient topics. Based on the clarity, I could tell somebody else what the project is about. The delivery was audible, and intelligible. The feasibility of the project is doable and not too easy."
+"Seems very ambitious for the scope of the class, good luck"
+"Content (10 - 1) 10 = Awesome, 1 = No Content
+Clarity (10 - 1) 10 = I Understand what you are doing, 1 = huh?
+Delivery(10 - 1) 10 = I can listen to you all day, 1 = Zzzz.
+
+Content: 10
+Clarity : 10
+Delivery: 10
+Doable: Yes!"
+"Not quite sure what the direction is or intentions of the app is. The presentation was just really ambiguous."
+"Did not have a good delivery for their presentation but the idea is feasible."
+"Create a modular something
+Sprint #1: Get server up, routing for request etc. Be able to add users and implement security
+Sprint #2: Make central homepage, theme manager, user manual
+Sprint #3: Extensions to provide additional functionality on top of existing apps, regression test
+Future: Will be open source and keep development ongoing
+Clarity
+What is it???
+Delivery
+Good delivery"
+"Seems like a great idea, will be interested in seeing it come to fruition. The slides were to wordy though and not appealing."
+"sister project, good presentation and ambitious idea"
+"This idea is interesting because, I agree, that seems to be the direction that everything is headed especially looking at the new mac OS and how it looks like your phone."
+"Members: Present
+Summary: Present
+Goals: Present
+Stories: Present
+Clarity: Good
+Delivery: Good
+Feasibility: Good"
+"Building web frameworks is no easy task. Should be a very hard project with a big payoff at the end. Lots of room to make a quality product."
+"Well done, went into detail and gave good reasoning for existence. Could have been a little more interesting."
+"Not entirely sure what you guys are doing with this CMS, some further clarification would have helped the presentation."
+"Introduced
+A bit quiet
+Scope seems slightly ambitious
+Not well explained"
+"Needs a better explanation of what a CMS is. Pictures/diagrams in the side would help a lot. I don't know enough about this to know if it's feasible, perhaps the presentation should have assured me that what you're planning can be done. (Though I am still not sure what it is your are planning)"
+"Very clever idea. This could possibly be as successful as squarespace."
+"Good presentation."
+"best idea in the class"
+"Great, covered everything that was required of the presentation."
+"#NAME?"
+"Looking forward to seeing a fully fledged website built from this CMS. I enjoyed the presentation for it, could be useful for web development."
