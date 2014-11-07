@@ -1,4 +1,4 @@
-build : proj fui testExt loginExt securityExt borderPane homescreenExt mainExt
+build : proj fui loginExt securityExt borderPane homescreenExt mainExt
 
 run : build
 	- bin/fcms
