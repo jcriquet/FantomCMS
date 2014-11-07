@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 build : db proj fui mainExt homescreenExt loginExt settingsExt securityExt pagesExt borderPaneExt
-=======
-build : db proj fui homeExt loginExt settingsExt securityExt pagesExt
->>>>>>> master
 
 run : build
 	- bin/fcms

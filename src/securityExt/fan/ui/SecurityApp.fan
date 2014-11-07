@@ -1,7 +1,7 @@
 using fui
 using fwt
 using gfx
-//using [java]BCrypt
+//using [java] org.mindrot.jbcrypt.BCrypt
 
 //class BCrypt() extends java.lang.Object
 //
