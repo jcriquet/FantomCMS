@@ -8,17 +8,17 @@ class UserApp : App {
   
   new make() : super() {
     content = SashPane {
-      it.weights = [25, 75]
+      it.weights = [15, 85]
       BorderPane {
-        it.bg = Color.red
+        it.bg = Color.gray
         EdgePane {
           top = GridPane {
             numCols = 1
-            Label {
-              text = "Latest yeah"
+            Button {
+              text = "Manage users"
             },
-            Label {
-              text = "test2"
+            Button {
+              text = "Manage user groups"
             }
           }
         },
@@ -26,14 +26,51 @@ class UserApp : App {
       EdgePane {
         top = EdgePane {
           left = Label {
-            text = "Header Name"
+            text = "MANAGE USERS"
           }
-          right = Label {
+          right = Text {
             text = "Search"
           }
         }
-        center = BorderPane {
-          it.bg = Color.blue
+        center = GridPane {
+          numCols = 3
+          uniformCols = true
+          Label {
+            text = "Name"
+          },
+          Label {
+            text = "Group"
+          },
+          Label {
+            text = "Registration"
+          },
+          Label {
+            text = "admin"
+          },
+          Label {
+            text = "Administrators"
+          },
+          Label {
+            text = "10/27/14"
+          },
+          Label {
+            text = "TestUser"
+          },
+          Label {
+            text = "Authors"
+          },
+          Label {
+            text = "10/28/14"
+          },
+          Label {
+            text = "TestUser2"
+          },
+          Label {
+            text = "Authors, Editors"
+          },
+          Label {
+            text = "10/28/14"
+          }
         }
       }
     }
