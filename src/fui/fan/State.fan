@@ -40,7 +40,7 @@ class State {
     valueToStr = |Obj? value->Str| {
       if ( value == null ) return "null"
       if ( value is Num || value is Bool ) return value.toStr
-      if ( value is Str ) return "\"$value\""
+      if ( value is Str ) return "\"" + ( (Str) value ).replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\""
       if ( value is Str:Obj? ) return "{" + ( (Str:Obj?) value ).join( "," ) |v, k| { "\"$k\":" + valueToStr( v ) } + "}"
       if ( value is Obj?[] ) return "[" + ( (Obj?[]) value ).join( "," ) |v| { valueToStr( v ) } + "]"
       return "null"

@@ -8,10 +8,11 @@
 using afMongo
 using afBson
 using concurrent
+using db
 using inet
 
-const class DBConnector {
-  static const DBConnector cur := DBConnector(
+const class DBConnectorMongo {
+  static const DBConnectorMongo cur := DBConnectorMongo(
     Env.cur.config( Pod.find( "db" ), "host" ) ?: "",
     Env.cur.config( Pod.find( "db" ), "port" )?.toInt ?: 0,
     Env.cur.config( Pod.find( "db" ), "database" ) ?: "fantomcms",
@@ -19,18 +20,17 @@ const class DBConnector {
     Env.cur.config( Pod.find( "db" ), "password" ) )
   
   // Fields
-  /// Store the full URI we use to connect to the MongoDB
-  const Uri address
   
   /// The ConnectionManagerPooled that will manage our connections to the MongoDB
-  private const ConnectionManagerPooled? cm
+  private const ConnectionManagerPooled cm
   
   /// The MongoClient that this Database Connector will use to communicate with
   /// the server.
   private const MongoClient? mc
   
   /// The Database object that we will primarily be working with.
-  private const Database? db
+  private const Str databaseName
+  private Database db() { try { return mc.db( databaseName ) } catch ( NullErr e ) { throw Err( "Database did not connect.  Please configure it and reconnect the server." ) } }
   
   // Constructor
   /// Can be provided with a username, password, and database to be used to connect
@@ -41,26 +41,22 @@ const class DBConnector {
   /// the admin database to check authentication.
   new make( Str host, Int port, Str databaseName := "fantomcms", Str? username := null, 
             Str? password := null, Str authDatabase := "admin") {
-    if ( username != null && password != null )
-      address = "mongodb://$username:$password@$host:$port/$authDatabase".toUri
-    else
-      address = "mongodb://$host:$port".toUri
-    try {
-      cm = ConnectionManagerPooled( ActorPool(), address )
-      mc = MongoClient( cm )
-      db = mc[ databaseName ]
-    } catch ( Err e ) {}
+    address := "$host:$port"
+    if ( username != null && password != null ) address = "$username:$password@$address/$authDatabase"
+    address = "mongodb://" + address
+    this.databaseName = databaseName
+    cm = ConnectionManagerPooled( ActorPool(), address.toUri )
+    try { mc = MongoClient( cm ) } catch ( Err e ) {}
   }
   
   // Public
-  override Str toStr() { address.toStr }
+  override Str toStr() { cm.connectionUri.toStr }
   
   // Startup will take in a list of strings containing the
   // names of the collections we will be using. It will ensure
   // that all the collections we need for the app have been
   // created on the Mongo server.
   Void startup( Str[] collections ) {
-    if ( db == null ) { echo( "\nDatabase could not load.  Please check the configuration." ); return }
     echo( "\nChecking that all required collections exist on server... " )
     collections.each |Str name| {
       if ( collectionExists( name ) ) {
@@ -126,79 +122,4 @@ const class DBConnector {
     db.collection( name ).drop
     if ( collectionExists( name ) ) throw DBErr ("failed", "Failed to delete collection.")
   }
-}
-
-// Classes
-
-
-/// DBEntry represents an entry in the database. It can be created
-/// directly, or created using the Factory method.
-@Serializable
-class DBEntry {
-  Str app
-  Str:Str? entryData := [:]
-  Str? bsonData
-  ObjectId? _id
-
-  new make ( Str app ) {
-    this.app = app
-  }
-  
-  /// getFromMap is a static method getting an entry from
-  /// a map.
-  static new makeFromMap( Str:Obj? map ) {
-    newMap := map.dup
-    toReturn := DBEntry( (Str) newMap.remove( "app" ) )
-    if ( newMap.containsKey( "_id" ) ) toReturn._id = newMap.remove( "_id" )
-    if ( newMap.containsKey( "bsonData" ) ) toReturn.bsonData = newMap.remove( "bsonData" )
-    toReturn.setAll( newMap )
-    return toReturn
-  }
-  
-  @Operator
-  Void set( Str key, Str? val ) { entryData[key] = val }
-  Void setAll( Str:Str? vals ) { entryData.setAll( vals ) }
-  Void setBsonData( Obj:Obj? o ) { bsonData = writeBson(o) }
-  
-  @Operator
-  Str get( Str key ) { entryData[key] ?: throw DBErr("notfound", "Key ${key} was not found.") }
-  Str:Str? getAll( Str[] tags ) {
-    toReturn := Str:Str?[:]
-    tags.each |Str key| { toReturn[key] = entryData[key] }
-    return toReturn
-  }
-  Str:Obj? getBsonData() { readBson( bsonData ) }
-
-  /// getMap returns the map representing this object.
-  Str:Str getMap() {
-    toReturn := entryData.dup
-    /*
-    toReturn := [
-      "app"       : app,
-      ]
-    toReturn.addAll( entryData )
-    */
-    if (this.bsonData != null) toReturn["bsonData"] = bsonData
-    return toReturn
-  }
-
-  static private Str:Obj? readBson( Str string ) { BsonReader( string.in ).readDocument }
-
-  static private Str writeBson( Obj:Obj? o ) {
-    Buf b := Buf()
-    BsonWriter( b.out ).writeDocument( o )
-    return b.flip.in.readAllStr
-  }
-}
-
-/// DCErr : DatabaseConnector Err that also has a tag where we can put
-/// a reason.
-const class DBErr : Err {
-  const Str tag
-
-  new make (Str tag, Str s, Err? e := null) : super(s, e) {
-    this.tag = tag
-  }
-  
-  override Str toStr() { "Tag:[$this.tag] Message:[$this.msg]" }
 }
