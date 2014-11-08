@@ -14,6 +14,7 @@ abstract class App : StatePane {
   virtual Str? onBeforeLeave() { null }
   
   Str name() { spec.name }
+  virtual Str? curTitle() { null }
   
   /*
   Void onReady() {
@@ -54,6 +55,7 @@ abstract class App : StatePane {
     inLoad = true
     onLoadState( loadState( Win.cur.uri.frag ?: "" ).ro )
     inLoad = false
+    Fui.cur.updateTitle
   }
   
   private Str _genKey() { StrBuf().add( ( DateTime.nowTicks/1000000000 ).and( 4294967295 ).toHex( 8 ) ).addChar( 45 ).add( Int.random( 0..4294967295 ).and( 4294967295 ).toHex( 8 ) ).toStr }

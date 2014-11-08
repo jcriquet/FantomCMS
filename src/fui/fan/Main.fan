@@ -13,26 +13,15 @@ class Main : ContentPane {
   new make() : super() {
     vars := Env.cur.vars
     fui := Fui( this ) {
-      appMap = ( (Str:Obj?) JsonInStream( vars[ "fui.apps" ].in ).readJson ).map |Str:Str map->AppSpec| { AppSpec( map[ "name" ], map[ "qname" ] ) }
+      title = vars[ "fui.title" ] ?: ""
+      appMap = ( (Str:Obj?) JsonInStream( vars[ "fui.apps" ].in ).readJson ).map |Str:Str map->AppSpec| { AppSpec.makeFromMap( map ) }
       baseUri = vars[ "fui.baseUri" ].toUri
     }
 
     Actor.locals[ "fui.cur" ] = fui
     content = EdgePane {
-
-      // Header
       top = HeaderPane()
-      //BorderPane {
-        //bg = getOption("bgcolor")
-        //border = Border.fromStr( "0,0,3 outset #444444" )
-        //HeaderPane(),
-        //Button { text = "test" ; it.onAction.add { goto( `fui://app/login` ) } },
-      //}
-      
-      // App Container
       center = appContainer
-      
-      // Footer
       bottom = BorderPane {
         bg = getOption("bgcolor")
         border = Border.fromStr( "3,0,0 outset #444444")
@@ -70,6 +59,7 @@ class Main : ContentPane {
     curApp = (App) Type.find( appSpec.qname ).make
     curApp.spec = appSpec
     appContainer.content = curApp
+    Fui.cur.updateTitle
     appContainer.relayout
   }
   

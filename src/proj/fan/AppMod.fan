@@ -6,8 +6,9 @@ const class AppMod : WebMod {
   
   new make( Str:Type exts ) {
     appMap = exts.map |ext, name| {
-      app := ( ext.facets.find |f| { f is ExtMeta } as ExtMeta )?.app
-      return app == null ? null : AppSpec( name, app.qname )
+      meta := ( ext.facets.find |f| { f is ExtMeta } as ExtMeta )
+      app := meta?.app
+      return app == null ? null : AppSpec( name, app.qname, meta.label ?: name.capitalize )
     }.exclude |app| { app == null }
   }
   
@@ -18,12 +19,20 @@ const class AppMod : WebMod {
     notFound := !appMap.containsKey( appStr )// || queryRow == null
     if ( notFound ) { res.sendErr( 404 ); return }
     
+    title := Env.cur.config( typeof.pod, "server.title" )
+    if ( title == null ) {
+      title = "FantomCMS"
+      file := Env.cur.homeDir + `etc/proj/config.props`
+      props := file.exists ? file.readProps : Str:Str[:]
+      file.create.writeProps( props[ "server.title" ] = title )
+    }
+    
     res.headers["Content-Type"] = "text/html; charset=utf-8"
     out := res.out
     out.docType5
     out.html
     out.head
-      out.title.w( "Title Goes Here" ).titleEnd
+      out.title.w( title ).titleEnd
       out.includeJs( `/pod/sys/sys.js` )
       out.includeJs( `/pod/util/util.js` )
       out.includeJs( `/pod/concurrent/concurrent.js` )
@@ -40,6 +49,7 @@ const class AppMod : WebMod {
       WebUtil.jsMain( out, "fui::Main", [
           "fui.baseUri" : "/",
 //          "fui.projName" : projStr,
+          "fui.title" : title,
           "fui.app" : appStr,
           "fui.apps" : buf.toStr
         ] )

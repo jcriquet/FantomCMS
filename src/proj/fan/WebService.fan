@@ -9,7 +9,6 @@ const class WebService : WispService {
     if ( port == null ) {
       port = 8080
       file := Env.cur.homeDir + `etc/proj/config.props`
-      echo( file.normalize.pathStr )
       props := file.exists ? file.readProps : Str:Str[:]
       file.create.writeProps( props[ "server.port" ] = port.toStr )
     }
