@@ -13,7 +13,6 @@ class FooterPaneDockItem : ContentPane
   }
   
   Void close(){
-    pane := (FooterPane)this.parent.parent.parent
-    pane.removeFooterItem(this)
+    Fui.cur.main.removeFooterItem(this)
   }
 }

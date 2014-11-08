@@ -5,21 +5,23 @@ using proj
 using dom
 
 @Js
-class FooterPane : BorderPane{
+class FooterPane : StatePane{
   Int dockItems := 0
   GridPane footerItemPane
 
   new make() : super(){
-    this.bg = Color.white
-    this.content = EdgePane{
-      center = GridPane{
-        it.halignCells = Halign.center
-        it.valignCells = Valign.center
-        it.halignPane = Halign.center
-        it.valignPane = Valign.center
-        this.footerItemPane = it
-        it.numCols = this.dockItems
-      }
+    this.content = BorderPane{
+      it.bg = Color.white
+      EdgePane{
+        center = GridPane{
+          it.halignCells = Halign.center
+          it.valignCells = Valign.center
+          it.halignPane = Halign.center
+          it.valignPane = Valign.center
+          this.footerItemPane = it
+          it.numCols = this.dockItems
+        }
+      },
     }
   }
   

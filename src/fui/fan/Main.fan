@@ -30,6 +30,10 @@ class Main : ContentPane {
   Void addFooterItem(FooterPaneDockItem item){
     this.footPane.addFooterItem(item)
   }
+
+  Void removeFooterItem(FooterPaneDockItem item){
+    this.footPane.removeFooterItem(item)
+  }
   
   // Sample input: `fui://app/home`
   Void goto( Uri uri ) {
