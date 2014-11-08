@@ -13,7 +13,7 @@ class Fui {
   }
   
   Uri appUri( Str appName ) { baseUri + "app/$appName".toUri }
-  AppSpec? curApp() { appMap[ Win.cur.uri.pathOnly.relTo( baseUri ).path[ 1 ] ] }
+  AppSpec? curApp() { appMap[ Win.cur.uri.pathOnly.relTo( baseUri ).path.getSafe( 1 ) ?: "home" ] }
   
   static Fui cur() { Actor.locals[ "fui.cur" ] }
 }
