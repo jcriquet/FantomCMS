@@ -6,7 +6,7 @@ using dom
 
 @Js
 class FooterPane : BorderPane{
-  Int maxItems := 7
+  Int dockItems := 0
   GridPane footerItemPane
 
   new make() : super(){
@@ -18,13 +18,20 @@ class FooterPane : BorderPane{
         it.halignPane = Halign.center
         it.valignPane = Valign.center
         this.footerItemPane = it
-        it.numCols = this.maxItems
+        it.numCols = this.dockItems
       }
     }
   }
   
-  Void addFooterItem(FooterPaneDockItem o){
-    this.footerItemPane.add(o)
+  Void addFooterItem(FooterPaneDockItem item){
+    this.footerItemPane.numCols++
+    this.footerItemPane.add(item)
+    this.relayout
+  }
+  
+  Void removeFooterItem(FooterPaneDockItem item){
+    this.footerItemPane.numCols--
+    this.footerItemPane.remove(item)
     this.relayout
   }
   

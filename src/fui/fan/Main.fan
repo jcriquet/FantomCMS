@@ -8,6 +8,7 @@ using util
 @Js
 class Main : ContentPane {
   private ContentPane appContainer := ContentPane()
+  private FooterPane footPane
   App? curApp { private set }
 
   new make() : super() {
@@ -22,8 +23,12 @@ class Main : ContentPane {
     content = EdgePane {
       top = HeaderPane()
       center = appContainer
-      bottom = FooterPane()
+      bottom = FooterPane() { this.footPane = it }
     }
+  }
+  
+  Void addFooterItem(FooterPaneDockItem item){
+    this.footPane.addFooterItem(item)
   }
   
   // Sample input: `fui://app/home`
