@@ -13,9 +13,19 @@ class HomeApp : App {
     content = BorderPane{
       it.bg = Gradient("0% 50%, 100% 50%, #f00 0.1, #00f 0.9")
       it.content = GridPane{
+        it.numCols = 4
+        it.halignCells = Halign.center
+        it.valignCells = Valign.center
+        it.halignPane = Halign.center
+        it.valignPane = Valign.center
+        it.hgap = 10
+        it.vgap = 10
+        gridPane := it
         it.numCols = Fui.cur.appMap.size
-        Fui.cur.appMap.each |AppSpec appSpec, Str appName | {   
-          add(HomeAppIcon(appName))
+        Fui.cur.appMap.each |AppSpec appSpec, Str appName| {  
+          gridPane.add(HomeAppIcon(appName, Fui.cur.baseUri + `pod/fui/res/img/home-50.png`){
+            it.onMouseDown.add { Fui.cur.main.goto("fui://app/$appName".toUri) }
+          })
         }
       }
     }

@@ -16,6 +16,7 @@ class Build : build::BuildPod {
                  "sql 1.0",
                  "util 1.0",
                  "web 1.0",
+                 "webfwt 1.0",
                  "webmod 1.0"]
   }
 }
