@@ -3,8 +3,9 @@ using util
 using web
 
 @ExtMeta {
-  name = "Dock Test"
+  name = "dockTest"
   app = dockTestExt::DockTestApp#
+  label = "Dock Test"
 }
 const class DockTestExt : Ext {
 }
