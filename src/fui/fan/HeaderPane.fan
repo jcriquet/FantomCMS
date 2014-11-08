@@ -5,8 +5,7 @@ using proj
 using dom
 
 @Js
-class HeaderPane : BorderPane
-{
+class HeaderPane : BorderPane{
   OverlayPane? appIconPane
   Bool paneOpen := false
 
@@ -63,7 +62,7 @@ class HeaderPane : BorderPane
             gridPane := it
             Fui.cur.appMap.each |AppSpec appSpec, Str appName| {  
               appIcon := null
-              gridPane.add(AppIcon(appName, Fui.cur.baseUri + `pod/fui/res/img/home-50.png`){
+              gridPane.add(AppIcon(appSpec.label, Fui.cur.baseUri + `pod/fui/res/img/home-50.png`){
                 it.onMouseDown.add { 
                   Fui.cur.main.goto("fui://app/$appName".toUri) 
                   this.paneOpen = false

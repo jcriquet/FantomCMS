@@ -23,7 +23,7 @@ class HomeApp : App {
         gridPane := it
         it.numCols = Fui.cur.appMap.size
         Fui.cur.appMap.each |AppSpec appSpec, Str appName| {  
-          gridPane.add(HomeAppIcon(appName, Fui.cur.baseUri + `pod/fui/res/img/home-50.png`){
+          gridPane.add(HomeAppIcon(appSpec.label, Fui.cur.baseUri + `pod/fui/res/img/home-50.png`){
             it.onMouseDown.add { Fui.cur.main.goto("fui://app/$appName".toUri) }
           })
         }
