@@ -3,7 +3,7 @@ using util
 using web
 
 @ExtMeta {
-  name = "Dock Test Extention"
+  name = "Dock Test"
   app = dockTestExt::DockTestApp#
 }
 const class DockTestExt : Ext {

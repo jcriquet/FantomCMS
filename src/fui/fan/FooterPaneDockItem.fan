@@ -9,7 +9,7 @@ class FooterPaneDockItem : ContentPane
   }
   
   override Size prefSize(Hints hints := Hints.defVal){
-    return Size(100, this.parent.size.h)
+    return Size(200, this.parent.size.h)
   }
   
   Void close(){
