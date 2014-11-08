@@ -10,16 +10,17 @@ class HeaderPane : BorderPane
   OverlayPane? appIconPane
 
   new make() : super(){
+    this.border = Border.fromStr( "0,0,3 outset #444444" )
     this.bg = Color.white
     this.content = EdgePane{
-      it.left = StyledButton { 
-        it.bg = Color.white
-        it.border = Border.fromStr("")
-        button := it
-        it.content = Label { 
+      it.left = BorderPane{
+        it.insets = Insets(10)
+        Label { 
+          label := it
+          it.bg = Color.white
           it.image = Image(Fui.cur.baseUri + `pod/fui/res/img/list-50.png`)
-          button.onAction.add { getPane.open(this, button.posOnDisplay) }
-        }
+          it.onMouseDown.add { getPane.open(this, Point(label.pos.x, this.size.h)) }
+        },
       }
     }
   }
@@ -30,11 +31,16 @@ class HeaderPane : BorderPane
       it.animate = true
       it.enabled = true
       it.content = BorderPane{
-        it.border = Border.fromStr( "0,0,3 outset #444444" )
+        it.insets = Insets(10,5)
         it.bg = Color.white
         it.content = EdgePane {
           it.top = EdgePane {
-            it.right = StyledButton { it.content = Label { text = "X" } ; onAction.add { appIconPane.close } }
+            it.right = BorderPane{
+              Label { 
+                it.text = "X"
+                it.onMouseDown.add { appIconPane.close } 
+              },
+            }
           }
           it.center = GridPane {
             it.uniformCols = true
