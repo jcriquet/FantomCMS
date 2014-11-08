@@ -66,6 +66,7 @@ class HeaderPane : BorderPane
               gridPane.add(AppIcon(appName, Fui.cur.baseUri + `pod/fui/res/img/home-50.png`){
                 it.onMouseDown.add { 
                   Fui.cur.main.goto("fui://app/$appName".toUri) 
+                  this.paneOpen = false
                   appIconPane.close
                 }
               })

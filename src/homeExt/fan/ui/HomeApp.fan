@@ -11,7 +11,7 @@ class HomeApp : App {
 
   new make() : super() {
     content = BorderPane{
-      it.bg = Gradient("0% 50%, 100% 50%, #f00 0.1, #00f 0.9")
+      it.bg = Color.white
       it.content = GridPane{
         it.numCols = 4
         it.halignCells = Halign.center
