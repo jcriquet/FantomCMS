@@ -10,7 +10,6 @@ class HeaderPane : BorderPane{
   Bool paneOpen := false
 
   new make() : super(){
-    this.onFocus.add { appIconPane.close }
     this.border = Border.fromStr( "0,0,3 outset #444444" )
     this.bg = Color.white
     this.content = EdgePane{

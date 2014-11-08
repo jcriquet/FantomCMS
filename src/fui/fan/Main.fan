@@ -22,14 +22,7 @@ class Main : ContentPane {
     content = EdgePane {
       top = HeaderPane()
       center = appContainer
-      bottom = BorderPane {
-        bg = getOption("bgcolor")
-        border = Border.fromStr( "3,0,0 outset #444444")
-        ConstraintPane {
-          minh = maxh = 50
-          Label { text = "I'm a footer!" },
-        },
-      }
+      bottom = FooterPane()
     }
   }
   
