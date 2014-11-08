@@ -8,8 +8,10 @@ using dom
 class HeaderPane : BorderPane
 {
   OverlayPane? appIconPane
+  Bool paneOpen := false
 
   new make() : super(){
+    this.onFocus.add { appIconPane.close }
     this.border = Border.fromStr( "0,0,3 outset #444444" )
     this.bg = Color.white
     this.content = EdgePane{
@@ -19,11 +21,17 @@ class HeaderPane : BorderPane
           label := it
           it.bg = Color.white
           it.image = Image(Fui.cur.baseUri + `pod/fui/res/img/list-50.png`)
-          it.onMouseDown.add { getPane.open(this, Point(label.pos.x, this.size.h)) }
+          it.onMouseDown.add { 
+            if(this.paneOpen == false) {
+              getPane.open(this, Point(label.pos.x, this.size.h))
+              this.paneOpen = true 
+            }
+          }
         },
       }
     }
   }
+  
 
   OverlayPane getPane(){
     return OverlayPane{
@@ -38,7 +46,10 @@ class HeaderPane : BorderPane
             it.right = BorderPane{
               Label { 
                 it.text = "X"
-                it.onMouseDown.add { appIconPane.close } 
+                it.onMouseDown.add { 
+                  appIconPane.close 
+                  this.paneOpen = false
+                } 
               },
             }
           }
