@@ -8,7 +8,8 @@ using util
 @Js
 class Main : ContentPane {
   private ContentPane appContainer := ContentPane()
-  private FooterPane footPane
+  HeaderPane headerPane { private set }
+  FooterPane footerPane { private set }
   App? curApp { private set }
 
   new make() : super() {
@@ -21,18 +22,18 @@ class Main : ContentPane {
 
     Actor.locals[ "fui.cur" ] = fui
     content = EdgePane {
-      top = HeaderPane()
       center = appContainer
-      bottom = FooterPane() { this.footPane = it }
+      top = headerPane = HeaderPane()
+      bottom = footerPane = FooterPane()
     }
   }
   
   Void addFooterItem(FooterPaneDockItem item){
-    this.footPane.addFooterItem(item)
+    this.footerPane.addFooterItem(item)
   }
 
   Void removeFooterItem(FooterPaneDockItem item){
-    this.footPane.removeFooterItem(item)
+    this.footerPane.removeFooterItem(item)
   }
   
   // Sample input: `fui://app/home`

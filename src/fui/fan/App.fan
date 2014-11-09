@@ -43,6 +43,8 @@ abstract class App : StatePane {
   Void modifyState() {
     if ( inLoad ) throw Err( "Cannot call modifyState during onLoadState" )
     state := State()
+    Fui.cur.main.headerPane.onSaveState( state )
+    Fui.cur.main.footerPane.onSaveState( state )
     onSaveState( state )
     inModify = true
     key := _genKey
@@ -53,7 +55,10 @@ abstract class App : StatePane {
   Void reload() {
     inModify = false
     inLoad = true
-    onLoadState( loadState( Win.cur.uri.frag ?: "" ).ro )
+    state := loadState( Win.cur.uri.frag ?: "" ).ro
+    Fui.cur.main.headerPane.onLoadState( state )
+    Fui.cur.main.footerPane.onLoadState( state )
+    onLoadState( state )
     inLoad = false
     Fui.cur.updateTitle
   }

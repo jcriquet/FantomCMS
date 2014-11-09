@@ -5,19 +5,17 @@ using proj
 using dom
 
 @Js
-class HeaderPane : BorderPane{
+class HeaderPane : StatePane{
   OverlayPane? appIconPane
   Bool paneOpen := false
-
-  new make() : super(){
-    this.border = Border.fromStr( "0,0,3 outset #444444" )
-    this.bg = Color.white
-    this.content = EdgePane{
+  BorderPane themedMain := BorderPane{
+    it.border = Border.fromStr( "0,0,3 outset #444444" )
+    EdgePane{
       it.left = BorderPane{
         it.insets = Insets(10)
         Label { 
           label := it
-          it.bg = Color.white
+          it.bg = FuiThemes.defColorNone
           it.image = Image(Fui.cur.baseUri + `pod/fui/res/img/list-50.png`)
           it.onMouseDown.add { 
             if(this.paneOpen == false) {
@@ -27,12 +25,16 @@ class HeaderPane : BorderPane{
           }
         },
       }
-    }
+    },
+  }
+
+  new make() : super(){
+    this.content = themedMain
   }
   
 
   OverlayPane getPane(){
-    return OverlayPane{
+    OverlayPane{
       appIconPane = it
       it.animate = true
       it.enabled = true
@@ -77,5 +79,9 @@ class HeaderPane : BorderPane{
   
   override Size prefSize(Hints hints := Hints.defVal){
     return Size(0,75)
+  }
+  
+  override Void onLoadState(State state){
+    themedMain.bg = FuiThemes.getBg( "header" )
   }
 }

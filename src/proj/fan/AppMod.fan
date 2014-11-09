@@ -3,6 +3,7 @@ using web
 
 const class AppMod : WebMod {
   const Str:AppSpec appMap
+  static const Method? getTheme := Type.find( "themesExt::ThemesExt" ).method( "getTheme" )
   
   new make( Str:Type exts ) {
     appMap = exts.map |ext, name| {
@@ -27,6 +28,16 @@ const class AppMod : WebMod {
       file.create.writeProps( props[ "server.title" ] = title )
     }
     
+    buf := StrBuf()
+    JsonOutStream( buf.out ).writeJson( appMap.map |spec| { spec.toMap } )
+    clientData := [
+      "fui.baseUri" : "/",
+      "fui.title" : title,
+      "fui.app" : appStr,
+      "fui.apps" : buf.toStr
+    ]
+    if ( getTheme != null ) clientData.addAll( getTheme.call( "default" ) )
+    
     res.headers["Content-Type"] = "text/html; charset=utf-8"
     out := res.out
     out.docType5
@@ -44,15 +55,7 @@ const class AppMod : WebMod {
       out.includeJs( `/pod/proj/proj.js` )
       out.includeJs( `/pod/fui/fui.js` )
       appMap.vals.each |spec| { podStr := spec.qname[ 0..<spec.qname.index( "::" ) ]; out.includeJs( "/pod/$podStr/${podStr}.js".toUri ) }
-      buf := StrBuf()
-      JsonOutStream( buf.out ).writeJson( appMap.map |spec| { spec.toMap } )
-      WebUtil.jsMain( out, "fui::Main", [
-          "fui.baseUri" : "/",
-//          "fui.projName" : projStr,
-          "fui.title" : title,
-          "fui.app" : appStr,
-          "fui.apps" : buf.toStr
-        ] )
+      WebUtil.jsMain( out, "fui::Main", clientData )
     out.headEnd
     out.body
     out.bodyEnd
