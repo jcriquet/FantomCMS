@@ -43,7 +43,8 @@ const class SettingsExt : Ext, Weblet {
       case "Server":
         file := Env.cur.homeDir + `etc/proj/config.props`
         props := file.readProps
-        if ( form.containsKey( "server.port" ) ) props[ "server.port" ] = form[ "server.port" ]
+        keys := ["server.port", "server.title"]
+        keys.each |key| { if ( form.containsKey( key ) ) props[ key ] = form[ key ] }
         file.create.writeProps( props )
     }
   }

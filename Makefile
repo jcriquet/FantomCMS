@@ -1,4 +1,4 @@
-build : db proj fui homeExt loginExt settingsExt securityExt pagesExt
+build : db proj fui homeExt loginExt settingsExt securityExt pagesExt userExt dockTestExt
 
 run : build
 	- bin/fcms
@@ -15,6 +15,9 @@ fui :
 pagesExt :
 	- cd src/pagesExt; ../../bin/fan build.fan
 
+dockTestExt :
+	- cd src/dockTestExt; ../../bin/fan build.fan
+
 homeExt :
 	- cd src/homeExt; ../../bin/fan build.fan
 
@@ -23,6 +26,9 @@ loginExt :
 
 settingsExt :
 	- cd src/settingsExt; ../../bin/fan build.fan
+
+userExt :
+	- cd src/userExt; ../../bin/fan build.fan
 
 securityExt :
 	- cd src/securityExt; ../../bin/fan build.fan
