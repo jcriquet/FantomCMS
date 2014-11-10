@@ -6,6 +6,10 @@ class Build : build::BuildPod {
     summary   = ""
     srcDirs   = [`fan/`]
     outPodDir = `../../lib/fan/`
-    depends   = ["sys 1.0"]
+    depends   = ["sys 1.0",
+                 "afBson 1.0",
+                 "afMongo 0+",
+                 "concurrent 1.0",
+                 "inet 1.0"]
   }
 }

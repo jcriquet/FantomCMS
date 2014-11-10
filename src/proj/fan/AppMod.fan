@@ -3,11 +3,13 @@ using web
 
 const class AppMod : WebMod {
   const Str:AppSpec appMap
+  static const Method? getTheme := Type.find( "themesExt::ThemesExt" ).method( "getTheme" )
   
   new make( Str:Type exts ) {
     appMap = exts.map |ext, name| {
-      app := ( ext.facets.find |f| { f is ExtMeta } as ExtMeta )?.app
-      return app == null ? null : AppSpec( name, app.qname )
+      meta := ( ext.facets.find |f| { f is ExtMeta } as ExtMeta )
+      app := meta?.app
+      return app == null ? null : AppSpec( name, app.qname, meta.label ?: name.capitalize )
     }.exclude |app| { app == null }
   }
   
@@ -18,12 +20,30 @@ const class AppMod : WebMod {
     notFound := !appMap.containsKey( appStr )// || queryRow == null
     if ( notFound ) { res.sendErr( 404 ); return }
     
+    title := Env.cur.config( typeof.pod, "server.title" )
+    if ( title == null ) {
+      title = "FantomCMS"
+      file := Env.cur.homeDir + `etc/proj/config.props`
+      props := file.exists ? file.readProps : Str:Str[:]
+      file.create.writeProps( props[ "server.title" ] = title )
+    }
+    
+    buf := StrBuf()
+    JsonOutStream( buf.out ).writeJson( appMap.map |spec| { spec.toMap } )
+    clientData := [
+      "fui.baseUri" : "/",
+      "fui.title" : title,
+      "fui.app" : appStr,
+      "fui.apps" : buf.toStr
+    ]
+    if ( getTheme != null ) clientData.addAll( getTheme.call( "default" ) )
+    
     res.headers["Content-Type"] = "text/html; charset=utf-8"
     out := res.out
     out.docType5
     out.html
     out.head
-      out.title.w( "Title Goes Here" ).titleEnd
+      out.title.w( title ).titleEnd
       out.includeJs( `/pod/sys/sys.js` )
       out.includeJs( `/pod/util/util.js` )
       out.includeJs( `/pod/concurrent/concurrent.js` )
@@ -35,14 +55,7 @@ const class AppMod : WebMod {
       out.includeJs( `/pod/proj/proj.js` )
       out.includeJs( `/pod/fui/fui.js` )
       appMap.vals.each |spec| { podStr := spec.qname[ 0..<spec.qname.index( "::" ) ]; out.includeJs( "/pod/$podStr/${podStr}.js".toUri ) }
-      buf := StrBuf()
-      JsonOutStream( buf.out ).writeJson( appMap.map |spec| { spec.toMap } )
-      WebUtil.jsMain( out, "fui::Main", [
-          "fui.baseUri" : "/",
-//          "fui.projName" : projStr,
-          "fui.app" : appStr,
-          "fui.apps" : buf.toStr
-        ] )
+      WebUtil.jsMain( out, "fui::Main", clientData )
     out.headEnd
     out.body
     out.bodyEnd

@@ -1,5 +1,6 @@
 using fwt
 using fui
+using webfwt
 
 @Js
 class DatabasePane : SettingsPane {
@@ -7,8 +8,9 @@ class DatabasePane : SettingsPane {
   Text dbHost:= Text()
   Text dbPort := Text()
   Text dbUsername := Text()
-  Text dbPassword := Text {
+  WebText dbPassword := WebText {
     password = true
+    it.placeHolder = "password"
     onModify.add { dbPasswordChanged = true }
     it.onFocus.add { if ( !dbPasswordChanged ) dbPassword.text = "" }
   }

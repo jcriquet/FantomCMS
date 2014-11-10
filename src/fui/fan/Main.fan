@@ -8,40 +8,32 @@ using util
 @Js
 class Main : ContentPane {
   private ContentPane appContainer := ContentPane()
+  HeaderPane headerPane { private set }
+  FooterPane footerPane { private set }
   App? curApp { private set }
 
   new make() : super() {
     vars := Env.cur.vars
     fui := Fui( this ) {
-      appMap = ( (Str:Obj?) JsonInStream( vars[ "fui.apps" ].in ).readJson ).map |Str:Str map->AppSpec| { AppSpec( map[ "name" ], map[ "qname" ] ) }
+      title = vars[ "fui.title" ] ?: ""
+      appMap = ( (Str:Obj?) JsonInStream( vars[ "fui.apps" ].in ).readJson ).map |Str:Str map->AppSpec| { AppSpec.makeFromMap( map ) }
       baseUri = vars[ "fui.baseUri" ].toUri
     }
 
     Actor.locals[ "fui.cur" ] = fui
     content = EdgePane {
-
-      // Header
-      top = HeaderPane()
-      //BorderPane {
-        //bg = getOption("bgcolor")
-        //border = Border.fromStr( "0,0,3 outset #444444" )
-        //HeaderPane(),
-        //Button { text = "test" ; it.onAction.add { goto( `fui://app/login` ) } },
-      //}
-      
-      // App Container
       center = appContainer
-      
-      // Footer
-      bottom = BorderPane {
-        bg = getOption("bgcolor")
-        border = Border.fromStr( "3,0,0 outset #444444")
-        ConstraintPane {
-          minh = maxh = 50
-          Label { text = "I'm a footer!" },
-        },
-      }
+      top = headerPane = HeaderPane()
+      bottom = footerPane = FooterPane()
     }
+  }
+  
+  Void addFooterItem(FooterPaneDockItem item){
+    this.footerPane.addFooterItem(item)
+  }
+
+  Void removeFooterItem(FooterPaneDockItem item){
+    this.footerPane.removeFooterItem(item)
   }
   
   // Sample input: `fui://app/home`
@@ -51,7 +43,7 @@ class Main : ContentPane {
       token = uri.host
       if ( token == "app" ) {
         token = uri.path[ 0 ]
-        newUri := Fui.cur.appUri( token )
+        newUri := token != "home" ? Fui.cur.appUri( token ) : Fui.cur.baseUri
         if ( Win.cur.uri.pathOnly.relTo( newUri ).toStr != "" || Win.cur.uri.frag != newUri.frag ) Win.cur.hisPushState( token, newUri, [:] )
         _reload
       } else Win.cur.hyperlink( Fui.cur.baseUri + uri.pathOnly )
@@ -70,6 +62,7 @@ class Main : ContentPane {
     curApp = (App) Type.find( appSpec.qname ).make
     curApp.spec = appSpec
     appContainer.content = curApp
+    Fui.cur.updateTitle
     appContainer.relayout
   }
   
