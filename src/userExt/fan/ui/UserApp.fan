@@ -1,84 +1,38 @@
+using dom
 using fui
 using fwt
 using gfx
+using util
 using webfwt
 
 @Js
 class UserApp : App {
+  BorderPane contentPane := BorderPane {
+    insets = Insets( 10 )
+  }
+  Str:UserPane contentPaneMap := ["Manage Users":UserListPane( this ), "Manage User Groups":UserGroupPane( this )]
+  TreeList sideList := TreeList {
+    onSelect.add { modifyState }
+  }
   
   new make() : super() {
+    sideList.items = contentPaneMap.keys
     content = SashPane {
       it.weights = [15, 85]
-      BorderPane {
-        it.bg = Color.gray
-        EdgePane {
-          top = GridPane {
-            numCols = 1
-            Button {
-              text = "Manage users"
-            },
-            Button {
-              text = "Manage user groups"
-            }
-          }
-        },
-      },
-      EdgePane {
-        top = EdgePane {
-          left = Label {
-            text = "MANAGE USERS"
-          }
-          right = Text {
-            text = "Search"
-          }
-        }
-        center = GridPane {
-          numCols = 3
-          uniformCols = true
-          Label {
-            text = "Name"
-          },
-          Label {
-            text = "Group"
-          },
-          Label {
-            text = "Registration"
-          },
-          Label {
-            text = "admin"
-          },
-          Label {
-            text = "Administrators"
-          },
-          Label {
-            text = "10/27/14"
-          },
-          Label {
-            text = "TestUser"
-          },
-          Label {
-            text = "Authors"
-          },
-          Label {
-            text = "10/28/14"
-          },
-          Label {
-            text = "TestUser2"
-          },
-          Label {
-            text = "Authors, Editors"
-          },
-          Label {
-            text = "10/28/14"
-          }
-        }
-      }
+      sideList,
+      contentPane,
     }
   }
   
   override Void onSaveState( State state ) {
+    state[ "selectedIndex" ] = sideList.selectedIndex
+    ( (UserPane?) contentPane.content )?.onSaveState( state )
   }
   
   override Void onLoadState( State state ) {
+    sideList.selectedIndex = state[ "selectedIndex" ]
+    contentPane.content = contentPaneMap[ sideList.selected.getSafe( 0 ) ?: "" ]
+    ( (UserPane?) contentPane.content )?.onLoadState( state )
+    contentPane.relayout
   }
 }

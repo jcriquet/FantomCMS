@@ -5,7 +5,7 @@ FantomCMS is a Web Content Management System developed as a course project for C
 Current Developers:
 - Jeremy Criquet
 - Cole Grim
-- Isaac Lean
+- Matthew Isaac Lean
 - Jono Yang
 - Joshua Leihe
 

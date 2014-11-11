@@ -2,8 +2,8 @@
 ## Project Pods
 #################
 
-lib/fan/
-etc/*/
+lib/fan/*
+etc/*/*
 
 #################
 ## Eclipse

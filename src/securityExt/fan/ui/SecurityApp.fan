@@ -4,12 +4,13 @@ using fui
 using fwt
 using gfx
 using [java]org.mindrot.jbcrypt
+using [js]bCrypt.js
 
 @Js
 class SecurityApp : App {
   
   new make() : super() {
-    mypass := BCrypt.hashpw("foobar", BCrypt.gensalt())
+    //mypass := BCrypt.hashpw("foobar", BCrypt.gensalt())
     content = BorderPane {
       it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
       GridPane {
