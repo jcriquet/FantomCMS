@@ -11,10 +11,18 @@ class HtmlEditor : OverlayPane
   Bool newFile := false
   Text filenameText := Text{}
   Text uriText := Text{}
+  Str? html
   Editor editor
   
   new make(Str? title := null, Str? uri := null, Str? file := null) : super(){
     if(file == null) newFile = true
+    else{
+      Buf a := Buf()
+      a.writeChars(file)
+      a.flip
+      HtmlPaneSerial pane := a.readObj
+      this.html = pane.savedHtml
+    }
     this.animate = true
     this.content = BorderPane{
       it.bg = Color.gray
@@ -30,7 +38,7 @@ class HtmlEditor : OverlayPane
             if(!newFile){
               this.filenameText.text = title
               this.uriText.text = uri
-              it.textbox.text = file
+              it.textbox.text = this.html
             }
           },
         }

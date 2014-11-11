@@ -1,5 +1,6 @@
 using dom
 using db
+using afBson
 using webfwt
 using fui
 using fwt
@@ -47,7 +48,7 @@ class HtmlEditorApp : App {
   }
 
   private Void doEdit(){
-    this.editPane = HtmlEditor(list.getItem.title, list.getItem.itemData)
+    this.editPane = HtmlEditor(list.getItem.title, list.getItem.uri, list.getItem.itemData)
     editPane.open(this, Point(this.pos.x + 100, this.pos.y + 100))
   }
 
@@ -70,23 +71,20 @@ class ItemList : WebList {
     updateList
   }
 
-  Void populateList(Map a){
-    this.itemList = [,]
-    a.each |v, k| { 
-      this.itemList.add(ItemLabel(k,v)) 
-    }
-    this.items = this.itemList
-  }
-  
   Void updateList(){
     HttpReq { uri = Fui.cur.baseUri + `/api/htmleditor/pagelist` }.get |res| { 
       if(res.status != 200){
         Win.cur.alert("Error loading data.")
       }
-      toPass := [:]
-      Map[] mapList := JsonInStream(res.content.in).readJson
-      mapList.each |item| { if(item.containsKey("title")) toPass.add(item["title"],item["data"]) } 
-      populateList(toPass)
+      this.itemList = [,]
+      mapList := JsonInStream(res.content.in).readJson as [Str:Obj?][]
+      mapList.each |map| {
+        if(map.containsKey("title") && map.containsKey("data") && map.containsKey("uri")){
+          this.itemList.add(ItemLabel(map["title"], map["uri"], map["data"]))
+        }
+      }
+      this.items = this.itemList
+      this.parent.relayout
     } 
   }
   
@@ -113,11 +111,13 @@ class ItemList : WebList {
 @Js
 class ItemLabel : Label {
   Str itemData
+  Str uri
   Str title
   Str display
   
-  new make(Str title, Str data) : super(){ 
+  new make(Str title, Str uri, Str data) : super(){ 
     this.title = this.display = title
+    this.uri = uri
     this.itemData = data
   }
   

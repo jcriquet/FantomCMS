@@ -18,6 +18,7 @@ const class HtmlEditorExt : Ext, Weblet {
       data := JsonOutStream.writeJsonToStr(map)
       res.headers[ "Content-Type" ] = "text/plain"
       res.headers[ "Content-Length" ] = data.size.toStr
+      res.statusCode = 200
       res.out.writeChars( data ).close
       res.done
       default:
