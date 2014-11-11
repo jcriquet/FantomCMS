@@ -4,10 +4,9 @@ using gfx
 
 @Js
 class LoginApp : App {
-  
-  new make() : super() {
-    content = BorderPane {
-      it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
+  BorderPane loginPane := BorderPane {
+    insets = Insets( 10 )
+          it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
       GridPane {
         it.halignPane = Halign.center
         it.valignPane = Valign.center
@@ -25,6 +24,14 @@ class LoginApp : App {
             },
             Button {
               text = "Log in"
+              onAction.add {
+                echo("Falcon YES")
+                loginPane.content = Label{text = "You logged in kinda not really..."}
+                loginPane.relayout
+                /*Obj? json
+                json = DBConnector.cur.db["user"].group(["name", "password"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"user"]])
+                echo(json)*/
+              }
             },
             Label { 
               text = "Password"
@@ -39,7 +46,10 @@ class LoginApp : App {
           },
         },  
       },
-    }
+  }
+  
+  new make() : super() {
+    content = loginPane
   }
   
   override Void onSaveState( State state ) {
