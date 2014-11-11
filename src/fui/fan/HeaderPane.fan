@@ -59,7 +59,8 @@ class HeaderPane : StatePane{
             it.halignPane = Halign.center
             it.hgap = 10
             appMap := Fui.cur.appMap
-            it.numCols = appMap.size
+            if(appMap.size >= 4) it.numCols = 4
+            else it.numCols = appMap.size
             gridPane := it
             Fui.cur.appMap.each |AppSpec appSpec, Str appName| {  
               appIcon := null
