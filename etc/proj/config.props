@@ -1,9 +1,0 @@
-//
-// Config: fanServ
-//
-// History:
-//   08 Sept 14  Jeremy Criquet  Creation
-//
-
-// core setup
-core.uri=jdbc:mysql://128.114.9.179:3306/
