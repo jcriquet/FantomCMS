@@ -1,9 +1,12 @@
 using fui
 using fwt
 using gfx
+using util
 
 @Js
 class LoginApp : App {
+  LoginApp app := this
+  
   BorderPane loginPane := BorderPane {
     insets = Insets( 10 )
           it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
@@ -31,6 +34,10 @@ class LoginApp : App {
                 /*Obj? json
                 json = DBConnector.cur.db["user"].group(["name", "password"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"user"]])
                 echo(json)*/
+               app.apiCall( ``, app.name ).get |res| {
+                  json := ([Str:Obj?][]) JsonInStream( res.content.in ).readJson
+                  echo( json )
+                }
               }
             },
             Label { 
