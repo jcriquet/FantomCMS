@@ -56,6 +56,7 @@ const class DBConnector {
   // that all the collections we need for the app have been
   // created on the Mongo server.
   Void startup( Str[] collections ) {
+    if ( mc == null ) { echo( "\nDatabase could not load.  Please check the configuration." ); return }
     echo( "\nChecking that all required collections exist on server... " )
     collections.each |Str name| {
       if ( collectionExists( name ) ) {

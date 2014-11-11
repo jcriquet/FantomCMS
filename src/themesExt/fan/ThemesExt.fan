@@ -10,11 +10,27 @@ using web
 }
 const class ThemesExt : Ext, Weblet {
   override Void onGet() {
+    Str:Obj? json := [:]
+    json[ "list" ] = DBConnector.cur.db[ "themes" ].group( ["name", "title"], [:], Code.makeCode( "function(){}" ) )
+    reqTheme := req.modRel.toStr
+    if ( ( ([Str:Obj?][]) json[ "list" ] ).any |map| { map[ "name" ] == reqTheme } ) {
+      document := DBConnector.cur.db[ "themes" ].findOne( ["name":reqTheme], false )
+      document.remove( "_id" )
+      json[ "selected" ] = document
+    }
+    content := JsonOutStream.writeJsonToStr( json )
+    res.headers[ "Content-Type" ] = "text/plain"
+    res.headers[ "Content-Length" ] = content.size.toStr
+    out := res.out
+    out.writeChars( content )
+    out.close
     res.done
   }
   
   static Str:Str getTheme( Str name ) {
-    [Str:Obj?]? document := DBConnector.cur.db[ "themes" ].findOne( ["name":name], false )
+    [Str:Obj?]? document
+    try document = DBConnector.cur.db[ "themes" ].findOne( ["name":name], false )
+    catch ( Err e ) {}
     map := [:]
     if ( document == null ) return map
     document.remove( "_id" )
