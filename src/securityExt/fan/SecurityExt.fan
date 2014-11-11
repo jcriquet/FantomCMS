@@ -8,6 +8,7 @@ using web
   name = "security"
   app = securityExt::SecurityApp#
   label = "Security Class Test"
+  icon = "security-50.png"
 }
 
 const class SecurityExt : Ext {

@@ -9,7 +9,7 @@ const class AppMod : WebMod {
     appMap = exts.map |ext, name| {
       meta := ( ext.facets.find |f| { f is ExtMeta } as ExtMeta )
       app := meta?.app
-      return app == null ? null : AppSpec( name, app.qname, meta.label ?: name.capitalize )
+      return app == null ? null : AppSpec( name, app.qname, meta.label ?: name.capitalize, meta.icon ?: "default-50.png" )
     }.exclude |app| { app == null }
   }
   

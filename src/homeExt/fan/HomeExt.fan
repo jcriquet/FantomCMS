@@ -5,6 +5,7 @@ using web
 @ExtMeta {
   name = "home"
   app = homeExt::HomeApp#
+  icon = "home-50.png"
 }
 
 const class HomeExt : Ext, Weblet {
