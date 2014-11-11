@@ -6,6 +6,8 @@ using util
 @Js
 class LoginApp : App {
   LoginApp app := this
+  Text field_username:= Text()
+  Text field_password := Text{password = true}
   
   BorderPane loginPane := BorderPane {
     insets = Insets( 10 )
@@ -22,30 +24,36 @@ class LoginApp : App {
             Label { 
               text = "Username" 
             },
-            Text {
-            
-            },
+            field_username,
             Button {
               text = "Log in"
               onAction.add {
-                echo("Falcon YES")
-                loginPane.content = Label{text = "You logged in kinda not really..."}
-                loginPane.relayout
-                /*Obj? json
-                json = DBConnector.cur.db["user"].group(["name", "password"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"user"]])
-                echo(json)*/
                app.apiCall( ``, app.name ).get |res| {
                   json := ([Str:Obj?][]) JsonInStream( res.content.in ).readJson
-                  echo( json )
+                  for(Int i := 0; i < json.size; ++ i) {
+                    if(json[i]["name"] == field_username.text) {
+                      if(json[i]["password"] == field_password.text) {
+                        echo("successfully logged in")
+                        loginPane.content = Label{text = "You logged in successfully kinda not really..."}
+                        loginPane.relayout
+                      } else {
+                        echo("incorrect password")
+                        loginPane.content = Label{text = "Your login details were incorrect."}
+                        loginPane.relayout
+                      }
+                    } else {
+                      echo("username not found")
+                      loginPane.content = Label{text = "Your login details were incorrect."}
+                      loginPane.relayout
+                    }
+                  }
                 }
               }
             },
             Label { 
               text = "Password"
             },
-            Text {
-              password = true;
-            },
+            field_password,
             Button {
               mode = ButtonMode.check;
               text = "Remember me";
