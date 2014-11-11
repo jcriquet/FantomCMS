@@ -8,7 +8,7 @@ using gfx
 class BorderPaneApp : App {
   new make() : super() {
     content = BorderPane {
-      it.bg = Color.green
+      it.bg = Color.black
       it.insets = Insets(30, 30)
       GridPane {
         numCols = 4

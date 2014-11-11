@@ -33,11 +33,8 @@ userExt :
 securityExt :
 	- cd src/securityExt; ../../bin/fan build.fan
 
-themesExt :
-	-- cd src/borderPane; ../../bin/fan build.fan
-
 borderPaneExt :
-	-- cd src/themesExt; ../../bin/fan build.fan
+	-- cd src/borderPane; ../../bin/fan build.fan
 
 themesExt :
 	- cd src/themesExt; ../../bin/fan build.fan
