@@ -21,7 +21,7 @@ class HomeApp : App {
         it.vgap = 10
         gridPane := it
         Fui.cur.appMap.each |AppSpec appSpec, Str appName| {  
-          gridPane.add(HomeAppIcon(appSpec.label, Fui.cur.baseUri + `pod/fui/res/img/home-50.png`){
+          gridPane.add(HomeAppIcon(appSpec.label, Fui.cur.baseUri + `pod/fui/res/img/` + Uri.fromStr(appSpec.icon)){
             it.onMouseDown.add { Fui.cur.main.goto("fui://app/$appName".toUri) }
           })
         }

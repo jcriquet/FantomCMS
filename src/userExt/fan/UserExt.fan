@@ -7,6 +7,7 @@ using afBson
 @ExtMeta {
   name = "user"
   app = userExt::UserApp#
+  icon = "users-50.png"
 }
 const class UserExt : Ext, Weblet {
   override Void onGet() {
