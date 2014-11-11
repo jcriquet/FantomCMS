@@ -1,2 +1,3 @@
 core.uri=jdbc:mysql:\u002f/128.114.9.179:3306/
 server.port=8080
+server.title=FantomCMS

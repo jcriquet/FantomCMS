@@ -1,14 +1,15 @@
+// Author:Joshua Leihe
+
 using fui
 using fwt
 using gfx
-//using [java] org.mindrot.jbcrypt.BCrypt
+using [java]org.mindrot.jbcrypt
 
-//class BCrypt() extends java.lang.Object
-//
 @Js
 class SecurityApp : App {
   
   new make() : super() {
+    mypass := BCrypt.hashpw("foobar", BCrypt.gensalt())
     content = BorderPane {
       it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
       GridPane {
@@ -51,3 +52,13 @@ class SecurityApp : App {
   override Void onLoadState( State state ) {
   }
 }
+
+//class ServerEncrypt : BCrypt {
+//  new make () {
+//    mypass := BCrypt.hashpw("foobar", BCrypt.gensalt())
+//  }
+//  
+//  Void test() {
+//    
+//  }
+//}

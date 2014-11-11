@@ -1,4 +1,4 @@
-build : db proj fui homeExt loginExt settingsExt securityExt pagesExt userExt dockTestExt borderPaneExt
+build : db proj fui homeExt loginExt settingsExt securityExt pagesExt userExt dockTestExt borderPaneExt themesExt
 
 run : build
 	- bin/fcms
@@ -32,5 +32,8 @@ userExt :
 
 securityExt :
 	- cd src/securityExt; ../../bin/fan build.fan
-borderPaneExt :
+themesExt :
 	-- cd src/borderPane; ../../bin/fan build.fan
+
+borderPaneExt :
+        -- cd src/themesExt; ../../bin/fan build.fan

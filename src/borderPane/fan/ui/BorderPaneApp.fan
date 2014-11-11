@@ -1,3 +1,5 @@
+// Author:Joshua Leihe
+
 using fui
 using fwt
 using gfx
