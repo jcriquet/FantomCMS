@@ -63,7 +63,7 @@ class HeaderPane : StatePane{
             gridPane := it
             Fui.cur.appMap.each |AppSpec appSpec, Str appName| {  
               appIcon := null
-              gridPane.add(AppIcon(appSpec.label, Fui.cur.baseUri + `pod/fui/res/img/home-50.png`){
+              gridPane.add(AppIcon(appSpec.label, Fui.cur.baseUri + `pod/fui/res/img/` + Uri.fromStr(appSpec.icon)){
                 it.onMouseDown.add { 
                   Fui.cur.main.goto("fui://app/$appName".toUri) 
                   this.paneOpen = false

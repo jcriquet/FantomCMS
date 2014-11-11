@@ -6,6 +6,7 @@ using web
 @ExtMeta {
   name = "settings"
   app = settingsExt::SettingsApp#
+  icon = "settings-50.png"
 }
 const class SettingsExt : Ext, Weblet {
   

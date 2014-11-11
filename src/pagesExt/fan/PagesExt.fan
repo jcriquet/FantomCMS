@@ -7,6 +7,7 @@ using web
 @ExtMeta {
   name = "pages"
   app = pagesExt::PagesApp#
+  icon = "pages-50.png"
 }
 const class PagesExt : Ext, Weblet {
   override Void onGet() {
