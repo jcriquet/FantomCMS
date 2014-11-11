@@ -17,9 +17,6 @@ class UserListPane : UserPane {
         left = Label {
           text = "MANAGE USERS"
         }
-        right = Text {
-          text = "Search"
-        }
       }
       center = table
     }
