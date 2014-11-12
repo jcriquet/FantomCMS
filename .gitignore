@@ -2,7 +2,7 @@
 ## Project Pods
 #################
 
-lib/fan/*
+lib/fan/
 etc/*/*
 
 #################
