@@ -18,8 +18,8 @@ class UserGroupPane : UserPane {
           text = "MANAGE USER GROUPS"
         }
       }
-      //center = table
-      center = GridPane {
+      center = table
+      /*center = GridPane {
           numCols = 2
           uniformCols = true
           Label {
@@ -78,7 +78,7 @@ class UserGroupPane : UserPane {
           Button {
             mode = ButtonMode.check
           },
-      }
+      }*/
     }
   }
   

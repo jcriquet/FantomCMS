@@ -11,7 +11,7 @@ class LoginApp : App {
   
   BorderPane loginPane := BorderPane {
     insets = Insets( 10 )
-          it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
+      it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
       GridPane {
         it.halignPane = Halign.center
         it.valignPane = Valign.center

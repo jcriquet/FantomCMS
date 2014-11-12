@@ -17,7 +17,7 @@ const class UserExt : Ext, Weblet {
         json = DBConnector.cur.db["user"].group(["_id", "name", "password"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"user"]])
         if ( json == null ) json = [,]
       case `groups`:
-        json = DBConnector.cur.db["user"].group(["_id", "name", "title"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"group"]])
+        json = DBConnector.cur.db["user"].group(["_id", "name", "pages", "settings", "themes", "user"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"group"]])
         if ( json == null ) json = [,]
     }
     //json["users"] = DBConnector.cur.db["user"].findAll( ["type":"user"] )
