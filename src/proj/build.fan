@@ -5,7 +5,7 @@ class Build : BuildPod {
     version   = Version( [ 1, 0, 0 ] )
     summary   = ""
     srcDirs   = [`fan/`]
-    outPodDir = `../../lib/fan/`
+    outPodDir = Env.cur.homeDir.uri + `lib/fan/`
     depends   = ["sys 1.0",
                  "afBson 1.0",
                  "afMongo 0+",
