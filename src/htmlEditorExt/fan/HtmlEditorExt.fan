@@ -28,23 +28,27 @@ const class HtmlEditorExt : Ext, Weblet {
 
   override Void onPost() {
     uri := req.modRel
+    res.headers[ "Content-Type" ] = "text/plain"
     switch(uri.pathOnly.toStr){
       case "newpage":
-      Str content := req.in.readAllStr
-      Buf b := Buf()
-      b.writeChars(content)
-      b.flip
-      Map map := b.readObj
-      if(map.containsKey("title") && map.containsKey("data") && map.containsKey("uri")){
-        DBEntry a := DBEntry("pages")
-        a.set("title", map["title"])
-        a.set("data", map["data"])
-        a.set("uri", map["uri"])
-        DBConnector.cur.put(a)
-        res.sendErr(200)
-      } else {
-        res.sendErr(500)
-      }
+        map := req.form
+        if(map.containsKey("title") && map.containsKey("data") && map.containsKey("uri")){
+          map.each |v, k| {
+            k.replace("\\", "\\\\")
+            k.replace("\"", "\\\"")
+            k.replace("\n", "\\n")
+          }
+          echo(map)
+          DBConnector.cur.db["pages"].insert(map)
+          res.statusCode = 200
+          res.done
+          return
+        } else {
+          res.sendErr(500)
+            res.done
+            return
+        }
+      default:
     }
   }
 }

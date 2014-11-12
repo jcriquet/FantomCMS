@@ -88,11 +88,14 @@ class HtmlEditor : OverlayPane
     a.writeObj(htmlData)
     a.flip
     toSend := ["title":this.filenameText.text, "data":a.readAllStr, "uri":this.uriText.text]
-    Buf b := Buf()
-    b.writeObj(toSend)
-    b.flip
-    HttpReq { uri = Fui.cur.baseUri + `/api/htmleditor/newpage` }.post(b.readAllStr) |res| {
-      if(res.status == 200) this.doExit
+    HttpReq { uri = Fui.cur.baseUri + `/api/htmleditor/newpage` }.postForm(toSend) |res| {  
+      Win.cur.alert(res.status)
+      switch(res.status){
+      case 199:
+        Win.cur.alert("overwrite")
+      case 200:
+        doExit()
+      }
     }
   }
 
