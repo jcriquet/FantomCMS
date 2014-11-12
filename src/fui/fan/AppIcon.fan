@@ -2,8 +2,7 @@ using fwt
 using gfx
 
 @Js
-class AppIcon : ContentPane
-{
+class AppIcon : ContentPane {
   Str appName
   Image? icon
 

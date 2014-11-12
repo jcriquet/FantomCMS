@@ -1,6 +1,11 @@
-build : db proj fui homeExt loginExt settingsExt securityExt pagesExt userExt dockTestExt themesExt
 
-run : build
+
+buildfast:
+	- bin/fan build.fan
+
+build: db proj fui homeExt loginExt settingsExt securityExt pagesExt userExt dockTestExt themesExt htmlEditorExt
+
+run : buildfast
 	- bin/fcms
 
 db :
@@ -14,6 +19,9 @@ fui :
 
 pagesExt :
 	- cd src/pagesExt; ../../bin/fan build.fan
+
+htmlEditorExt :
+	- cd src/htmlEditorExt; ../../bin/fan build.fan
 
 dockTestExt :
 	- cd src/dockTestExt; ../../bin/fan build.fan

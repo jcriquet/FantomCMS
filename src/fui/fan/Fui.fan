@@ -13,7 +13,7 @@ class Fui {
     this.main = main
   }
   
-  Uri appUri( Str appName ) { baseUri + "app/$appName".toUri }
+  Uri appUri( Str appName ) { baseUri + "app/$appName/".toUri }
   AppSpec? curApp() { appMap[ Win.cur.uri.pathOnly.relTo( baseUri ).path.getSafe( 1 ) ?: "home" ] }
   Void updateTitle() { Win.cur.doc.title = title + " - " + ( main.curApp.curTitle ?: curApp.label ) }
   

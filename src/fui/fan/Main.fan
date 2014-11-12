@@ -43,8 +43,8 @@ class Main : ContentPane {
       token = uri.host
       if ( token == "app" ) {
         token = uri.path[ 0 ]
-        newUri := token != "home" ? Fui.cur.appUri( token ) : Fui.cur.baseUri
-        if ( Win.cur.uri.pathOnly.relTo( newUri ).toStr != "" || Win.cur.uri.frag != newUri.frag ) Win.cur.hisPushState( token, newUri, [:] )
+        newUri := token != "home" ? Fui.cur.appUri( token ) + uri[ 1..-1 ] : Fui.cur.baseUri
+        if ( newUri.relTo( Win.cur.uri.pathOnly ).toStr != "" || Win.cur.uri.frag != newUri.frag ) Win.cur.hisPushState( token, newUri, [:] )
         _reload
       } else Win.cur.hyperlink( Fui.cur.baseUri + uri.pathOnly )
     }
