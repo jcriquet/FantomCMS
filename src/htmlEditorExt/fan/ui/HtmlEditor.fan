@@ -88,15 +88,55 @@ class HtmlEditor : OverlayPane
     a.writeObj(htmlData)
     a.flip
     toSend := ["title":this.filenameText.text, "data":a.readAllStr, "uri":this.uriText.text]
-    HttpReq { uri = Fui.cur.baseUri + `/api/htmleditor/newpage` }.postForm(toSend) |res| {  
-      Win.cur.alert(res.status)
+    HttpReq { uri = Fui.cur.baseUri + `/api/htmleditor/newpage` }.postForm(toSend) |res| {
+      echo( res.status )
+      echo( res.content )
+      echo( res.headers )
       switch(res.status){
-      case 199:
-        Win.cur.alert("overwrite")
-      case 200:
+      case 304:
+        doOverwrite(toSend)
+      case 201:
+        Win.cur.alert("Saved.")
         doExit()
       }
     }
+  }
+  
+  Void doOverwrite(Map toSend){
+    Bool? toOverwrite
+    OverlayPane{
+      pane := it
+      it.content = BorderPane{
+        it.border = Border.fromStr("1")
+        it.insets = Insets(2)
+        it.bg = Color.white
+        EdgePane{
+          it.center = Label{ it.text = "Entry already exists. Overwrite?" }
+          it.bottom = GridPane{
+            it.numCols = 2
+            it.halignCells = Halign.center
+            it.valignCells = Valign.center
+            it.halignCells = Halign.center
+            it.valignCells = Valign.center
+            Button { it.text = "Yes" ; it.onAction.add { toOverwrite = true ; pane.close }},
+            Button { it.text = "No" ; it.onAction.add { toOverwrite = false ; pane.close }},
+          }
+        },
+      }
+      it.onClose.add { 
+        if(toOverwrite){
+          HttpReq { uri = Fui.cur.baseUri + `/api/htmleditor/overwrite` }.postForm(toSend) |res| {
+            switch(res.status){
+              case 201:
+                Win.cur.alert("Overwritten.")
+                doExit()
+              default:
+                Win.cur.alert("Error saving.")
+            }
+          }
+        }
+      }
+    }.open(this, Point(Point.defVal.x + 200, Point.defVal.y + 200))
   }
 
   Void doExit(){
