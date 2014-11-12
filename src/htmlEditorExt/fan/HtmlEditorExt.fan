@@ -28,26 +28,55 @@ const class HtmlEditorExt : Ext, Weblet {
 
   override Void onPost() {
     uri := req.modRel
-    res.headers[ "Content-Type" ] = "text/plain"
     switch(uri.pathOnly.toStr){
+      
+      // New Page
       case "newpage":
         map := req.form
         if(map.containsKey("title") && map.containsKey("data") && map.containsKey("uri")){
-          map.each |v, k| {
-            k.replace("\\", "\\\\")
-            k.replace("\"", "\\\"")
-            k.replace("\n", "\\n")
+          if(DBConnector.cur.db["pages"].findAll(["uri":map["uri"]]).isEmpty){
+            map.each |v, k| {
+              k.replace("\\", "\\\\")
+              k.replace("\"", "\\\"")
+              k.replace("\n", "\\n")
+            }
+            echo(map)
+            DBConnector.cur.db["pages"].insert(map)
+            res.statusCode = 201
+          }else{
+            res.statusCode = 304
           }
-          echo(map)
-          DBConnector.cur.db["pages"].insert(map)
-          res.statusCode = 200
+          res.headers[ "Content-Type" ] = "text/plain"
+          res.headers[ "Content-Length" ] = "1"
+          out := res.out
+          out.writeChar( 'a' )
+          out.close
           res.done
-          return
         } else {
           res.sendErr(500)
-            res.done
-            return
         }
+      
+      // Overwrite
+      case "overwrite":
+        map := req.form
+        map.each |v, k| {
+          k.replace("\\", "\\\\")
+          k.replace("\"", "\\\"")
+          k.replace("\n", "\\n")
+        }
+        if(map.containsKey("title") && map.containsKey("data") && map.containsKey("uri")){
+          DBConnector.cur.db["pages"].delete(["uri":map["uri"]])
+          DBConnector.cur.db["pages"].insert(map)
+          res.statusCode = 201
+        }else{
+          res.statusCode = 500
+        }
+        res.headers[ "Content-Type" ] = "text/plain"
+        res.headers[ "Content-Length" ] = "1"
+        out := res.out
+        out.writeChar( 'a' )
+        out.close
+        res.done
       default:
     }
   }
