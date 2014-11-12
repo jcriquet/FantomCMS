@@ -40,4 +40,25 @@ class BorderPaneApp : App {
       },
     }
   }
+  
+  override Void onSaveState( State state ) {
+    buf := Buf()
+    out := buf.out
+    out.writeObj(this.content, ["indent":2])
+    out.close
+    buf.flip
+    echo( buf.readAllStr.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n"))
+  }
+  
+//  Void main() {
+//    buf := Buf()
+//    out := buf.out
+//    out.writeObj(this.content, ["indent":2])
+//    out.close
+//    buf.flip
+//    echo( buf.readAllStr.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n"))
+//  }
+  
+  override Void onLoadState( State state ) {
+  }
 }
