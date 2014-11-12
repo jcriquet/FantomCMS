@@ -3,7 +3,6 @@
 using fui
 using fwt
 using gfx
-using [java]org.mindrot.jbcrypt
 //using [js]bCrypt.js
 
 @Js
