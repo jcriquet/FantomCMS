@@ -10,6 +10,10 @@ using [java]org.mindrot.jbcrypt
 class SecurityApp : App {
   
   new make() : super() {
+    bcrypt := Bcrypt()
+    something := bcrypt.genSalt( 5 )
+    echo( something.typeof )
+    echo( something )
     //mypass := BCrypt.hashpw("foobar", BCrypt.gensalt())
     content = BorderPane {
       it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
