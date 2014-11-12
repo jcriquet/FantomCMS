@@ -18,67 +18,7 @@ class UserGroupPane : UserPane {
           text = "MANAGE USER GROUPS"
         }
       }
-      //center = table
-      center = GridPane {
-          numCols = 2
-          uniformCols = true
-          Label {
-            text = "AUTHORS"
-          },
-          ContentPane{},
-          Label {
-            text = "Can use Pages app?"
-          },
-          Button {
-            mode = ButtonMode.check
-          },
-          Label {
-            text = "Can use Themes app?"
-          },
-          Button {
-            mode = ButtonMode.check
-          },
-          Label {
-            text = "Can use Users app?"
-          },
-          Button {
-            mode = ButtonMode.check
-          },
-          Label {
-            text = "Can use Settings app?"
-          },
-          Button {
-            mode = ButtonMode.check
-          },
-          Label {
-            text = "ADMINISTRATORS"
-          },
-          ContentPane{},
-          Label {
-            text = "Can use Pages app?"
-          },
-          Button {
-            mode = ButtonMode.check
-          },
-          Label {
-            text = "Can use Themes app?"
-          },
-          Button {
-            mode = ButtonMode.check
-          },
-          Label {
-            text = "Can use Users app?"
-          },
-          Button {
-            mode = ButtonMode.check
-          },
-          Label {
-            text = "Can use Settings app?"
-          },
-          Button {
-            mode = ButtonMode.check
-          },
-      }
+      center = table
     }
   }
   
@@ -101,7 +41,11 @@ class UserGroupPane : UserPane {
         return BorderPane {
           border = Border( "1 solid #000000" )
           it.insets = insets
-          Label { it.text = cell.toStr },
+          if(col == "name") {
+            Label { it.text = cell.toStr },
+          } else {
+            Button { mode = ButtonMode.check },
+          }
         }
       }
     }

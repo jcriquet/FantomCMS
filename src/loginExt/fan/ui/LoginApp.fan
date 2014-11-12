@@ -11,7 +11,7 @@ class LoginApp : App {
   
   BorderPane loginPane := BorderPane {
     insets = Insets( 10 )
-          it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
+      it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
       GridPane {
         it.halignPane = Halign.center
         it.valignPane = Valign.center
@@ -28,24 +28,30 @@ class LoginApp : App {
             Button {
               text = "Log in"
               onAction.add {
-               app.apiCall( ``, app.name ).get |res| {
+               app.apiCall( `list`, "user" ).get |res| {
+                  Bool userFound := false
                   json := ([Str:Obj?][]) JsonInStream( res.content.in ).readJson
-                  for(Int i := 0; i < json.size; ++ i) {
+                  for(Int i := 0; i < json.size; ++i) {
                     if(json[i]["name"] == field_username.text) {
                       if(json[i]["password"] == field_password.text) {
                         echo("successfully logged in")
                         loginPane.content = Label{text = "You logged in successfully kinda not really..."}
                         loginPane.relayout
+                        userFound = true
+                        break
                       } else {
                         echo("incorrect password")
                         loginPane.content = Label{text = "Your login details were incorrect."}
                         loginPane.relayout
+                        userFound = true
+                        break
                       }
-                    } else {
+                    }
+                  }
+                  if(userFound == false){
                       echo("username not found")
                       loginPane.content = Label{text = "Your login details were incorrect."}
                       loginPane.relayout
-                    }
                   }
                 }
               }

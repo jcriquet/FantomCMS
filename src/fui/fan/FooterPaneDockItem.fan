@@ -5,7 +5,6 @@ using gfx
 class FooterPaneDockItem : ContentPane
 {
   new make() : super(){
-    
   }
   
   override Size prefSize(Hints hints := Hints.defVal){
