@@ -46,6 +46,7 @@ class Main : ContentPane {
         newUri := token != "home" ? Fui.cur.appUri( token ) + uri[ 1..-1 ] : Fui.cur.baseUri
         if ( newUri.relTo( Win.cur.uri.pathOnly ).toStr != "" || Win.cur.uri.frag != newUri.frag ) Win.cur.hisPushState( token, newUri, [:] )
         _reload
+        curApp.onGoto
       } else Win.cur.hyperlink( Fui.cur.baseUri + uri.pathOnly )
     }
   }
@@ -59,27 +60,21 @@ class Main : ContentPane {
   
   // Be sure to call curApp.onReady after this
   private Void _setContent( AppSpec appSpec ) {
-    curApp = (App) Type.find( appSpec.qname ).make
-    curApp.spec = appSpec
-    appContainer.content = curApp
-    Fui.cur.updateTitle
-    appContainer.relayout
-  }
-  
-  // getOption checks the database for config options
-  // TODO: interface with db
-  Obj getOption( Str opt ) {
-    switch ( opt ) {
-      case "bgcolor": return Gradient("0% 50%, 100% 50%, #f00 0.1, #00f 0.9")
-      default:        throw Err("Option not found")
+    if ( appSpec != curApp?.spec ) {
+      curApp = (App) Type.find( appSpec.qname ).make
+      curApp.spec = appSpec
+      appContainer.content = curApp
+      appContainer.relayout
     }
+    Fui.cur.updateTitle
   }
   
   Void main() {
+    Env.cur.vars.each |v, k| { Actor.locals[ k ] = v }
     fui := Fui.cur
     _setContent( fui.appMap[ Env.cur.vars[ "fui.app" ] ] )
     window := Window { it.content = this }.open
-    Win.cur.onEvent( "hashchange", false ) { curApp.reload }
+    //Win.cur.onEvent( "hashchange", false ) { echo( "hashchange" ); curApp.reload }
     Win.cur.onEvent( "popstate", false ) { _reload }
     Win.cur.onEvent( "error", false ) { echo( "JS Event: Error" ) }
     Win.cur.onEvent( "beforeunload", false ) |e| {
@@ -89,5 +84,6 @@ class Main : ContentPane {
     }
     Actor.locals[ "appLoaded" ] = true // Do we need this?
     curApp.reload
+    curApp.onGoto
   }
 }

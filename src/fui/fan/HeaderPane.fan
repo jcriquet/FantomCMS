@@ -85,5 +85,6 @@ class HeaderPane : StatePane{
   
   override Void onLoadState(State state){
     themedMain.bg = FuiThemes.getBg( "header" )
+    themedMain.repaint
   }
 }

@@ -12,6 +12,7 @@ using web
 const class ThemesExt : Ext, Weblet {
   override Void onGet() {
     Str:Obj? json := [:]
+    json[ "myTheme" ] = "default"
     json[ "list" ] = DBConnector.cur.db[ "themes" ].group( ["name", "title"], [:], Code.makeCode( "function(){}" ) )
     reqTheme := req.modRel.toStr
     if ( ( ([Str:Obj?][]) json[ "list" ] ).any |map| { map[ "name" ] == reqTheme } ) {

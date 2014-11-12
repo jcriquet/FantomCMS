@@ -57,5 +57,6 @@ class FooterPane : StatePane{
       this.relayout
     }
     themedMain.bg = FuiThemes.getBg( "footer" )
+    themedMain.repaint
   }
 }

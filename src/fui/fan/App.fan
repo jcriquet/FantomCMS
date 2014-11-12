@@ -37,28 +37,49 @@ abstract class App : StatePane {
   
   State loadState( Str key ) {
     json := Win.cur.sessionStorage[ key ]
-    return json == null ? State() : State.fromStr( json )
+    return json == null ? State( key ) : State.fromStr( key, json )
+  }
+  
+  Void updateState() {
+    if ( inLoad ) throw Err( "Cannot call updateState during onLoadState" )
+    if ( Win.cur.uri.relToAuth.relTo( Fui.cur.appUri( name ) ).path.getSafe( 0 ) == ".." ) return
+    key := Win.cur.uri.relToAuth.relTo( Fui.cur.baseUri ).pathOnly.toStr + "#" + Win.cur.uri.frag
+    state := loadState( key ).rw
+    onSaveState( state )
+    Fui.cur.main.headerPane.onSaveState( state )
+    Fui.cur.main.footerPane.onSaveState( state )
+    Win.cur.sessionStorage[ key ] = state.toStr
   }
   
   Void modifyState() {
     if ( inLoad ) throw Err( "Cannot call modifyState during onLoadState" )
-    state := State()
+    if ( Win.cur.uri.relToAuth.relTo( Fui.cur.appUri( name ) ).path.getSafe( 0 ) == ".." ) return
+    Str? frag
+    Str? key
+    while ( true ) {
+      frag = _genKey
+      key = Win.cur.uri.relToAuth.relTo( Fui.cur.baseUri ).pathOnly.toStr + "#" + frag
+      echo( key )
+      if ( Win.cur.sessionStorage[ key ] == null ) break
+    }
+    state := State( key )
+    onSaveState( state )
     Fui.cur.main.headerPane.onSaveState( state )
     Fui.cur.main.footerPane.onSaveState( state )
-    onSaveState( state )
     inModify = true
-    key := _genKey
     Win.cur.sessionStorage[ key ] = state.toStr
-    Win.cur.hyperlink( "#$key".toUri )
+    Win.cur.hyperlink( "#$frag".toUri )
   }
   
   Void reload() {
+    if ( Win.cur.uri.relToAuth.relTo( Fui.cur.appUri( name ) ).path.getSafe( 0 ) == ".." ) return
     inModify = false
     inLoad = true
-    state := loadState( Win.cur.uri.frag ?: "" ).ro
+    state := loadState( Win.cur.uri.relToAuth.relTo( Fui.cur.baseUri ).pathOnly.toStr + "#" + Win.cur.uri.frag ).ro
+    echo( state )
+    onLoadState( state )
     Fui.cur.main.headerPane.onLoadState( state )
     Fui.cur.main.footerPane.onLoadState( state )
-    onLoadState( state )
     inLoad = false
     Fui.cur.updateTitle
   }

@@ -3,6 +3,9 @@ using util
 @Js
 class State {
   private Str:Obj map := [:]
+  const Str key
+  
+  new make( Str key ) { this.key = key }
   
   Bool has( Str key ) { map.containsKey( key ) }
   @Operator
@@ -24,13 +27,13 @@ class State {
   Bool isRW() { map.isRW }
   This ro() {
     if ( map.isRO ) return this
-    copy := State()
+    copy := State( key )
     copy.map = map.ro
     return copy
   }
   This rw() {
     if ( map.isRW ) return this
-    copy := State()
+    copy := State( key )
     copy.map = map.rw
     return copy
   }
@@ -48,10 +51,9 @@ class State {
     return valueToStr( map )
   }
   
-  static State? fromStr( Str json, Bool checked := true ) {
-    echo( json )
+  static State? fromStr( Str key, Str json, Bool checked := true ) {
     try {
-      state := State()
+      state := State( key )
       state.map = JsonInStream( json.in ).readJson
       return state
     } catch ( Err e ) {
