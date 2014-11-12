@@ -10,7 +10,7 @@ using util
 @Js
 class HtmlEditorApp : App {
   OverlayPane? editPane
-  ItemList list := ItemList()
+  ItemList list := ItemList(this)
   
   new make() : super() {
     content = GridPane{
@@ -41,34 +41,37 @@ class HtmlEditorApp : App {
       },
     }
   }
+
+  Void doRefresh(){
+    this.list.updateList
+  }
   
   private Void doNew(){
-    this.editPane = HtmlEditor()
+    this.editPane = HtmlEditor(this)
     editPane.open(this, Point(this.pos.x + 100, this.pos.y + 100))
   }
 
   private Void doEdit(){
-    this.editPane = HtmlEditor(list.getItem.title, list.getItem.uri, list.getItem.itemData)
+    this.editPane = HtmlEditor(this, list.getItem.title, list.getItem.uri, list.getItem.itemData)
     editPane.open(this, Point(this.pos.x + 100, this.pos.y + 100))
   }
 
   private Void doDelete(){
-    Win.cur.alert("You wanted to delete [${list.getItem.text}]\nThe delete feature is not yet implemented.")
+    this.apiCall(`delete`).post(list.getItem.uri) |res| { 
+      this.doRefresh
+    }
   }
-
-  private Void doRefresh(){
-    this.list.updateList
-  }
-
 }
 
 @Js
 class ItemList : WebList {
+  HtmlEditorApp app
   ItemLabel[] itemList := [,]
 
-  new make() : super(){
+  new make(HtmlEditorApp app) : super(){
+    this.app = app
     this.onSelect.add { doSelected() }
-    updateList
+    this.updateList
   }
 
   Void updateList(){

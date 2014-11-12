@@ -77,7 +77,29 @@ const class HtmlEditorExt : Ext, Weblet {
         out.writeChar( 'a' )
         out.close
         res.done
+
+      // delete
+      case "delete":
+        Int i := DBConnector.cur.db["pages"].delete(["uri":req.in.readAllStr])
+        if(i > 0){
+          res.statusCode = 200
+        }else{
+          res.statusCode = 500
+        }
+        res.headers[ "Content-Type" ] = "text/plain"
+        res.headers[ "Content-Length" ] = "1"
+        out := res.out
+        out.writeChar( 'a' )
+        out.close
+        res.done
       default:
+        res.statusCode = 500
+        res.headers[ "Content-Type" ] = "text/plain"
+        res.headers[ "Content-Length" ] = "1"
+        out := res.out
+        out.writeChar( 'a' )
+        out.close
+        res.done
     }
   }
 }

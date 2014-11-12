@@ -8,13 +8,16 @@ using util
 @Js
 class HtmlEditor : OverlayPane
 {
+  HtmlEditorApp app
   Bool newFile := false
   Text filenameText := Text{}
   Text uriText := Text{}
   Str? html
   Editor editor
   
-  new make(Str? title := null, Str? uri := null, Str? file := null) : super(){
+  new make(HtmlEditorApp app, Str? title := null, Str? uri := null, Str? file := null) : super(){
+    this.app = app
+    this.onClose.add { app.doRefresh }
     if(file == null) newFile = true
     else{
       Buf a := Buf()
@@ -88,7 +91,7 @@ class HtmlEditor : OverlayPane
     a.writeObj(htmlData)
     a.flip
     toSend := ["title":this.filenameText.text, "data":a.readAllStr, "uri":this.uriText.text]
-    HttpReq { uri = Fui.cur.baseUri + `/api/htmleditor/newpage` }.postForm(toSend) |res| {
+    this.app.apiCall(`newpage`).postForm(toSend) |res| {
       echo( res.status )
       echo( res.content )
       echo( res.headers )
@@ -125,7 +128,7 @@ class HtmlEditor : OverlayPane
       }
       it.onClose.add { 
         if(toOverwrite){
-          HttpReq { uri = Fui.cur.baseUri + `/api/htmleditor/overwrite` }.postForm(toSend) |res| {
+          this.app.apiCall(`overwrite`).postForm(toSend) |res| {
             switch(res.status){
               case 201:
                 Win.cur.alert("Overwritten.")
