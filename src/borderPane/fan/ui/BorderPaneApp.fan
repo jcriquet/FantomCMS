@@ -11,7 +11,7 @@ class BorderPaneApp : App {
       it.bg = Color.black
       it.insets = Insets(30, 30)
       GridPane {
-        numCols = 4
+        numCols = 5
         
         BorderPane {
           it.bg = Color.blue
@@ -36,6 +36,10 @@ class BorderPaneApp : App {
         },
         Label { 
           text = "This is a BorderPane example!"
+          fg = Color.white
+        },
+        GotoButton(`fui://app/pages/`) {
+          it.text = "Back"
         },
       },
     }
@@ -44,20 +48,20 @@ class BorderPaneApp : App {
   override Void onSaveState( State state ) {
     buf := Buf()
     out := buf.out
-    out.writeObj(this.content, ["indent":2])
+    out.writeObj(this.content)
     out.close
     buf.flip
     echo( buf.readAllStr.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n"))
   }
   
-//  Void main() {
-//    buf := Buf()
-//    out := buf.out
-//    out.writeObj(this.content, ["indent":2])
-//    out.close
-//    buf.flip
-//    echo( buf.readAllStr.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n"))
-//  }
+  Void main() {
+    buf := Buf()
+    out := buf.out
+    out.writeObj(this.content)
+    out.close
+    buf.flip
+    echo( buf.readAllStr.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n"))
+  }
   
   override Void onLoadState( State state ) {
   }

@@ -55,7 +55,7 @@ class SecurityApp : App {
     
     cb := |Str str| { echo( str ) }
     
-    bcrypt.hashPw(password, salt, cb->func )
+    bcrypt.hashPw(password, salt, cb )
   }
   
   override Void onLoadState( State state ) {
