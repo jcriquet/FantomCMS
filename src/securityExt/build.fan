@@ -5,8 +5,8 @@ class Build : build::BuildPod {
     version   = Version( [ 1, 0, 0 ] )
     summary   = ""
     srcDirs   = [`fan/`, `fan/ui/`]
-    jsDirs    = [`js/Clipperz/Crypto/`, `js/Clipperz/`, `js/` ]
-    outPodDir = `../../lib/fan/`
+    jsDirs    = [`js/` ]
+    outPodDir = Env.cur.homeDir.uri + `lib/fan/`
     depends   = ["sys 1.0",
                  "fui 1.0",
                  "fwt 1.0",

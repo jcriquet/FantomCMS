@@ -7,13 +7,9 @@ using gfx
 
 @Js
 class SecurityApp : App {
-  
+  Text passwordField := Text { password = true }
+    
   new make() : super() {
-    bcrypt := Bcrypt()
-    something := bcrypt.genSalt( 5 )
-    echo( something.typeof )
-    echo( something )
-    //mypass := BCrypt.hashpw("foobar", BCrypt.gensalt())
     content = BorderPane {
       it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
       GridPane {
@@ -33,13 +29,12 @@ class SecurityApp : App {
             },
             Button {
               text = "Log in"
+              onAction.add { modifyState }
             },
             Label { 
               text = "Password"
             },
-            Text {
-              password = true;
-            },
+            passwordField,
             Button {
               mode = ButtonMode.check;
               text = "Remember me";
@@ -51,6 +46,16 @@ class SecurityApp : App {
   }
   
   override Void onSaveState( State state ) {
+    bcrypt := Bcrypt()
+    salt := bcrypt.genSalt( 5 )
+    
+    password := passwordField.text
+    
+    echo( password )
+    
+    cb := |Str str| { echo( str ) }
+    
+    bcrypt.hashPw(password, salt, cb->func )
   }
   
   override Void onLoadState( State state ) {

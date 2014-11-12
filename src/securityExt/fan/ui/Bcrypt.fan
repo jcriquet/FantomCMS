@@ -4,7 +4,7 @@
 native class Bcrypt {
   new make()
   Str genSalt( Int rounds )
-  Str hashPw( Str password, Str salt, |Str| callback, |->| progress )
+  Void hashPw( Str password, Str salt, |Str| callback, |->|? progress := null )
 }
 
 
