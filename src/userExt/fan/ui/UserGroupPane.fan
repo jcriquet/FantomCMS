@@ -15,13 +15,70 @@ class UserGroupPane : UserPane {
     content = EdgePane {
       top = EdgePane {
         left = Label {
-          text = "MANAGE USERS"
-        }
-        right = Text {
-          text = "Search"
+          text = "MANAGE USER GROUPS"
         }
       }
-      center = table
+      //center = table
+      center = GridPane {
+          numCols = 2
+          uniformCols = true
+          Label {
+            text = "AUTHORS"
+          },
+          ContentPane{},
+          Label {
+            text = "Can use Pages app?"
+          },
+          Button {
+            mode = ButtonMode.check
+          },
+          Label {
+            text = "Can use Themes app?"
+          },
+          Button {
+            mode = ButtonMode.check
+          },
+          Label {
+            text = "Can use Users app?"
+          },
+          Button {
+            mode = ButtonMode.check
+          },
+          Label {
+            text = "Can use Settings app?"
+          },
+          Button {
+            mode = ButtonMode.check
+          },
+          Label {
+            text = "ADMINISTRATORS"
+          },
+          ContentPane{},
+          Label {
+            text = "Can use Pages app?"
+          },
+          Button {
+            mode = ButtonMode.check
+          },
+          Label {
+            text = "Can use Themes app?"
+          },
+          Button {
+            mode = ButtonMode.check
+          },
+          Label {
+            text = "Can use Users app?"
+          },
+          Button {
+            mode = ButtonMode.check
+          },
+          Label {
+            text = "Can use Settings app?"
+          },
+          Button {
+            mode = ButtonMode.check
+          },
+      }
     }
   }
   

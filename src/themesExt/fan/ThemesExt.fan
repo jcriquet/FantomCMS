@@ -7,6 +7,7 @@ using web
 @ExtMeta {
   name = "themes"
   app = themesExt::ThemesApp#
+  icon = "themes-50.png"
 }
 const class ThemesExt : Ext, Weblet {
   override Void onGet() {

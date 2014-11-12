@@ -6,7 +6,7 @@ class Build : build::BuildPod {
     summary   = ""
     srcDirs   = [`fan/`]
     resDirs   = [`res/img/`]
-    outPodDir = `../../lib/fan/`
+    outPodDir = Env.cur.homeDir.uri + `lib/fan/`
     depends   = ["sys 1.0",
                  "concurrent 1.0",
                  "dom 1.0",
