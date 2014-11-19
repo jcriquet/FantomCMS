@@ -1,7 +1,7 @@
 buildfast:
 	- bin/fan build.fan
 
-build: db proj fui homeExt loginExt settingsExt securityExt pagesExt userExt dockTestExt themesExt htmlEditorExt
+build: db proj fui homeExt loginExt settingsExt pagesExt userExt dockTestExt themesExt htmlEditorExt firstDemoPageExt
 
 run : buildfast
 	- bin/fcms
@@ -44,3 +44,5 @@ borderPaneExt :
 
 themesExt :
 	- cd src/themesExt; ../../bin/fan build.fan
+firstDemoPageExt :
+	- cd src/firstDemoPageExt; ../../bin/fan build.fan
