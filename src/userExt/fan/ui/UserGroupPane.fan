@@ -28,11 +28,22 @@ class UserGroupPane : UserPane {
     permissionArray.add(false)
     echo(permissionArray)*/
     
-    map := [Str:Bool][:]
-    map.add("cat1", true)
-    map.add("cat2", false)
-    map.set("cat1", false)
-    echo(map)
+    //Build state of data from checkboxes into map
+    permissionMap := [Str:Map][:]
+    
+    adminPerm := [Str:Bool][:]
+    permissionMap.add("admins", adminPerm)
+    
+    adminPerm.add("Pages", true)
+    echo(permissionMap)
+    echo(permissionMap["admins"])
+    echo(adminPerm)
+    /*permissionMap.add("cat1", true)
+    permissionMap.add("cat2", false)
+    permissionMap.set("cat1", false)
+    echo(permissionMap)
+    echo(permissionMap["cat1"])
+    echo(permissionMap["cat2"])*/
     
     currCol := "nothing"
     
@@ -61,9 +72,13 @@ class UserGroupPane : UserPane {
             echo(currCol)
             Label { it.text = cell.toStr },
           } else {
-            currCol = "checkbox"
-            echo(currCol)
-            Button { mode = ButtonMode.check },
+            echo(col)
+            Button {
+              mode = ButtonMode.check
+              onAction.add {
+                echo(col)
+              }
+            },
           }
         }
       }
