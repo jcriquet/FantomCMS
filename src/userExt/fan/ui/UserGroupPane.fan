@@ -23,6 +23,19 @@ class UserGroupPane : UserPane {
   }
   
   override Void onLoadState( State state ) {
+    /*permissionArray := Bool[true, true, true]
+    permissionArray[0] = false
+    permissionArray.add(false)
+    echo(permissionArray)*/
+    
+    map := [Str:Bool][:]
+    map.add("cat1", true)
+    map.add("cat2", false)
+    map.set("cat1", false)
+    echo(map)
+    
+    currCol := "nothing"
+    
     app.apiCall( `groups`, app.name ).get |res| {
       json := ([Str:Obj?][]) JsonInStream( res.content.in ).readJson
       insets := Insets( 7 )
@@ -31,6 +44,8 @@ class UserGroupPane : UserPane {
           if ( row == null ) return BorderPane {
             border = Border( "1 solid #000000" )
             it.insets = insets
+            currCol = col
+            echo(currCol)
             Label { text = col.toStr.capitalize },
           }
           else return BorderPane {
@@ -42,8 +57,12 @@ class UserGroupPane : UserPane {
           border = Border( "1 solid #000000" )
           it.insets = insets
           if(col == "name") {
+            currCol = cell
+            echo(currCol)
             Label { it.text = cell.toStr },
           } else {
+            currCol = "checkbox"
+            echo(currCol)
             Button { mode = ButtonMode.check },
           }
         }
