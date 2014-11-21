@@ -1,3 +1,4 @@
+using db
 using util
 using web
 
@@ -36,7 +37,8 @@ const class AppMod : WebMod {
       "fui.app" : appStr,
       "fui.apps" : buf.toStr
     ]
-    if ( getTheme != null ) clientData.addAll( getTheme.call( "default" ) )
+    curTheme := DBConnector.cur.db[ "settings" ].findOne( ["ext":"themesExt"], false )[ "default" ].toStr
+    if ( getTheme != null ) clientData.addAll( getTheme.call( curTheme ) )
     
     res.headers["Content-Type"] = "text/html; charset=utf-8"
     out := res.out
