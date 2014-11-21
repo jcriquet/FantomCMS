@@ -31,21 +31,21 @@ class UserGroupPane : UserPane {
     //Build state of data from checkboxes into map
     permissionMap := [Str:Map][:]
     
-    adminPerm := [Str:Bool][:]
+    /*adminPerm := [Str:Bool][:]
     permissionMap.add("admins", adminPerm)
-    
     adminPerm.add("Pages", true)
     echo(permissionMap)
     echo(permissionMap["admins"])
     echo(adminPerm)
-    /*permissionMap.add("cat1", true)
+    permissionMap.add("cat1", true)
     permissionMap.add("cat2", false)
     permissionMap.set("cat1", false)
     echo(permissionMap)
     echo(permissionMap["cat1"])
     echo(permissionMap["cat2"])*/
     
-    currCol := "nothing"
+    currCol := "na"
+    tempMap := [Str:Bool][:]
     
     app.apiCall( `groups`, app.name ).get |res| {
       json := ([Str:Obj?][]) JsonInStream( res.content.in ).readJson
@@ -55,8 +55,9 @@ class UserGroupPane : UserPane {
           if ( row == null ) return BorderPane {
             border = Border( "1 solid #000000" )
             it.insets = insets
-            currCol = col
-            echo(currCol)
+            if(col != "name") {
+              tempMap.add(col, false)
+            }
             Label { text = col.toStr.capitalize },
           }
           else return BorderPane {
@@ -69,19 +70,22 @@ class UserGroupPane : UserPane {
           it.insets = insets
           if(col == "name") {
             currCol = cell
-            echo(currCol)
+            permissionMap.add(cell, tempMap)
+            tempMap = [Str:Bool][:]
             Label { it.text = cell.toStr },
           } else {
-            echo(col)
             Button {
               mode = ButtonMode.check
               onAction.add {
-                echo(col)
+                echo(currCol)
+                permissionMap[currCol][col] = true
+                echo(permissionMap)
               }
             },
           }
         }
       }
+      echo(permissionMap);
     }
   }
 }
