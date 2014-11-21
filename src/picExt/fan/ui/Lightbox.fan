@@ -13,7 +13,7 @@ class Lightbox : OverlayPane
     this.image = image
     this.size = Size(this.image.size.w+30, this.image.size.h+50)
     this.content = BorderPane{
-      it.insets = Insets(15)
+      it.insets = Insets(5)
       it.bg = Color.white
       it.border = Border.fromStr("1")
       EdgePane{
@@ -26,6 +26,7 @@ class Lightbox : OverlayPane
           },
         }
         it.center = BorderPane{
+          it.insets = Insets(10)
           it.bg = Color.white
           it.content = Label{it.image = this.image}
         }
