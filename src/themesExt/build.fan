@@ -15,6 +15,7 @@ class Build : build::BuildPod {
                  "fwt 1.0",
                  "gfx 1.0",
                  "proj 1.0",
+                 "settingsExt 1.0",
                  "util 1.0",
                  "web 1.0",
                  "webfwt 1.0"]
