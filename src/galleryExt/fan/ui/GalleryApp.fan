@@ -20,6 +20,8 @@ class GalleryApp : App {
           },
         }
         center = BorderPane {
+          it.border = Border.fromStr( "3 solid #000000 30" )
+          it.insets = Insets( 10, 16 )
           it.bg = Color.purple
         }
         right = ConstraintPane {
