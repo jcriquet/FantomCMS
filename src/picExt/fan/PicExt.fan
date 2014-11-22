@@ -2,7 +2,7 @@ using util
 using proj
 using web
 @ExtMeta {
-  name = "picExt"
+  name = "pic"
   app = picExt::PicExt#
 }
 const class PicExt : Ext, Weblet {
