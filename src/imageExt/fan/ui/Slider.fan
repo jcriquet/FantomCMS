@@ -1,4 +1,5 @@
 using fwt
+using fui
 using dom
 using gfx
 using webfwt
@@ -10,11 +11,13 @@ class Slider : OverlayPane
   Image[] imageList
   Size s
   ImageScrollPane isp
+  OverlayContainer oc
 
   new make(Widget toOpenIn, Image[] list, Size s := Size((toOpenIn.size.w * .5F).toInt, (toOpenIn.size.h * .5F).toInt)) : super(){
     this.s = s
     this.toOpenIn = toOpenIn
     this.imageList = list
+    this.oc = OverlayContainer(toOpenIn, this)
     
     // Start UI
     this.content = BorderPane{
@@ -60,7 +63,7 @@ class Slider : OverlayPane
   }
 
   Void display(){
-    super.open(this.toOpenIn, getCoords)
+    oc.display(this.toOpenIn, getCoords)
   }
   
   Void doRight(){

@@ -1,4 +1,5 @@
 using fwt
+using fui
 using gfx
 using webfwt
 
@@ -7,10 +8,12 @@ class Lightbox : OverlayPane
 {
   Widget toOpenIn
   Image image
+  OverlayContainer oc
 
   new make(Widget toOpenIn, Image image) : super(){
     this.toOpenIn = toOpenIn
     this.image = image
+    this.oc = OverlayContainer(toOpenIn, this)
     this.size = Size(this.image.size.w+30, this.image.size.h+50)
     this.content = BorderPane{
       it.insets = Insets(5)
@@ -36,12 +39,13 @@ class Lightbox : OverlayPane
 
   new makeFromUri(Widget toOpenIn, Uri uri) : super.make(){
     this.toOpenIn = toOpenIn
+    this.oc = OverlayContainer(toOpenIn, this)
     this.image = Image.make(uri)
     this.size = Size(this.image.size.w+30, this.image.size.h+75)
   }
 
   Void display(){
-    super.open(this.toOpenIn, getCoords)
+    oc.display(this.toOpenIn, getCoords)
   }
   
   // get coords that will display the lightbox in the center of the widget
