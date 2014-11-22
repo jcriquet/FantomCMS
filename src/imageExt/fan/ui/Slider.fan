@@ -40,13 +40,23 @@ class Slider : OverlayPane
           }
         }
 
-        it.right = Label { it.text = "->" ; it.onMouseDown.add { doRight() }}
-        it.left = Label { it.text = "<-" ; it.onMouseDown.add { doLeft() }}
+        it.right = GridPane{
+          it.halignCells = Halign.center
+          it.valignCells = Valign.center
+          it.halignPane = Halign.center
+          it.valignPane = Valign.center
+          Label { it.text = "->" ; it.onMouseDown.add { doRight() }},
+        }
+        it.left = GridPane{
+          it.halignCells = Halign.center
+          it.valignCells = Valign.center
+          it.halignPane = Halign.center
+          it.valignPane = Valign.center
+          Label { it.text = "<-" ; it.onMouseDown.add { doLeft() }},
+        }
       },
     }
     // End UI
-    
-    
   }
 
   Void display(){
@@ -55,20 +65,18 @@ class Slider : OverlayPane
   
   Void doRight(){
     isp.scrollRight
-    relayout
   }
 
   Void doLeft(){
     isp.scrollLeft
-    relayout
   }
   
   // get coords that will display the lightbox in the center of the widget
   Point getCoords(){
     x := toOpenIn.size.w
     y := toOpenIn.size.h
-    w := this.size.w
-    h := this.size.h
+    w := this.s.w
+    h := this.s.h
     
     x1 := ((x/2).toInt)-((w/2).toInt)
     y1 := ((y/2).toInt)-((h/2).toInt)
@@ -78,18 +86,17 @@ class Slider : OverlayPane
   override Size prefSize(Hints h := Hints.defVal){
     return this.s
   }
-  
 }
   
 @Js
-class ImageScrollPane : ScrollPane{
+class ImageScrollPane : ContentPane{
   GridPane contentGrid
+  Image[] items := [,]
   Size s
+  Int index := 0
 
   new make(Size s) : super(){
     this.s = Size(s.w, Size.defVal.h)
-    this.vbar.visible = false
-    this.vbar.enabled = false
     content = this.contentGrid = GridPane{
       it.halignCells = Halign.center
       it.valignCells = Valign.center
@@ -101,17 +108,28 @@ class ImageScrollPane : ScrollPane{
   }
   
   Void addImage(Image i){
-    this.contentGrid.numCols++
-    this.contentGrid.add(Label{it.image = i})
+    if(this.contentGrid.numCols < 5) this.contentGrid.numCols++
+    this.items.add(i)
+    if(this.contentGrid.children.size < 5) this.contentGrid.add(Label{it.image=i})
     this.relayout
   }
   
   Void scrollRight(){
-    this.hbar.val += 25
+    if(this.index + 5 < this.items.size){
+      this.index++
+      this.contentGrid.remove(this.contentGrid.children[0])
+      this.contentGrid.add(Label{it.image=this.items[this.index]})
+      this.relayout
+    }
   }
   
   Void scrollLeft(){
-    this.hbar.val -= 25
+    if(this.index - 1 >= 0){
+      this.index--
+      this.contentGrid.remove(this.contentGrid.children[4])
+      this.contentGrid.insert(0, Label{it.image=this.items[this.index]})
+      this.relayout
+    }
   }
   
   override Size prefSize(Hints h := Hints.defVal){
