@@ -8,7 +8,9 @@ using web
   name = "firstDemoPage"
   label = "First Demo Page"
   app = firstDemoPageExt::FirstDemoPageApp#
+  icon = "settings-50.png"
 }
+
 const class FirstDemoPageExt : Ext, Weblet {
   
 }
