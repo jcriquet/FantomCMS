@@ -24,9 +24,15 @@ class GalleryApp : App {
           it.insets = Insets( 10, 16 )
           it.bg = Color.purple
           //numCols = 50
-          Image a := Image(Fui.cur.baseUri + `pod/fui/res/img/default-50.png`)
-          me := it
-          50.times { me.add( Label { it.image = a } ) }
+          Image a := Image("https://i.imgur.com/bkqu6Ss.jpg")
+          //me := it
+          //50.times { me.add( Label { it.image = a } ) }
+          GridPane {
+            it.halignPane = Halign.center
+            it.valignPane = Valign.center
+            
+            Label { it.image = a },            
+          },
         }
         right = ConstraintPane {
           it.minw = it.maxw = 100
