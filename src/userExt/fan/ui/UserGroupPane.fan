@@ -23,6 +23,30 @@ class UserGroupPane : UserPane {
   }
   
   override Void onLoadState( State state ) {
+    /*permissionArray := Bool[true, true, true]
+    permissionArray[0] = false
+    permissionArray.add(false)
+    echo(permissionArray)*/
+    
+    //Build state of data from checkboxes into map
+    permissionMap := [Str:Map][:]
+    
+    /*adminPerm := [Str:Bool][:]
+    permissionMap.add("admins", adminPerm)
+    adminPerm.add("Pages", true)
+    echo(permissionMap)
+    echo(permissionMap["admins"])
+    echo(adminPerm)
+    permissionMap.add("cat1", true)
+    permissionMap.add("cat2", false)
+    permissionMap.set("cat1", false)
+    echo(permissionMap)
+    echo(permissionMap["cat1"])
+    echo(permissionMap["cat2"])*/
+    
+    currCol := "na"
+    tempMap := [Str:Bool][:]
+    
     app.apiCall( `groups`, app.name ).get |res| {
       json := ([Str:Obj?][]) JsonInStream( res.content.in ).readJson
       insets := Insets( 7 )
@@ -31,6 +55,9 @@ class UserGroupPane : UserPane {
           if ( row == null ) return BorderPane {
             border = Border( "1 solid #000000" )
             it.insets = insets
+            if(col != "name") {
+              tempMap.add(col, false)
+            }
             Label { text = col.toStr.capitalize },
           }
           else return BorderPane {
@@ -42,12 +69,23 @@ class UserGroupPane : UserPane {
           border = Border( "1 solid #000000" )
           it.insets = insets
           if(col == "name") {
+            currCol = cell
+            permissionMap.add(cell, tempMap)
+            tempMap = [Str:Bool][:]
             Label { it.text = cell.toStr },
           } else {
-            Button { mode = ButtonMode.check },
+            Button {
+              mode = ButtonMode.check
+              onAction.add {
+                echo(currCol)
+                permissionMap[currCol][col] = true
+                echo(permissionMap)
+              }
+            },
           }
         }
       }
+      echo(permissionMap);
     }
   }
 }

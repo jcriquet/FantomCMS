@@ -20,11 +20,12 @@ const class WebService : WispService {
     exts := Str:Type[:]
     Env.cur.index( "proj.ext" ).each |qname| {
       type := Type.find( qname )
-      name := ( type.facets.find |f| { f is ExtMeta } as ExtMeta )?.name
-      if ( type.fits( Ext# ) && name != null ) exts[ name ] = type
+      if ( !type.fits( Ext# ) ) return
+      meta := ( type.facets.find |f| { f is ExtMeta } as ExtMeta )
+      if ( meta != null ) exts[ meta.name ] = type
     }
     
-    DBConnector.cur.startup( exts.keys )
+    DBConnector.cur.startup( exts.vals.map |type| { type.pod.toStr } )
     
     appMod := AppMod( exts )
     root = RouteMod { it.routes = [

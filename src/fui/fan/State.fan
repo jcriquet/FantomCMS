@@ -38,17 +38,15 @@ class State {
     return copy
   }
   
-  override Str toStr() {
-    |Obj?->Str|? valueToStr
-    valueToStr = |Obj? value->Str| {
-      if ( value == null ) return "null"
-      if ( value is Num || value is Bool ) return value.toStr
-      if ( value is Str ) return "\"" + ( (Str) value ).replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\""
-      if ( value is Str:Obj? ) return "{" + ( (Str:Obj?) value ).join( "," ) |v, k| { "\"$k\":" + valueToStr( v ) } + "}"
-      if ( value is Obj?[] ) return "[" + ( (Obj?[]) value ).join( "," ) |v| { valueToStr( v ) } + "]"
-      return "null"
-    }
-    return valueToStr( map )
+  override Str toStr() { valueToStr( map ) }
+  
+  static Str valueToStr( Obj? value ) {
+    if ( value == null ) return "null"
+    if ( value is Num || value is Bool ) return value.toStr
+    if ( value is Str ) return "\"" + ( (Str) value ).replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\""
+    if ( value is Str:Obj? ) return "{" + ( (Str:Obj?) value ).join( "," ) |v, k| { "\"$k\":" + valueToStr( v ) } + "}"
+    if ( value is Obj?[] ) return "[" + ( (Obj?[]) value ).join( "," ) |v| { valueToStr( v ) } + "]"
+    return "null"
   }
   
   static State? fromStr( Str key, Str json, Bool checked := true ) {

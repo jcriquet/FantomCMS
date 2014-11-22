@@ -1,16 +1,24 @@
+using db
 using util
 using web
 
 const class AppMod : WebMod {
   const Str:AppSpec appMap
+  const Pod[] podList
   static const Method? getTheme := Type.find( "themesExt::ThemesExt" ).method( "getTheme" )
   
   new make( Str:Type exts ) {
-    appMap = exts.map |ext, name| {
-      meta := ( ext.facets.find |f| { f is ExtMeta } as ExtMeta )
-      app := meta?.app
+    podList := Pod[,]
+    metas := (Str:ExtMeta) exts.map |ext->ExtMeta?| {
+      podList.remove( ext.pod )
+      podList.add( ext.pod )
+      return ext.facets.find |f| { f is ExtMeta } as ExtMeta
+    }.exclude |meta| { meta == null }
+    appMap = metas.map |meta, name| {
+      app := meta.app
       return app == null ? null : AppSpec( name, app.qname, meta.label ?: name.capitalize, meta.icon ?: "default-50.png" )
     }.exclude |app| { app == null }
+    this.podList = podList
   }
   
   override Void onGet() {
@@ -36,7 +44,8 @@ const class AppMod : WebMod {
       "fui.app" : appStr,
       "fui.apps" : buf.toStr
     ]
-    if ( getTheme != null ) clientData.addAll( getTheme.call( "default" ) )
+    curTheme := DBConnector.cur.db[ "settingsExt" ].findOne( ["ext":"themesExt"], false )?.get( "default" )?.toStr
+    if ( getTheme != null ) clientData.addAll( getTheme.call( curTheme ) )
     
     res.headers["Content-Type"] = "text/html; charset=utf-8"
     out := res.out
@@ -54,7 +63,7 @@ const class AppMod : WebMod {
       out.includeJs( `/pod/webfwt/webfwt.js` )
       out.includeJs( `/pod/proj/proj.js` )
       out.includeJs( `/pod/fui/fui.js` )
-      appMap.vals.each |spec| { podStr := spec.qname[ 0..<spec.qname.index( "::" ) ]; out.includeJs( "/pod/$podStr/${podStr}.js".toUri ) }
+      podList.each |pod| { out.includeJs( "/pod/$pod/${pod}.js".toUri ) }
       WebUtil.jsMain( out, "fui::Main", clientData )
     out.headEnd
     out.body
