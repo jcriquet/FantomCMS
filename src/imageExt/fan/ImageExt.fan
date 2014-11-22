@@ -2,10 +2,9 @@ using util
 using proj
 using web
 @ExtMeta {
-  name = "pic"
-  app = picExt::PicExt#
+  name = "image"
 }
-const class PicExt : Ext, Weblet {
+const class ImageExt : Ext, Weblet {
   
   override Void onGet() {
     type := req.modRel.path.first

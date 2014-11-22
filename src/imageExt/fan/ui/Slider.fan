@@ -1,4 +1,5 @@
 using fwt
+using dom
 using gfx
 using webfwt
 
@@ -7,11 +8,13 @@ class Slider : OverlayPane
 {
   Widget toOpenIn
   Image[] imageList
+  Size s
+  ImageScrollPane isp
 
   new make(Widget toOpenIn, Image[] list, Size s := Size((toOpenIn.size.w * .5F).toInt, (toOpenIn.size.h * .5F).toInt)) : super(){
+    this.s = s
     this.toOpenIn = toOpenIn
     this.imageList = list
-    this.size = s
     
     // Start UI
     this.content = BorderPane{
@@ -31,13 +34,14 @@ class Slider : OverlayPane
           it.insets = Insets(10)
           it.bg = Color.white
           // Content here
-          it.content = ImageScrollPane{
-            
-
+          isp = it.content = ImageScrollPane(s){ }
+          this.imageList.each |img| {   
+            isp.addImage(img)
           }
         }
-        it.right = Label { it.text = "->" ; it.onMouseDown.add { this.doRight() }}
-        it.right = Label { it.text = "<-" ; it.onMouseDown.add { this.doLeft() }}
+
+        it.right = Label { it.text = "->" ; it.onMouseDown.add { doRight() }}
+        it.left = Label { it.text = "<-" ; it.onMouseDown.add { doLeft() }}
       },
     }
     // End UI
@@ -49,12 +53,14 @@ class Slider : OverlayPane
     super.open(this.toOpenIn, getCoords)
   }
   
-  Void onRight(){
-    
+  Void doRight(){
+    isp.scrollRight
+    relayout
   }
 
-  Void onLeft(){
-    
+  Void doLeft(){
+    isp.scrollLeft
+    relayout
   }
   
   // get coords that will display the lightbox in the center of the widget
@@ -69,15 +75,28 @@ class Slider : OverlayPane
     return Point(x1, y1)
   }
   
+  override Size prefSize(Hints h := Hints.defVal){
+    return this.s
+  }
+  
 }
   
 @Js
 class ImageScrollPane : ScrollPane{
   GridPane contentGrid
+  Size s
 
-  new make() : super(){
+  new make(Size s) : super(){
+    this.s = Size(s.w, Size.defVal.h)
+    this.vbar.visible = false
+    this.vbar.enabled = false
     content = this.contentGrid = GridPane{
-      
+      it.halignCells = Halign.center
+      it.valignCells = Valign.center
+      it.halignPane = Halign.center
+      it.valignPane = Valign.center
+      it.hgap = 25
+      it.numCols = 0
     }
   }
   
@@ -85,5 +104,17 @@ class ImageScrollPane : ScrollPane{
     this.contentGrid.numCols++
     this.contentGrid.add(Label{it.image = i})
     this.relayout
+  }
+  
+  Void scrollRight(){
+    this.hbar.val += 25
+  }
+  
+  Void scrollLeft(){
+    this.hbar.val -= 25
+  }
+  
+  override Size prefSize(Hints h := Hints.defVal){
+    return this.s
   }
 }

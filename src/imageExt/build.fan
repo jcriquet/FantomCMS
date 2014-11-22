@@ -1,7 +1,7 @@
 using build
 class Build : build::BuildPod {
   new make() {
-    podName   = "picExt"
+    podName   = "imageExt"
     version   = Version( [ 1, 0, 0 ] )
     summary   = ""
     srcDirs   = [`fan/`, `fan/ui/`]
@@ -17,6 +17,6 @@ class Build : build::BuildPod {
                  "web 1.0",
                  "webfwt 1.0",
                  "webmod 1.0"]
-    index    = ["proj.ext": "picExt::PicExt"]
+    index    = ["proj.ext": "imageExt::ImageExt"]
   }
 }
