@@ -126,7 +126,8 @@ class ThemesApp : App {
     sideList.items = state[ "sideListItems" ] ?: [,]
     sideList.relayout
     sideList.selectedIndex = sideList.items.findIndex |item| { ( item as Str:Obj? ).get( "_id" ) == selectedId }
-    deleteButton.enabled = defaultButton.enabled = sideList.selectedIndex != null && !sideList.isDefault( sideList.selected[ 0 ] )
+    saveButton.enabled = revertButton.enabled = sideList.selectedIndex != null
+    deleteButton.enabled = defaultButton.enabled = saveButton.enabled && !sideList.isDefault( sideList.selected[ 0 ] )
     if ( selectedStyles.size > 0 ) {
       Actor.locals[ "themes.id" ] = selectedId
       Actor.locals[ "themes.title" ] = selectedTitle.text
