@@ -49,3 +49,5 @@ themesExt :
 	- cd src/themesExt; ../../bin/fan build.fan
 firstDemoPageExt :
 	- cd src/firstDemoPageExt; ../../bin/fan build.fan
+calcExt :
+	- cd src/calcExt; ../../bin/fan build.fan

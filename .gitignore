@@ -1,3 +1,6 @@
+#My GitIgnore
+.gitignore
+
 #################
 ## Project Pods
 #################
@@ -221,8 +224,3 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-
-#Files to ignore
-src/borderPane
-src/firstDemoPageExt
-src/calcExt
