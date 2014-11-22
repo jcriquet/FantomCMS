@@ -16,10 +16,10 @@ const class PagesExt : Ext, Weblet {
     path := uri.pathOnly.pathStr
     [Str:Obj?]? document
     Str? data
-    if ( _id != null ) document = DBConnector.cur.db[ "pages" ].findOne( ["_id":ObjectId( _id )], false )
+    if ( _id != null ) document = DBConnector.cur.db[ typeof.pod.toStr ].findOne( ["_id":ObjectId( _id )], false )
     else {
       if ( uri.pathOnly == `` ) path = "index"
-      if ( path != "" ) document = DBConnector.cur.db[ "pages" ].findOne( ["uri":path], false )
+      if ( path != "" ) document = DBConnector.cur.db[ typeof.pod.toStr ].findOne( ["uri":path], false )
     }
     if ( document == null || ( data = document[ "data" ] ) == null ) {
       res.sendErr( 404 )
