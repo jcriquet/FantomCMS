@@ -17,7 +17,7 @@ const class ThemesExt : Ext, Weblet {
     data := in.readJson
     in.close
     reqTheme := ObjectId( req.modRel.pathOnly.toStr, false )
-    db := DBConnector.cur.db[ "themes" ]
+    db := DBConnector.cur.db[ typeof.pod.toStr ]
     if ( reqTheme == null || db.findAndUpdate( ["_id":reqTheme], data, false ) == null ) {
       document := db.findAndUpdate( ["_false":true], data, true, ["upsert":true] )
       reqTheme = document[ "_id" ]
@@ -27,14 +27,14 @@ const class ThemesExt : Ext, Weblet {
   
   private Void _get( Str _id ) {
     Str:Obj? json := [:]
-    settingsDoc := DBConnector.cur.db[ "settings" ].findOne( ["ext":"themesExt"], false )
+    settingsDoc := DBConnector.cur.db[ "settingsExt" ].findOne( ["ext":typeof.pod.toStr], false )
     defaultId := settingsDoc[ "default" ].toStr
     reqTheme := ObjectId( _id, false )
-    db := DBConnector.cur.db[ "themes" ]
+    db := DBConnector.cur.db[ typeof.pod.toStr ]
     if ( reqTheme != null && _id != defaultId ) {
       if ( req.uri.query[ "default" ] == "true" ) {
         settingsDoc[ "default" ] = reqTheme
-        if ( DBConnector.cur.db[ "settings" ].update( ["ext":"themesExt"], settingsDoc ) > 0 ) defaultId = settingsDoc[ "default" ].toStr
+        if ( DBConnector.cur.db[ "settingsExt" ].update( ["ext":"themesExt"], settingsDoc ) > 0 ) defaultId = settingsDoc[ "default" ].toStr
       }
       if ( req.uri.query[ "delete" ] == "true" && db.delete( ["_id":reqTheme] ) > 0 ) reqTheme = ObjectId( defaultId )
     }
@@ -56,7 +56,7 @@ const class ThemesExt : Ext, Weblet {
   
   static Str:Str getTheme( Str id ) {
     [Str:Obj?]? document
-    try document = DBConnector.cur.db[ "themes" ].findOne( ["_id":ObjectId( id )], false )
+    try document = DBConnector.cur.db[ ThemesExt#.pod.toStr ].findOne( ["_id":ObjectId( id )], false )
     catch ( Err e ) {}
     map := [:]
     if ( document == null ) return map

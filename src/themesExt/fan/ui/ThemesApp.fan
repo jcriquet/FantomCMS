@@ -84,7 +84,7 @@ class ThemesApp : App {
     json = json[ "selected" ]
     selectedId = json[ "_id" ]
     selectedTitle.text = json[ "title" ]
-    selectedStyles = json[ "styles" ]
+    selectedStyles = json[ "styles" ] ?: [:]
     modifyState
   }
   Void revert() { apiCall( selectedId.toUri, name ).get |res| { load( res ) } }
@@ -126,9 +126,9 @@ class ThemesApp : App {
     sideList.items = state[ "sideListItems" ] ?: [,]
     sideList.relayout
     sideList.selectedIndex = sideList.items.findIndex |item| { ( item as Str:Obj? ).get( "_id" ) == selectedId }
-    saveButton.enabled = revertButton.enabled = sideList.selectedIndex != null
-    deleteButton.enabled = defaultButton.enabled = saveButton.enabled && !sideList.isDefault( sideList.selected[ 0 ] )
-    if ( selectedStyles.size > 0 ) {
+    saveButton.enabled = revertButton.enabled = selectedStyles.size > 0
+    deleteButton.enabled = defaultButton.enabled = sideList.selectedIndex != null && !sideList.isDefault( sideList.selected[ 0 ] )
+    if ( saveButton.enabled ) {
       Actor.locals[ "themes.id" ] = selectedId
       Actor.locals[ "themes.title" ] = selectedTitle.text
       selectedStyles.each |style, styleName| { ( (Str:Obj?) style ).each |v, objName| { Actor.locals[ "themes.styles.${styleName}.${objName}" ] = v } }

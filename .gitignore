@@ -225,3 +225,4 @@ pip-log.txt
 #Files to ignore
 src/borderPane
 src/firstDemoPageExt
+src/calcExt
