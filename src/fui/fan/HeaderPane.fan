@@ -19,7 +19,8 @@ class HeaderPane : StatePane{
           it.image = Image(Fui.cur.baseUri + `pod/fui/res/img/list-50.png`)
           it.onMouseDown.add { 
             if(this.paneOpen == false) {
-              getPane.open(this, Point(label.pos.x, this.size.h))
+              OverlayContainer oc := OverlayContainer(this,(getPane)){it.onClose.add { this.paneOpen = false } }
+              oc.display(this, Point(label.pos.x, this.size.h))
               this.paneOpen = true 
             }
           }
@@ -48,7 +49,6 @@ class HeaderPane : StatePane{
                 it.text = "X"
                 it.onMouseDown.add { 
                   appIconPane.close 
-                  this.paneOpen = false
                 } 
               },
             }
