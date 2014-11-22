@@ -23,6 +23,10 @@ class GalleryApp : App {
           it.border = Border.fromStr( "3 solid #000000 30" )
           it.insets = Insets( 10, 16 )
           it.bg = Color.purple
+          //numCols = 50
+          Image a := Image(Fui.cur.baseUri + `pod/fui/res/img/default-50.png`)
+          me := it
+          50.times { me.add( Label { it.image = a } ) }
         }
         right = ConstraintPane {
           it.minw = it.maxw = 100

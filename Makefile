@@ -44,3 +44,6 @@ borderPaneExt :
 
 themesExt :
 	- cd src/themesExt; ../../bin/fan build.fan
+
+galleryExt :
+	- cd src/galleryExt; ../../bin/fan build.fan
