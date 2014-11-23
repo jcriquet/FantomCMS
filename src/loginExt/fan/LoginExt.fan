@@ -1,4 +1,5 @@
 using proj
+using fui
 using util
 using web
 using db
@@ -12,19 +13,17 @@ using afBson
 const class LoginExt : Ext, Weblet {
   
   override Void onGet() {
-    /*Obj? json
-    switch ( req.modRel ) {
-      case `ss`:
-        json = DBConnector.cur.db[typeof.pod.toStr].group(["_id", "name", "password"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"user"]])
-        if ( json == null ) json = [,]
-    }
-    //json["users"] = DBConnector.cur.db["user"].findAll( ["type":"user"] )
-    text := JsonOutStream.writeJsonToStr( json )
+    username := req.modRel
+    Int session := SessionStorage.cur.getSession(username.toStr)
     res.headers[ "Content-Type" ] = "text/plain"
-    res.headers[ "Content-Length" ] = text.size.toStr
+    res.headers[ "Content-Length" ] = session.toStr.size.toStr
     out := res.out
-    out.writeChars( text )
+    res.cookies.add(Cookie("id", session.toStr.toBuf.toBase64){
+      it.domain = Fui.cur.baseUri.toStr
+      it.secure = false
+    })
+    out.writeChars( session.toStr )
     out.close
-    res.done*/
+    res.done
   }
 }
