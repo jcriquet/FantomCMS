@@ -2,6 +2,8 @@ using fui
 using fwt
 using gfx
 using util
+using proj
+using dom
 
 @Js
 class LoginApp : App {

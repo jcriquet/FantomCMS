@@ -1,4 +1,5 @@
 using db
+using concurrent
 using wisp
 using web
 using webmod
@@ -17,6 +18,8 @@ const class WebService : WispService {
     podMap := Str:PodMod[:]
     Env.cur.findAllPodNames.each |pod| { podMap[ pod ] = PodMod( pod ) }
     
+    sessionStorage := SessionStorage()
+    Actor.locals.add("sessionstorage.cur", sessionStorage)
     exts := Str:Type[:]
     Env.cur.index( "proj.ext" ).each |qname| {
       type := Type.find( qname )
