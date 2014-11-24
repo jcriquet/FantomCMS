@@ -7,6 +7,7 @@ class Build : build::BuildPod {
     srcDirs   = [`fan/`, `fan/ui/`]
     outPodDir = Env.cur.homeDir.uri + `lib/fan/`
     depends   = ["sys 1.0",
+                 "audioExt 1.0",
                  "db 1.0",
                  "dom 1.0",
                  "fui 1.0",
