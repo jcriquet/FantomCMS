@@ -1,7 +1,10 @@
 using fui
+using web
 using fwt
 using gfx
 using util
+using proj
+using dom
 
 @Js
 class LoginApp : App {
@@ -35,6 +38,7 @@ class LoginApp : App {
                     if(json[i]["name"] == field_username.text) {
                       if(json[i]["password"] == field_password.text) {
                         echo("successfully logged in")
+                        this.apiCall(Uri.fromStr(field_username.text)).get{}
                         loginPane.content = Label{text = "You logged in successfully kinda not really..."}
                         loginPane.relayout
                         userFound = true
