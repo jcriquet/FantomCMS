@@ -15,9 +15,6 @@ proj :
 fui :
 	- cd src/fui; ../../bin/fan build.fan
 
-imageExt :
-	- cd src/imageExt; ../../bin/fan build.fan
-
 homeExt :
 	- cd src/homeExt; ../../bin/fan build.fan
 
