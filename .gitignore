@@ -4,6 +4,7 @@
 
 lib/fan/
 etc/*/*
+cached/*
 
 #################
 ## Eclipse
