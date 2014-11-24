@@ -1,7 +1,7 @@
 buildfast:
 	- bin/fan build.fan
 
-build: db proj fui homeExt loginExt settingsExt userExt imageExt audioExt themesExt pagesExt uploaderExt securityExt dockTestExt htmlEditorExt picExt
+build: db proj fui homeExt loginExt settingsExt userExt imageExt audioExt themesExt pagesExt uploaderExt securityExt dockTestExt htmlEditorExt
 
 run : buildfast
 	- bin/fcms
