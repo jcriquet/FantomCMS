@@ -23,7 +23,10 @@ const class UploaderExt : Ext, Weblet {
       case "jpg":
       case "jpeg":
         Buf full := req.in.readAllBuf
-        Buf tb := FCMSThumbnailMaker.resize(full, ImageExt.typemap[filename.ext],100,100)
+        Buf? tb
+        try {
+          tb = FCMSThumbnailMaker.resize(full, ImageExt.typemap[filename.ext], 100, 100)
+        } catch ( Err e ) {}
         DBConnector.cur.db[ "imageExt" ].update( ["filename":filename.name], ["filename":filename.name, "modified":modified, "binFull":full, "binTb":tb], false, true )
       default:
         echo( "Upload Failed" )
