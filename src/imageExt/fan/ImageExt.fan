@@ -1,4 +1,5 @@
 using util
+using fui
 using [java]com.colegrim.fcms
 using gfx
 using fwt
@@ -14,24 +15,38 @@ const class ImageExt : Ext, Weblet {
   static const Str:Str typemap := ["gif":"gif","png":"png","jpg":"jpeg","jpeg":"jpeg"]
   
   override Void onGet() {
-    filename := req.modRel.pathOnly
-    isTb := req.uri.query["tb"] != null
-    if ( !typemap.containsKey( filename.ext ?: "" ) ) {
-      res.sendErr( 404 )
-      return
-    }
-    file := fetch( filename , isTb)
-    if ( file == null ) {
-      res.sendErr( 404 )
-      return
-    }
-    buf := file.readAllBuf
-    try {
-      res.headers[ "Content-Type" ] = "image/" + typemap[ filename.ext ]
-      res.headers[ "Content-Length" ] = buf.size.toStr
-      res.out.writeBuf( buf ).close
+    switch(req.modRel.path[0]){
+      // Api Calls
+    case "getAll":
+      Buf b := Buf()
+      b.writeObj(getAllFilenames)
+      b.flip
+      res.headers[ "Content-Type" ] = "application/fantom"
+      res.headers[ "Content-Length" ] = b.size.toStr
+      res.out.writeBuf( b ).close
       res.done
-    } catch ( Err e ) {}
+      
+      // Regular image request
+    default:
+      filename := req.modRel.pathOnly
+      isTb := req.uri.query["tb"] != null
+      if ( !typemap.containsKey( filename.ext ?: "" ) ) {
+        res.sendErr( 404 )
+        return
+      }
+      file := fetch( filename , isTb)
+      if ( file == null ) {
+        res.sendErr( 404 )
+        return
+      }
+      buf := file.readAllBuf
+      try {
+        res.headers[ "Content-Type" ] = "image/" + typemap[ filename.ext ]
+        res.headers[ "Content-Length" ] = buf.size.toStr
+        res.out.writeBuf( buf ).close
+        res.done
+      } catch ( Err e ) {}
+    }
   }
   
   File? fetch( Uri relUri , Bool isTb) {
@@ -61,7 +76,14 @@ const class ImageExt : Ext, Weblet {
     return cached.exists ? cached : null
   }
   
-  static Void makeThumb(File i, File o){
-    
+  static Str:Uri getAllFilenames(){
+    filenameList := DBConnector.cur.db["imageExt"].group( ["filename"], [:], Code.makeCode( "function(){}" )) as [Str:Obj?][]
+    [Str:Uri] toReturn := [:]
+    if(filenameList != null){
+      filenameList.each |entry| {   
+        toReturn[entry["filename"]] = `api/image/` + Uri.fromStr(entry["filename"])
+      }
+    }
+    return toReturn
   }
 }
