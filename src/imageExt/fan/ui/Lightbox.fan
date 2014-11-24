@@ -28,10 +28,12 @@ class Lightbox : OverlayPane
             it.content = Label { it.text = "X" ; it.onMouseUp.add { this.close }}
           },
         }
-        it.center = BorderPane{
-          it.insets = Insets(10)
-          it.bg = Color.white
-          it.content = Label{it.image = this.image}
+        it.center = ScrollPane{
+          BorderPane{
+            it.insets = Insets(10)
+            it.bg = Color.white
+            it.content = Label{it.image = this.image}
+          },
         }
       },
     }
