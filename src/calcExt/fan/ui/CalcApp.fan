@@ -11,6 +11,9 @@ class CalcApp : App {
       it.bg = Color.black
       BorderPane calc := BorderPane {
         bg = Color.gray
+        WebBrowser {
+          
+        },
       }
       BorderPane clock := BorderPane {
         bg = Color.gray
