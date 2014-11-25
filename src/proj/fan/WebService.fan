@@ -26,7 +26,7 @@ const class WebService : WispService {
       if ( meta != null ) exts[ meta.name ] = type
     }
     
-    DBConnector.cur.startup( exts.vals.map |type| { type.pod.toStr } )
+    DBConnector.cur.startup( exts.vals )
     
     appMod := AppMod( exts )
     root = RouteMod { it.routes = [

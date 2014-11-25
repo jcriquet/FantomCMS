@@ -55,14 +55,15 @@ const class DBConnector {
   // names of the collections we will be using. It will ensure
   // that all the collections we need for the app have been
   // created on the Mongo server.
-  Void startup( Str[] collections ) {
+  Void startup( Type[] exts ) {
     if ( mc == null ) { echo( "\nDatabase could not load.  Please check the configuration." ); return }
     echo( "\nChecking that all required collections exist on server... " )
-    collections.each |Str name| {
+    exts.each |Type ext| {
+      name := ext.pod.toStr
       if ( collectionExists( name ) ) {
         echo( "${name}...exists." )
       } else {
-        makeCollection( name )
+        makeCollection( ext, name )
         echo( "${name}...doesn't exist. Created." )
       }
     }
@@ -109,10 +110,11 @@ const class DBConnector {
   
   /// Creates a new collection in the database.
   /// Throws DBErr if the collection exists.
-  private Void makeCollection( Str name ) {
+  private Void makeCollection( Type ext, Str name ) {
     if ( collectionExists( name ) ) throw DBErr( "exists", "makeCollection called when the collection ($name) already exists." )
-    db.collection( name ).create
+    collection := db.collection( name ).create
     if ( !collectionExists( name ) ) throw DBErr ("failed", "Failed to create collection.")
+    ext.make->initializeDB( collection )
   }
 
   /// Delete a collection in the database.

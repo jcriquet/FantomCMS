@@ -10,6 +10,7 @@ using web
   icon = "themes-50.png"
 }
 const class ThemesExt : Ext, Weblet {
+  static const Type stype := ThemesExt#
   override Void onGet() { _get( req.modRel.pathOnly.toStr ) }
   
   override Void onPost() {
@@ -27,7 +28,7 @@ const class ThemesExt : Ext, Weblet {
   
   private Void _get( Str _id ) {
     Str:Obj? json := [:]
-    settingsDoc := DBConnector.cur.db[ "settingsExt" ].findOne( ["ext":typeof.pod.toStr], false )
+    settingsDoc := getSettings
     defaultId := settingsDoc[ "default" ].toStr
     reqTheme := ObjectId( _id, false )
     db := DBConnector.cur.db[ typeof.pod.toStr ]
@@ -54,9 +55,25 @@ const class ThemesExt : Ext, Weblet {
     res.done
   }
   
+  static Str:Obj? getSettings() {
+    settingsDoc := DBConnector.cur.db[ "settingsExt" ].findOne( ["ext":stype.pod.toStr], false )
+    if ( settingsDoc == null ) settingsDoc = DBConnector.cur.db[ "settingsExt" ].findAndUpdate( ["ext":stype.pod.toStr], ["ext":stype.pod.toStr], true, ["upsert":true] )
+    defaultId := settingsDoc[ "default" ] as ObjectId
+    if ( defaultId == null || DBConnector.cur.db[ stype.pod.toStr ].findCount( ["_id":defaultId] ) == 0 ) {
+      defaultId = DBConnector.cur.db[ stype.pod.toStr ].findOne( [:], false )?.get( "_id" ) as ObjectId
+      if ( defaultId == null ) {
+        sampleTheme := ["title":"Sample Theme", "styles":[:]]
+        defaultId = DBConnector.cur.db[ stype.pod.toStr ].findAndUpdate( ["_false":true], sampleTheme, true, ["upsert":true] )[ "_id" ]
+      }
+      settingsDoc[ "default" ] = defaultId
+      DBConnector.cur.db[ "settingsExt" ].findAndUpdate( ["ext":stype.pod.toStr], settingsDoc, true )
+    }
+    return settingsDoc
+  }
+  
   static Str:Str getTheme( Str id ) {
     [Str:Obj?]? document
-    try document = DBConnector.cur.db[ ThemesExt#.pod.toStr ].findOne( ["_id":ObjectId( id )], false )
+    try document = DBConnector.cur.db[ stype.pod.toStr ].findOne( ["_id":ObjectId( id )], false )
     catch ( Err e ) {}
     map := [:]
     if ( document == null ) return map

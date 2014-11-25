@@ -129,7 +129,7 @@ class ThemesApp : App {
     saveButton.enabled = revertButton.enabled = selectedStyles.size > 0
     deleteButton.enabled = defaultButton.enabled = sideList.selectedIndex != null && !sideList.isDefault( sideList.selected[ 0 ] )
     if ( saveButton.enabled ) {
-      Actor.locals[ "themes.id" ] = selectedId
+      Actor.locals[ "themes._id" ] = selectedId
       Actor.locals[ "themes.title" ] = selectedTitle.text
       selectedStyles.each |style, styleName| { ( (Str:Obj?) style ).each |v, objName| { Actor.locals[ "themes.styles.${styleName}.${objName}" ] = v } }
       //if ( Actor.locals[ "themessaved.name" ] == null )
@@ -172,7 +172,7 @@ class ThemesApp : App {
         }
       }
     } else contentPane.populate( null ) { ContentPane() }
-    contentPane.parent.relayout
+    Fui.cur.main.refreshLayout
   }
 }
 

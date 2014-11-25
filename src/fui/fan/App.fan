@@ -46,8 +46,7 @@ abstract class App : StatePane {
     key := Win.cur.uri.relToAuth.relTo( Fui.cur.baseUri ).pathOnly.toStr + "#" + Win.cur.uri.frag
     state := loadState( key ).rw
     onSaveState( state )
-    Fui.cur.main.headerPane.onSaveState( state )
-    Fui.cur.main.footerPane.onSaveState( state )
+    Fui.cur.main.onSaveState( state )
     Win.cur.sessionStorage[ key ] = state.toStr
   }
   
@@ -64,8 +63,7 @@ abstract class App : StatePane {
     }
     state := State( key )
     onSaveState( state )
-    Fui.cur.main.headerPane.onSaveState( state )
-    Fui.cur.main.footerPane.onSaveState( state )
+    Fui.cur.main.onSaveState( state )
     inModify = true
     Win.cur.sessionStorage[ key ] = state.toStr
     Win.cur.hyperlink( "#$frag".toUri )
@@ -78,8 +76,7 @@ abstract class App : StatePane {
     state := loadState( Win.cur.uri.relToAuth.relTo( Fui.cur.baseUri ).pathOnly.toStr + "#" + Win.cur.uri.frag ).ro
     echo( state )
     onLoadState( state )
-    Fui.cur.main.headerPane.onLoadState( state )
-    Fui.cur.main.footerPane.onLoadState( state )
+    Fui.cur.main.onLoadState( state )
     inLoad = false
     Fui.cur.updateTitle
   }
