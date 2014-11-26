@@ -27,6 +27,7 @@ const class WebService : WispService {
     }
     
     DBConnector.cur.startup( exts.vals )
+    try { DBConnector.cur.db } catch ( Err e ) { exts = exts.findAll |t, name| { name == "settings" || name == "login" || name == "home" } }
     
     appMod := AppMod( exts )
     root = RouteMod { it.routes = [
