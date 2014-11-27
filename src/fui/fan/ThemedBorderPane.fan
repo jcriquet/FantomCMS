@@ -1,4 +1,5 @@
 using fwt
+using gfx
 
 @Js
 @Serializable
@@ -7,6 +8,16 @@ class ThemedBorderPane : BorderPane {
   
   new make( |This|? f := null ) {
     f?.call( this )
-    if ( bgStyle != null ) bg = FuiThemes.getBg( bgStyle )
+    checkStyles
+  }
+  
+  override Void onLayout() {
+    checkStyles
+    super.onLayout
+    repaint
+  }
+  
+  Void checkStyles() {
+    bg = bgStyle != null ? FuiThemes.getBg( bgStyle ) : null
   }
 }

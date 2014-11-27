@@ -22,7 +22,10 @@ class Main : StatePane {
     }
 
     Actor.locals[ "fui.cur" ] = fui
-    content = windowEdgePane
+    content = ThemedBorderPane {
+      bgStyle = "window"
+      windowEdgePane,
+    }
   }
   
   Void refreshLayout() {
@@ -34,7 +37,8 @@ class Main : StatePane {
     catch ( Err e ) { windowEdgePane.left = Label { text = "Error: $e" } }
     try { windowEdgePane.right = ( Actor.locals[ "layouts.paneRight" ] as Str ?: "null" ).in.readObj as Widget }
     catch ( Err e ) { windowEdgePane.right = Label { text = "Error: $e" } }
-    windowEdgePane.relayout
+    content.relayout
+    //windowEdgePane.relayout
   }
   
   //Void addFooterItem(FooterPaneDockItem item){
