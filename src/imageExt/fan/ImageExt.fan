@@ -57,7 +57,6 @@ const class ImageExt : Ext, Weblet {
     File? cached
     if (isTb) cached = "cached/$typeof.pod/thumbs/$relUri.pathStr".toUri.toFile 
     else cached = "cached/$typeof.pod/$relUri.pathStr".toUri.toFile
-    echo(cached)
     basename := relUri.pathStr
     dbDate := DBConnector.cur.db[ typeof.pod.toStr ].group( ["modified"], [:], Code.makeCode( "function(){}" ), ["cond":["filename":basename]] )
                          .getSafe( 0 )?.get( "modified" )?->seconds as Duration
