@@ -22,8 +22,17 @@ class ThemesApp : App {
     halignCells = Halign.fill
     valignCells = Valign.fill
   }
+  LayoutCombo layoutSelector := LayoutCombo {
+    onModify.add |e| {
+      newLayout := ( layoutSelector.selected as Str:Obj? )?.get( "_id" )
+      if ( newLayout == selectedLayoutId || newLayout == null ) return
+      apiCall( ( selectedId + "?layout=" + newLayout ).toUri, name ).get |res| { load( res ) }
+    }
+  }
   Str myTheme := ""
   Str selectedId := ""
+  Str:Obj? selectedLayout := [:]
+  Str? selectedLayoutId() { selectedLayout[ "layouts._id" ] }
   Text selectedTitle := Text {}
   Str:Obj? selectedStyles := Str:[Str:Str?][:] { ordered = true }
   
@@ -57,9 +66,12 @@ class ThemesApp : App {
             InsetPane {
               insets = Insets( 10 )
               GridPane {
-                FlowPane {
+                GridPane {
+                  numCols = 2
                   Label { it.text = "Title:" },
                   selectedTitle,
+                  Label { it.text = "Layout:" },
+                  layoutSelector,
                 },
                 BorderPane {
                   border = Border( "1 solid #000000" )
@@ -84,6 +96,12 @@ class ThemesApp : App {
       sideList.selected = sideList.items.containsAll( selected ) ? selected : [,]
       updateState
     }
+    if ( layoutSelector.items != json[ "layouts" ] ) {
+      layoutSelector.items = json[ "layouts" ]
+      layoutSelector.parent.parent.relayout
+      layoutSelector.selectedIndex = layoutSelector.items.findIndex |item| { ( item as Str:Obj? ).get( "_id" ) == selectedLayoutId }
+      updateState
+    }
   }
   
   Void load( HttpRes res ) {
@@ -92,13 +110,14 @@ class ThemesApp : App {
     json = json[ "selected" ]
     selectedId = json[ "_id" ]
     selectedTitle.text = json[ "title" ]
+    selectedLayout = json[ "layout" ]
     selectedStyles = json[ "styles" ] ?: [:]
     modifyState
   }
   Void revert() { apiCall( selectedId.toUri, name ).get |res| { load( res ) } }
   
   Void save() {
-    json := State.valueToStr( ["title":selectedTitle.text, "styles":selectedStyles] )
+    json := State.valueToStr( ["title":selectedTitle.text, "layout":selectedLayoutId, "styles":selectedStyles] )
     apiCall( selectedId.toUri, name ).post( json ) |res| { load( res ) }
   }
   
@@ -111,15 +130,17 @@ class ThemesApp : App {
   
   Void delete() { apiCall( selectedId.toUri + `?delete`, name).get |res| { load( res ) } }
   
-  Void setDefault() { apiCall( selectedId.toUri + `?default`, name).get |res| { load( res ) } }
+  Void setDefault() { apiCall( "$selectedId?default&layout=$selectedLayoutId".toUri, name).get |res| { load( res ) } }
   
   override Void onGoto() { apiCall( ``, name ).get |res| { _updateList( JsonInStream( res.content.in ).readJson ) } }
   
   override Void onSaveState( State state ) {
     state[ "sideListItems" ] = sideList.items
+    state[ "layoutSelectorItems" ] = layoutSelector.items
     state[ "myTheme" ] = myTheme
     state[ "selectedId" ] = selectedId
     state[ "selectedTitle" ] = selectedTitle.text
+    state[ "selectedLayout" ] = selectedLayout
     state[ "selectedStyles" ] = selectedStyles
   }
   
@@ -127,11 +148,14 @@ class ThemesApp : App {
     myTheme = state[ "myTheme" ] ?: ""
     selectedId = state[ "selectedId" ] ?: ""
     selectedTitle.text = state[ "selectedTitle" ] ?: ""
+    selectedLayout = state[ "selectedLayout" ] ?: [:]
     selectedStyles = state[ "selectedStyles" ] ?: Str:[Str:Str?][:] { ordered = true }
     sideList.items = state[ "sideListItems" ] ?: [,]
     sideList.relayout
     sideList.selectedIndex = sideList.items.findIndex |item| { ( item as Str:Obj? ).get( "_id" ) == selectedId }
-    saveButton.enabled = selectedStyles.size > 0
+    layoutSelector.enabled = saveButton.enabled = selectedStyles.size > 0
+    layoutSelector.items = state[ "layoutSelectorItems" ] ?: [,]
+    layoutSelector.selectedIndex = layoutSelector.items.findIndex |item| { ( item as Str:Obj? ).get( "_id" ) == selectedLayoutId }
     revertButton.enabled = saveButton.enabled && selectedId != ""
     deleteButton.enabled = defaultButton.enabled = sideList.selectedIndex != null && !sideList.isDefault( sideList.selected[ 0 ] )
     if ( saveButton.enabled ) {
@@ -139,6 +163,7 @@ class ThemesApp : App {
       Actor.locals[ "themes._id" ] = selectedId
       Actor.locals[ "themes.title" ] = selectedTitle.text
       selectedStyles.each |style, styleName| { ( (Str:Obj?) style ).each |v, objName| { Actor.locals[ "themes.styles.${styleName}.${objName}" ] = v } }
+      selectedLayout.each |v, k| { if ( k.startsWith( "layouts." ) ) Actor.locals[ k ] = v }
       //if ( Actor.locals[ "themessaved.name" ] == null )
       //  Actor.locals.findAll |v, k| { k.startsWith( "themes." ) }.each |v, k| { Actor.locals[ "themessaved." + k[ 7..-1 ] ] = v }
       insets := Insets( 7 )
@@ -268,4 +293,10 @@ class ThemesList : TreeList {
   override Str text( Obj item ) { ( isDefault( item ) ? "*" : "" ) + title( item ) }
   Bool isDefault( [Str:Obj?]? item ) { item?.get( "default" ) == true }
   Str title( [Str:Obj?]? item ) { item?.get( "title" )?.toStr ?: "Untitled" }
+}
+
+@Js
+class LayoutCombo : WebCombo {
+  new make( |This|? f := null ) : super( f ) {}
+  override Str itemText( Obj item ) { item->get( "title" ) as Str ?: "Untitled" }
 }

@@ -5,6 +5,7 @@ class Build : build::BuildPod {
     version   = Version( [ 1, 0, 0 ] )
     summary   = ""
     srcDirs   = [`fan/`]
+    jsDirs    = [`js/`]
     resDirs   = [`res/img/`]
     outPodDir = Env.cur.homeDir.uri + `lib/fan/`
     depends   = ["sys 1.0",

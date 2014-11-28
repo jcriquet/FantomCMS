@@ -47,11 +47,15 @@ const class AppMod : WebMod {
       "fui.app" : appStr,
       "fui.apps" : buf.toStr
     ]
-    try {
-      if ( getThemeSettings != null && getTheme != null ) clientData.addAll( getTheme.call( getThemeSettings.call->get( "default" )->toStr ) )
+    Str? layoutId
+    try if ( getThemeSettings != null && getTheme != null ) {
+      Str:Str themeData := getTheme.call( getThemeSettings.call->get( "default" )->toStr )
+      clientData.addAll( themeData )
+      if ( themeData[ "themes.layout" ] != null ) layoutId = themeData[ "themes.layout" ]
     } catch ( Err e ) {}
-    try {
-      if ( getLayoutSettings != null && getLayout != null ) clientData.addAll( getLayout.call( getLayoutSettings.call->get( "default" )->toStr ) )
+    try if ( getLayout != null ) {
+      if ( layoutId == null && getLayoutSettings != null ) layoutId = getLayoutSettings.call->get( "default" )->toStr
+      if ( layoutId != null ) clientData.addAll( getLayout.call( layoutId ) )
     } catch ( Err e ) {}
     
     res.headers["Content-Type"] = "text/html; charset=utf-8"

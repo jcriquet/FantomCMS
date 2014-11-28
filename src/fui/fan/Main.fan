@@ -38,16 +38,7 @@ class Main : StatePane {
     try { windowEdgePane.right = ( Actor.locals[ "layouts.paneRight" ] as Str ?: "null" ).in.readObj as Widget }
     catch ( Err e ) { windowEdgePane.right = Label { text = "Error: $e" } }
     content.relayout
-    //windowEdgePane.relayout
   }
-  
-  //Void addFooterItem(FooterPaneDockItem item){
-  //  this.footerPane.addFooterItem(item)
-  //}
-
-  //Void removeFooterItem(FooterPaneDockItem item){
-  //  this.footerPane.removeFooterItem(item)
-  //}
   
   static Uri resolve( Uri uri ) {
     token := uri.scheme

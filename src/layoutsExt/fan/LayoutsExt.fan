@@ -40,7 +40,7 @@ const class LayoutsExt : Ext, Weblet {
       if ( req.uri.query[ "delete" ] == "true" && db.delete( ["_id":reqLayout] ) > 0 ) reqLayout = ObjectId( defaultId )
     }
     json[ "myLayout" ] = defaultId
-    json[ "list" ] = db.group( ["_id", "title"], [:], Code.makeCode( "function(){}" ) )
+    json[ "list" ] = getLayouts
     if ( reqLayout != null && ( ([Str:Obj?][]) json[ "list" ] ).any |map| { map[ "_id" ] == reqLayout } ) {
       document := db.findOne( ["_id":reqLayout], false )
       json[ "selected" ] = document
@@ -90,6 +90,10 @@ const class LayoutsExt : Ext, Weblet {
       DBConnector.cur.db[ "settingsExt" ].findAndUpdate( ["ext":stype.pod.toStr], settingsDoc, true )
     }
     return settingsDoc
+  }
+  
+  static [Str:Obj?][] getLayouts() {
+    DBConnector.cur.db[ "layoutsExt" ].group( ["_id", "title"], [:], Code.makeCode( "function(){}" ) )
   }
   
   static Str:Str getLayout( Str id ) {

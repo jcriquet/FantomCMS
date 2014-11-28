@@ -11,13 +11,10 @@ class ThemedBorderPane : BorderPane {
     checkStyles
   }
   
-  override Void onLayout() {
-    checkStyles
-    super.onLayout
-    repaint
-  }
-  
   Void checkStyles() {
     bg = bgStyle != null ? FuiThemes.getBg( bgStyle ) : null
   }
+  
+  // force peer
+  private native Void dummy()
 }
