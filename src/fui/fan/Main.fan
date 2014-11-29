@@ -6,10 +6,11 @@ using proj
 using util
 
 @Js
-class Main : ContentPane {
-  private ContentPane appContainer := ContentPane()
-  HeaderPane headerPane { private set }
-  FooterPane footerPane { private set }
+class Main : StatePane {
+  private BorderPane appContainer := BorderPane()
+  EdgePane windowEdgePane := EdgePane { center = appContainer } { private set }
+  //HeaderPane headerPane { private set }
+  //FooterPane footerPane { private set }
   App? curApp { private set }
 
   new make() : super() {
@@ -21,19 +22,22 @@ class Main : ContentPane {
     }
 
     Actor.locals[ "fui.cur" ] = fui
-    content = EdgePane {
-      center = appContainer
-      top = headerPane = HeaderPane()
-      bottom = footerPane = FooterPane()
+    content = ThemedBorderPane {
+      bgStyle = "window"
+      windowEdgePane,
     }
   }
   
-  Void addFooterItem(FooterPaneDockItem item){
-    this.footerPane.addFooterItem(item)
-  }
-
-  Void removeFooterItem(FooterPaneDockItem item){
-    this.footerPane.removeFooterItem(item)
+  Void refreshLayout() {
+    try { windowEdgePane.top = ( Actor.locals[ "layouts.paneTop" ] as Str ?: "null" ).in.readObj as Widget }
+    catch ( Err e ) { windowEdgePane.top = Label { text = "Error: $e" } }
+    try { windowEdgePane.bottom = ( Actor.locals[ "layouts.paneBottom" ] as Str ?: "null" ).in.readObj as Widget }
+    catch ( Err e ) { windowEdgePane.bottom = Label { text = "Error: $e" } }
+    try { windowEdgePane.left = ( Actor.locals[ "layouts.paneLeft" ] as Str ?: "null" ).in.readObj as Widget }
+    catch ( Err e ) { windowEdgePane.left = Label { text = "Error: $e" } }
+    try { windowEdgePane.right = ( Actor.locals[ "layouts.paneRight" ] as Str ?: "null" ).in.readObj as Widget }
+    catch ( Err e ) { windowEdgePane.right = Label { text = "Error: $e" } }
+    content.relayout
   }
   
   static Uri resolve( Uri uri ) {
@@ -77,6 +81,7 @@ class Main : ContentPane {
   
   Void main() {
     Env.cur.vars.each |v, k| { Actor.locals[ k ] = v }
+    refreshLayout
     fui := Fui.cur
     _setContent( fui.appMap[ Env.cur.vars[ "fui.app" ] ] )
     window := Window { it.content = this }.open

@@ -1,7 +1,7 @@
 buildfast:
 	- bin/fan build.fan
 
-build: db proj fui homeExt loginExt settingsExt securityExt pagesExt userExt dockTestExt themesExt htmlEditorExt imageExt
+build: db proj fui homeExt loginExt settingsExt userExt imageExt audioExt themesExt pagesExt uploaderExt securityExt layoutsExt htmlEditorExt
 
 run : buildfast
 	- bin/fcms
@@ -15,18 +15,6 @@ proj :
 fui :
 	- cd src/fui; ../../bin/fan build.fan
 
-pagesExt :
-	- cd src/pagesExt; ../../bin/fan build.fan
-
-htmlEditorExt :
-	- cd src/htmlEditorExt; ../../bin/fan build.fan
-
-imageExt :
-	- cd src/imageExt; ../../bin/fan build.fan
-
-dockTestExt :
-	- cd src/dockTestExt; ../../bin/fan build.fan
-
 homeExt :
 	- cd src/homeExt; ../../bin/fan build.fan
 
@@ -39,11 +27,11 @@ settingsExt :
 userExt :
 	- cd src/userExt; ../../bin/fan build.fan
 
-securityExt :
-	- cd src/securityExt; ../../bin/fan build.fan
+imageExt :
+	- cd src/imageExt; ../../bin/fan build.fan
 
-borderPaneExt :
-	-- cd src/borderPane; ../../bin/fan build.fan
+audioExt :
+	- cd src/audioExt; ../../bin/fan build.fan
 
 themesExt :
 	- cd src/themesExt; ../../bin/fan build.fan
@@ -51,3 +39,18 @@ firstDemoPageExt :
 	- cd src/firstDemoPageExt; ../../bin/fan build.fan
 calcExt :
 	- cd src/calcExt; ../../bin/fan build.fan
+
+pagesExt :
+	- cd src/pagesExt; ../../bin/fan build.fan
+
+uploaderExt :
+	- cd src/uploaderExt; ../../bin/fan build.fan
+
+securityExt :
+	- cd src/securityExt; ../../bin/fan build.fan
+
+layoutsExt :
+	- cd src/layoutsExt; ../../bin/fan build.fan
+
+htmlEditorExt :
+	- cd src/htmlEditorExt; ../../bin/fan build.fan

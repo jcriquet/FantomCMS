@@ -16,19 +16,39 @@ const class AudioExt : Ext, Weblet {
       res.sendErr( 404 )
       return
     }
-    results := DBConnector.cur.db[ typeof.pod.toStr ].group( [dbmap[ filename.ext ]], [:], Code.makeCode( "function(){}" ), ["cond":["filename":filename.basename]] )
-    if ( results.size < 1 ) {
+    file := fetch( filename )
+    if ( file == null ) {
       res.sendErr( 404 )
       return
     }
-    bin := results[ 0 ][ dbmap[ filename.ext ] ] as Buf
-    if ( bin == null ) {
-      res.sendErr( 404 )
-      return
+    buf := file.readAllBuf
+    try {
+      res.headers[ "Content-Type" ] = "audio/" + typemap[ filename.ext ]
+      res.headers[ "Content-Length" ] = buf.size.toStr
+      res.out.writeBuf( buf ).close
+      res.done
+    } catch ( Err e ) {}
+  }
+  
+  File? fetch( Uri relUri ) {
+    if ( relUri.isAbs ) throw Err( "relUri ($relUri) is not relative!" )
+    cached := "cached/$typeof.pod/$relUri.pathStr".toUri.toFile
+    basename := relUri[ 0..-2 ].toStr + relUri.basename
+    dbDate := DBConnector.cur.db[ typeof.pod.toStr ].group( ["modified"], [:], Code.makeCode( "function(){}" ), ["cond":["filename":basename]] )
+                         .getSafe( 0 )?.get( "modified" )?->seconds as Duration
+    if ( dbDate == null ) return null
+    cachedMod := cached.modified
+    if ( cachedMod == null || cachedMod.minusDateTime( Utilities.unixEpoch ) < dbDate ) {
+      echo( "Refreshing Cache: $relUri" )
+      dbtag := dbmap[ relUri.ext ]
+      buf := DBConnector.cur.db[ typeof.pod.toStr ].group( [dbtag], [:], Code.makeCode( "function(){}" ), ["cond":["filename":basename]] )
+                        .getSafe( 0 )?.get( dbtag ) as Buf
+      if ( buf == null ) {
+        cached.delete
+        return null
+      }
+      cached.out.writeBuf( buf ).close
     }
-    res.headers[ "Content-Type" ] = "audio/" + typemap[ filename.ext ]
-    res.headers[ "Content-Length" ] = bin.size.toStr
-    res.out.writeBuf( bin ).close
-    res.done
+    return cached.exists ? cached : null
   }
 }

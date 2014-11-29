@@ -4,8 +4,7 @@ using webfwt
 using dom
 
 @Js
-class OverlayContainer : OverlayPane
-{
+class OverlayContainer : OverlayPane {
   OverlayPane? op
   Widget toOpenIn
   
@@ -23,10 +22,13 @@ class OverlayContainer : OverlayPane
     super.open(toOpenIn, Point.defVal)
     op.open(w, p)
   }
+  
+  // force native
+  private native Void dummy()
 }
 
 @Js
-class OverlayContainerCP : ContentPane{
+class OverlayContainerCP : ContentPane {
   new make() : super(){}
   
   override Size prefSize(Hints h := Hints.defVal){

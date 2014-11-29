@@ -11,7 +11,6 @@ class HomeApp : App {
 
   new make() : super() {
     content = BorderPane{
-      it.bg = Color.white
       it.content = HomeAppPane(Fui.cur.appMap.size-1){
         it.halignCells = Halign.center
         it.valignCells = Valign.center

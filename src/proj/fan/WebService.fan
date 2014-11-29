@@ -18,8 +18,6 @@ const class WebService : WispService {
     podMap := Str:PodMod[:]
     Env.cur.findAllPodNames.each |pod| { podMap[ pod ] = PodMod( pod ) }
     
-    sessionStorage := SessionStorage()
-    Actor.locals.add("sessionstorage.cur", sessionStorage)
     exts := Str:Type[:]
     Env.cur.index( "proj.ext" ).each |qname| {
       type := Type.find( qname )
@@ -28,7 +26,8 @@ const class WebService : WispService {
       if ( meta != null ) exts[ meta.name ] = type
     }
     
-    DBConnector.cur.startup( exts.vals.map |type| { type.pod.toStr } )
+    DBConnector.cur.startup( exts.vals )
+    try { DBConnector.cur.db } catch ( Err e ) { exts = exts.findAll |t, name| { name == "settings" || name == "login" || name == "home" } }
     
     appMod := AppMod( exts )
     root = RouteMod { it.routes = [

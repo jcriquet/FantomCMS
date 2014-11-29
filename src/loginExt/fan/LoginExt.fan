@@ -13,8 +13,9 @@ using afBson
 const class LoginExt : Ext, Weblet {
   
   override Void onGet() {
+    /*
     username := req.modRel
-    Int session := SessionStorage.cur.getSession(username.toStr)
+    //Session session := SessionStorage.cur[username.toStr]
     res.headers[ "Content-Type" ] = "text/plain"
     res.headers[ "Content-Length" ] = session.toStr.size.toStr
     out := res.out
@@ -24,6 +25,6 @@ const class LoginExt : Ext, Weblet {
     })
     out.writeChars( session.toStr )
     out.close
-    res.done
+    res.done*/
   }
 }
