@@ -40,18 +40,18 @@ class Main : StatePane {
     content.relayout
   }
   
-  static Uri resolve( Uri uri ) {
+  static Uri resolve( Uri uri, Bool keepApp := false ) {
     token := uri.scheme
     if ( token == "fui" ) {
       token = uri.host
-      if ( token != "app" ) return Fui.cur.baseUri + ( ( uri.auth ?: "" ) + uri.relToAuth.toStr ).toUri
+      if ( !keepApp || token != "app" ) return Fui.cur.baseUri + ( ( uri.auth ?: "" ) + uri.relToAuth.toStr ).toUri
     }
     return uri
   }
   
   // Sample input: `fui://app/home`
   Void goto( Uri uri ) {
-    uri = resolve( uri )
+    uri = resolve( uri, true )
     if ( uri.scheme == "fui" ) {
       token := uri.path[ 0 ]
       newUri := token != "home" ? Fui.cur.appUri( token ) + uri[ 1..-1 ] : Fui.cur.baseUri
