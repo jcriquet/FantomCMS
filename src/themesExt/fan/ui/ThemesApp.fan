@@ -268,22 +268,22 @@ class ThemesApp : App {
   private Widget widgetBrush( Obj? cell, Obj? col, Obj? row ) {
     ConstraintPane {
       minw = maxw = minh = maxh = 50
-      me := it
-      |Str|? makeButton
-      makeButton = |Str text| {
-        me.content = StyledButton {
-          try it.bg = bgPressed = ( text.in.readObj as Brush ) ?: FuiThemes.defColorNone
-          catch ( Err e ) it.bg = bgPressed = FuiThemes.defColorNone
-          onAction.add |e| { BrushDialog( cell ) |result| {
-            //makeButton( result )
-            if ( result == "" ) selectedStyles[ row ]->remove( col )
-            else selectedStyles[ row ]->set( col, result )
-            modifyState
-          }.open( e.widget, Point( 0, e.widget.size.h ) ) }
+      it.content = StyledButton {
+        try it.bg = bgPressed = ( ( (Str) cell ).in.readObj as Brush ) ?: FuiThemes.defColorNone
+        catch ( Err e ) it.bg = bgPressed = FuiThemes.defColorNone
+        onAction.add |e| {
+          overlay := BrushDialog( cell ) |result| {
+            if ( result == "" ) {
+              selectedStyles[ row ]->remove( col )
+              modifyState
+            } else if ( selectedStyles[ row ]->get( col ) != result ) {
+              selectedStyles[ row ]->set( col, result )
+              modifyState
+            }
+          }
+          OverlayContainer( e.widget, overlay ).display( e.widget, Point( 0, e.widget.size.h ) )
         }
-        me.relayout
       }
-      makeButton( cell )
     }
   }
 }
