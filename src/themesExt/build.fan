@@ -14,6 +14,7 @@ class Build : build::BuildPod {
                  "fui 1.0",
                  "fwt 1.0",
                  "gfx 1.0",
+                 "layoutsExt 1.0",
                  "proj 1.0",
                  "settingsExt 1.0",
                  "util 1.0",

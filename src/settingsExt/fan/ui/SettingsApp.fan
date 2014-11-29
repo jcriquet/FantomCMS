@@ -15,6 +15,7 @@ class SettingsApp : App {
   private BorderPane pageContent := BorderPane()
   
   private TreeList list := TreeList {
+    prefw = 300
     it.items = listMap.keys
     it.onSelect.add |e| {
       selected := list.selected[0]
@@ -28,17 +29,14 @@ class SettingsApp : App {
   }
   
   new make() : super() {
-    content = BorderPane {
-      it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
-      EdgePane {
-        center = SashPane {
-          it.weights = [25, 75]
-          EdgePane {
-            center = list
-          },
+    content = EdgePane {
+      left = list
+      center = ScrollPane {
+        InsetPane {
+          insets = Insets( 10 )
           pageContent,
-        }
-      },
+        },
+      }
     }
     relayout
   }

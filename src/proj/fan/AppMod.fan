@@ -5,7 +5,10 @@ using web
 const class AppMod : WebMod {
   const Str:AppSpec appMap
   const Pod[] podList
+  static const Method? getThemeSettings := Type.find( "themesExt::ThemesExt" ).method( "getSettings" )
   static const Method? getTheme := Type.find( "themesExt::ThemesExt" ).method( "getTheme" )
+  static const Method? getLayoutSettings := Type.find( "layoutsExt::LayoutsExt" ).method( "getSettings" )
+  static const Method? getLayout := Type.find( "layoutsExt::LayoutsExt" ).method( "getLayout" )
   
   new make( Str:Type exts ) {
     podList := Pod[,]
@@ -44,8 +47,16 @@ const class AppMod : WebMod {
       "fui.app" : appStr,
       "fui.apps" : buf.toStr
     ]
-    curTheme := DBConnector.cur.db[ "settingsExt" ].findOne( ["ext":"themesExt"], false )?.get( "default" )?.toStr
-    if ( getTheme != null ) clientData.addAll( getTheme.call( curTheme ) )
+    Str? layoutId
+    try if ( getThemeSettings != null && getTheme != null ) {
+      Str:Str themeData := getTheme.call( getThemeSettings.call->get( "default" )->toStr )
+      clientData.addAll( themeData )
+      if ( themeData[ "themes.layout" ] != null ) layoutId = themeData[ "themes.layout" ]
+    } catch ( Err e ) {}
+    try if ( getLayout != null ) {
+      if ( layoutId == null && getLayoutSettings != null ) layoutId = getLayoutSettings.call->get( "default" )->toStr
+      if ( layoutId != null ) clientData.addAll( getLayout.call( layoutId ) )
+    } catch ( Err e ) {}
     
     res.headers["Content-Type"] = "text/html; charset=utf-8"
     out := res.out
