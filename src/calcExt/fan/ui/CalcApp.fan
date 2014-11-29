@@ -13,7 +13,7 @@ class CalcApp : App {
         EdgePane {
           right = Button {
             it.text = "Click me to add an item"
-            it.onAction.add { Fui.cur.main.addFooterItem(CalcDockItem())}
+            //it.onAction.add { Fui.cur.main.addFooterItem(CalcDockItem())}
           }
           
           center = HtmlPane {
