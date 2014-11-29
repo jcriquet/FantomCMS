@@ -164,8 +164,6 @@ class ThemesApp : App {
       Actor.locals[ "themes.title" ] = selectedTitle.text
       selectedStyles.each |style, styleName| { ( (Str:Obj?) style ).each |v, objName| { Actor.locals[ "themes.styles.${styleName}.${objName}" ] = v } }
       selectedLayout.each |v, k| { if ( k.startsWith( "layouts." ) ) Actor.locals[ k ] = v }
-      //if ( Actor.locals[ "themessaved.name" ] == null )
-      //  Actor.locals.findAll |v, k| { k.startsWith( "themes." ) }.each |v, k| { Actor.locals[ "themessaved." + k[ 7..-1 ] ] = v }
       insets := Insets( 7 )
       stdBorder := Border( "1 solid #000000,#CCCCCC" )
       cols := Str:Str?["bg":null]
