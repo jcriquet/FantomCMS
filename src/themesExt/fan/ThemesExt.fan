@@ -75,7 +75,11 @@ const class ThemesExt : Ext, Weblet {
     if ( defaultId == null || DBConnector.cur.db[ stype.pod.toStr ].findCount( ["_id":defaultId] ) == 0 ) {
       defaultId = DBConnector.cur.db[ stype.pod.toStr ].findOne( [:], false )?.get( "_id" ) as ObjectId
       if ( defaultId == null ) {
-        sampleTheme := ["title":"Sample Theme", "styles":["window":["bg":"gfx::Color(\"#FFFFFF\")"]]]
+        sampleTheme := [
+          "title":"Sample Theme",
+          "layout":LayoutsExt.getSettings[ "default" ],
+          "styles":["window":["bg":"gfx::Color(\"#FFFFFF\")"]],
+        ]
         defaultId = DBConnector.cur.db[ stype.pod.toStr ].findAndUpdate( ["_false":true], sampleTheme, true, ["upsert":true] )[ "_id" ]
       }
       settingsDoc[ "default" ] = defaultId

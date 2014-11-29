@@ -73,6 +73,7 @@ const class LayoutsExt : Ext, Weblet {
                             },
                           },
                         }".splitLines.map |line->Str| { line.trimStart }.join( "\n" ),
+          /*
           "paneBottom":"fui::ThemedBorderPane {
                           bgStyle=\"footer\"
                           border=gfx::Border(\"3,0,0 outset #444444\")
@@ -83,6 +84,7 @@ const class LayoutsExt : Ext, Weblet {
                             audioExt::AudioPlayer(\"fui://api/audio/02%2023%20Flavors\"),
                           },
                         }".splitLines.map |line->Str| { line.trimStart }.join( "\n" ),
+          */
           ]
         defaultId = DBConnector.cur.db[ stype.pod.toStr ].findAndUpdate( ["_false":true], sampleLayout, true, ["upsert":true] )[ "_id" ]
       }
