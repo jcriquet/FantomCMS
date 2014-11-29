@@ -8,8 +8,8 @@ using webfwt
 
 @Js
 class GalleryApp : App {
-  ContentPane contentPane := ContentPane()
-  
+//  ContentPane contentPane := ContentPane()
+  GridPane pane := GridPane()
   new make() : super() {
     content = BorderPane {
       it.bg = Gradient.fromStr("0% 50%, 100% 50%, #f00 0.1, #00f 0.9", true)
@@ -32,7 +32,7 @@ class GalleryApp : App {
           GridPane {
             it.halignPane = Halign.center
             it.valignPane = Valign.center
-            contentPane,
+            pane,
           },
         }
         right = ConstraintPane {
@@ -40,7 +40,10 @@ class GalleryApp : App {
           GridPane {
             it.halignPane = Halign.center
             it.valignPane = Valign.center
-            Button { text = "next" },                  
+            Button { text = "next" 
+                     it.onAction.add { doTheThing }
+              
+            },                  
           },
         }
       },
@@ -48,30 +51,42 @@ class GalleryApp : App {
     relayout
   }
   
-  override Void onSaveState( State state ) {
-
-  }
-  
-  override Void onLoadState( State state ) {
-    uri := Win.cur.uri
-    uri = uri.pathOnly.relTo( Fui.cur.appUri( name ) ) + ( "?" + ( uri.queryStr ?: "" ) ).toUri
-    contentPane.content = null
-    switch ( uri[0..0] ) {
-      case `files/`:
-        uri = uri[1..-1]
-        switch ( uri.ext ) {
-          case "png":
-          case "gif":
-          case "jpg":
-          case "jpeg":
-            contentPane.content = Label { it.image = Image(Main.resolve("fui://api/image/$uri".toUri)) }
-          case "mp3":
-            contentPane.content = AudioPlayer("fui://api/audio/$uri".toUri)
-        }
-      case ``:
-        // What happens when you go to /app/gallery/
-        // Maybe grid view?
+  Void doTheThing(){
+    this.apiCall(`getAll`, "image").get |res| {
+      Buf b := res.content.toBuf
+      [Str:Uri]? map := b.readObj as Str:Uri
+      map.each |uri, filename| {
+        this.pane.numCols++
+        this.pane.add( Label{ it.image = Image(Fui.cur.baseUri + uri + "?tb".toUri) } )
+      }
+      this.pane.relayout
     }
-    contentPane.relayout
-  }
+  } 
+  
+//  override Void onSaveState( State state ) {
+//
+//  }
+//  
+//  override Void onLoadState( State state ) {
+//    uri := Win.cur.uri
+//    uri = uri.pathOnly.relTo( Fui.cur.appUri( name ) ) + ( "?" + ( uri.queryStr ?: "" ) ).toUri
+//    contentPane.content = null
+//    switch ( uri[0..0] ) {
+//      case `files/`:
+//        uri = uri[1..-1]
+//        switch ( uri.ext ) {
+//          case "png":
+//          case "gif":
+//          case "jpg":
+//          case "jpeg":
+//            contentPane.content = Label { it.image = Image(Main.resolve("fui://api/image/$uri".toUri)) }
+//          case "mp3":
+//            contentPane.content = AudioPlayer("fui://api/audio/$uri".toUri)
+//        }
+//      case ``:
+//        // What happens when you go to /app/gallery/
+//        // Maybe grid view?
+//    }
+//    contentPane.relayout
+//  }
 }
