@@ -11,22 +11,21 @@ using afBson
 }
 const class UserExt : Ext, Weblet {
   override Void onGet() {
-    Obj? json
+    Obj? data
     switch ( req.modRel ) {
       case `list`:
-        json = DBConnector.cur.db[typeof.pod.toStr].group(["_id", "name", "password"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"user"]])
-        if ( json == null ) json = [,]
+        data = DBConnector.cur.db[typeof.pod.toStr].group(["_id", "name"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"user"]]) as [Str:Obj?][]
+        if ( data == null ) data = [,]
       case `groups`:
-        json = DBConnector.cur.db[typeof.pod.toStr].group(["name", "pages", "settings", "themes", "user"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"group"]])
-        if ( json == null ) json = [,]
+        data = DBConnector.cur.db[typeof.pod.toStr].group(["_id", "name"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"group"]]) as [Str:Obj?][]
+        if ( data == null ) data = [,]
     }
-    //json["users"] = DBConnector.cur.db["user"].findAll( ["type":"user"] )
-    text := JsonOutStream.writeJsonToStr( json )
-    res.headers[ "Content-Type" ] = "text/plain"
-    res.headers[ "Content-Length" ] = text.size.toStr
-    out := res.out
-    out.writeChars( text )
-    out.close
+    echo(data.toStr)
+    echo("hi")
+    out := JsonOutStream.writeJsonToStr(data)
+    res.headers[ "Content-Type" ] = "application/json"
+    res.headers[ "Content-Length" ] = out.size.toStr
+    res.out.writeChars( out ).close
     res.done
   }
 }
