@@ -14,29 +14,17 @@ class UserListPane : UserPane {
     content = EdgePane {
       top = EdgePane {
         left = Label {
-          text = "Manage Users"
+          it.text = "Manage Users"
         }
       }
       center = itemList
       bottom = GridPane{
         it.numCols = 3
-        Button{ it.text = "Add User" ; it.onAction.add { doAdd() } },
-        Button{ it.text = "Remove User" ; it.onAction.add { doRemove() } },
-        Button{ it.text = "Edit User" ; it.onAction.add { doEdit() } },
+        Button{ it.text = "Add User" ; it.onAction.add { addUser() }},
+        Button{ it.text = "Remove User" ; it.onAction.add { removeUser(itemList.items[itemList.selectedIndex]) }},
+        Button{ it.text = "Edit User" ; it.onAction.add { editUser(itemList.items[itemList.selectedIndex]) }},
       }
     }
-  }
-  
-  Void doAdd(){
-    
-  }
-
-  Void doRemove(){
-    
-  }
-
-  Void doEdit(){
-    
   }
   
   override Void onLoadState( State state ) {
@@ -53,5 +41,17 @@ class UserListPane : UserPane {
       itemList.items = toAdd
       itemList.relayout
     }
+  }
+
+  Void addUser(){
+    return
+  }
+
+  Void removeUser(Str name){
+    return
+  }
+
+  Void editUser(Str name){
+    return
   }
 }
