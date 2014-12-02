@@ -1,8 +1,8 @@
-using fwt
+using webfwt
 
 @Js
 @Serializable
-class GotoButton : Button {
+class GotoButton : StyledButton {
   Uri uri
   
   new make( Uri uri, |This|? f := null ) : super() {
