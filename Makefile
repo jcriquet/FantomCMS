@@ -1,5 +1,5 @@
 buildfast:
-	- bin/fan build.fan
+	- bin/fan src/build.fan
 
 build: db proj fui homeExt loginExt settingsExt userExt imageExt audioExt themesExt pagesExt uploaderExt securityExt layoutsExt htmlEditorExt
 
