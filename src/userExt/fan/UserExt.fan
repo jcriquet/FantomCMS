@@ -35,7 +35,7 @@ const class UserExt : Ext, Weblet {
       case "adduser":
         map := req.form
         if(map.containsKey("name") && map.containsKey("password") && map.containsKey("group") && map.containsKey("type")){
-          if(DBConnector.cur.db[typeof.pod.toStr].findAll(["name":map["name"]]).isEmpty){
+          if(DBConnector.cur.db[typeof.pod.toStr].findAll(["name":map["name"],"type":"user"]).isEmpty){
             DBConnector.cur.db[typeof.pod.toStr].insert(map)
             res.statusCode = 201
           }else{
@@ -57,7 +57,66 @@ const class UserExt : Ext, Weblet {
         map := req.form
         if(map.containsKey("name") && map.containsKey("password") && map.containsKey("group") && map.containsKey("type")){
           try{
-            DBConnector.cur.db[typeof.pod.toStr].delete(["name":map["name"]])
+            DBConnector.cur.db[typeof.pod.toStr].delete(["name":map["name"],"type":"user"])
+          }catch{
+            // group didnt exist. oh well. we'll just add it
+          }
+          DBConnector.cur.db[typeof.pod.toStr].insert(map)
+          res.statusCode = 201
+        }else{
+          res.statusCode = 500
+        }
+        res.headers[ "Content-Type" ] = "text/plain"
+        res.headers[ "Content-Length" ] = "2"
+        out := res.out
+        out.writeChar( '4' )
+        out.writeChar( '2' )
+        out.close
+        res.done
+
+      // delete
+      case "deleteuser":
+        Int i := DBConnector.cur.db[typeof.pod.toStr].delete(["name":req.in.readAllStr,"type":"user"])
+        if(i > 0){
+          res.statusCode = 200
+        }else{
+          res.statusCode = 500
+        }
+        res.headers[ "Content-Type" ] = "text/plain"
+        res.headers[ "Content-Length" ] = "2"
+        out := res.out
+        out.writeChar( '4' )
+        out.writeChar( '2' )
+        out.close
+        res.done
+      
+      // New Page
+      case "addgroup":
+        map := req.form
+        if(map.containsKey("name") && map.containsKey("type")){
+          if(DBConnector.cur.db[typeof.pod.toStr].findAll(["name":map["name"], "type":"group"]).isEmpty){
+            DBConnector.cur.db[typeof.pod.toStr].insert(map)
+            res.statusCode = 201
+          }else{
+            res.statusCode = 304
+          }
+          res.headers[ "Content-Type" ] = "text/plain"
+          res.headers[ "Content-Length" ] = "2"
+          out := res.out
+          out.writeChar( '4' )
+          out.writeChar( '2' )
+          out.close
+          res.done
+        } else {
+          res.sendErr(500)
+        }
+      
+      // edit
+      case "editgroup":
+        map := req.form
+        if(map.containsKey("name") && map.containsKey("type")){
+          try{
+            DBConnector.cur.db[typeof.pod.toStr].delete(["name":map["name"],"type":"group"])
           }catch{
             // user didnt exist. oh well. we'll just add it
           }
@@ -75,8 +134,8 @@ const class UserExt : Ext, Weblet {
         res.done
 
       // delete
-      case "deleteuser":
-        Int i := DBConnector.cur.db[typeof.pod.toStr].delete(["name":req.in.readAllStr])
+      case "deletegroup":
+        Int i := DBConnector.cur.db[typeof.pod.toStr].delete(["name":req.in.readAllStr,"type":"group"])
         if(i > 0){
           res.statusCode = 200
         }else{
@@ -89,7 +148,6 @@ const class UserExt : Ext, Weblet {
         out.writeChar( '2' )
         out.close
         res.done
-      
       
       
       // default error

@@ -22,9 +22,9 @@ class UserGroupPane : UserPane {
       center = itemList
       bottom = GridPane{
         it.numCols = 3
-        Button{ it.text = "Add User" ; it.onAction.add { addGroup() }},
-        Button{ it.text = "Remove User" ; it.onAction.add { removeGroup(itemList.items[itemList.selectedIndex]) }},
-        Button{ it.text = "Edit User" ; it.onAction.add { editGroup(itemList.items[itemList.selectedIndex]) }},
+        Button{ it.text = "Add Group" ; it.onAction.add { addGroup() }},
+        Button{ it.text = "Remove Group" ; it.onAction.add { removeGroup(itemList.items[itemList.selectedIndex]) }},
+        Button{ it.text = "Edit Group" ; it.onAction.add { editGroup(itemList.items[itemList.selectedIndex]) }},
       }
     }
   }
@@ -46,7 +46,9 @@ class UserGroupPane : UserPane {
   }
   
   Void addGroup(){
-    return
+    AddGroupOverlayPane(app){
+      it.onClose.add { itemList.relayout }
+    }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
   }
 
   Void removeGroup(Str name){
