@@ -21,6 +21,7 @@ class ThemesApp : App {
     hgap = vgap = 0
     halignCells = Halign.fill
     valignCells = Valign.fill
+    cols = ["bg", "fg", "font"]
   }
   LayoutCombo layoutSelector := LayoutCombo {
     onModify.add |e| {
@@ -166,8 +167,7 @@ class ThemesApp : App {
       selectedLayout.each |v, k| { if ( k.startsWith( "layouts." ) ) Actor.locals[ k ] = v }
       insets := Insets( 7 )
       stdBorder := Border( "1 solid #000000,#CCCCCC" )
-      cols := Str:Str?["bg":null,"fg":null,"font":null]
-      contentPane.populate( selectedStyles.dup.add( "New Style", cols ) ) |cell, col, row| {
+      contentPane.populate( selectedStyles.dup.add( "New Style", Str:Obj?[:] ) ) |cell, col, row| {
         if ( col == null ) {
           if ( row == null ) return BorderPane { bg = Color.white; border = stdBorder; ContentPane(), }
           else return BorderPane { bg = Color.white; border = stdBorder; widgetRowHeader( row ), }

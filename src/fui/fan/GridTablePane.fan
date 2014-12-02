@@ -3,6 +3,8 @@ using gfx
 
 @Js
 class GridTablePane : GridPane {
+  Str[]? cols
+  
   Void populate( Obj? items, |Obj? cell, Obj? col, Obj? row->Widget| createFunc ) {
     removeAll
     if ( items == null ) {
@@ -13,7 +15,7 @@ class GridTablePane : GridPane {
       hasRowLabels := items is Str:Obj?
       hasColLabels := (Bool) items->all |Obj? row->Bool| { row is Str:Obj? }
       if ( hasColLabels ) {
-        colLabels := Str[,]
+        colLabels := cols ?: Str[,]
         items->each |Str:Obj? row| { colLabels = colLabels.union( row.keys ) }
         if ( hasRowLabels ) {
           numCols = 1 + colLabels.size
