@@ -1,4 +1,5 @@
 using fui
+using dom
 using webfwt
 using fwt
 using gfx
@@ -44,7 +45,7 @@ class UserListPane : UserPane {
   }
 
   Void addUser(){
-    return
+    AddOverlayPane.make.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
   }
 
   Void removeUser(Str name){

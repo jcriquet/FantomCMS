@@ -5,12 +5,12 @@ using util
 using fui
 
 @Js
-class addOverlayPane : OverlayPane
+class AddOverlayPane : OverlayPane
 {
   Text usernameBox := Text { }
   Text passwordBox := Text { it.password = true }
 
-  new make(Str name) : super(){
+  new make() : super(){
     this.content = BorderPane{
       it.border = Border.fromStr("1")
       it.bg = Color.white
