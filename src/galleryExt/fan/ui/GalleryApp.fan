@@ -62,13 +62,14 @@ class GalleryApp : App {
       it.halignPane = Halign.center
       it.valignPane = Valign.center
       this.apiCall(`getAll`, "image").get |res| {
+        echo ("api call")
         Buf b := res.content.toBuf
         [Str:Uri]? map := b.readObj as Str:Uri
         map.each |uri, filename| {
           this.pane.numCols++
           this.pane.add( Label{ it.image = Image(Fui.cur.baseUri + uri + "?tb".toUri) } )
         }
-        this.pane.relayout
+//        this.pane.relayout
       }
     }
   } 
