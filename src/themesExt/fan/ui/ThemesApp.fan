@@ -166,7 +166,7 @@ class ThemesApp : App {
       selectedLayout.each |v, k| { if ( k.startsWith( "layouts." ) ) Actor.locals[ k ] = v }
       insets := Insets( 7 )
       stdBorder := Border( "1 solid #000000,#CCCCCC" )
-      cols := Str:Str?["bg":null]
+      cols := Str:Str?["bg":null,"fg":null,"font":null]
       contentPane.populate( selectedStyles.dup.add( "New Style", cols ) ) |cell, col, row| {
         if ( col == null ) {
           if ( row == null ) return BorderPane { bg = Color.white; border = stdBorder; ContentPane(), }
@@ -177,7 +177,10 @@ class ThemesApp : App {
           if ( cell == null ) widgetNew( col, row ),;
           else switch ( col ) {
             case "bg":
+            case "fg":
               widgetBrush( cell, col, row ),;
+            case "font":
+              widgetFont( cell, col, row ),;
             default: Label { text = cell.toStr },;
           }
         }
@@ -250,16 +253,23 @@ class ThemesApp : App {
   
   private Widget widgetNew( Obj? col, Obj? row ) {
     if ( row == "New Style" ) return ContentPane()
-    return StyledButton {
-      border = null; bg = null
-      onAction.add {
-        switch ( col ) {
-          case "bg":
-            selectedStyles[ row ]->set( col, "gfx::Color(\"#FFFFFF\")" )
+    return ConstraintPane {
+      minw = maxw = minh = maxh = 50
+      it.content = StyledButton {
+        border = null; bg = null
+        onAction.add {
+          switch ( col ) {
+            case "bg":
+              selectedStyles[ row ]->set( col, "gfx::Color(\"#FFFFFF\")" )
+            case "fg":
+              selectedStyles[ row ]->set( col, "gfx::Color(\"#000000\")" )
+            case "font":
+              selectedStyles[ row ]->set( col, "gfx::Font(\"12pt Ariel\")" )
+          }
+          modifyState
         }
-        modifyState
+        Label { font = Font.makeFields( "Ariel", 24 ); text = "+" },
       }
-      Label { font = Font.makeFields( "Ariel", 24 ); text = "+" },
     }
   }
   
@@ -281,6 +291,32 @@ class ThemesApp : App {
           }
           OverlayContainer( e.widget, overlay ).display( e.widget, Point( 0, e.widget.size.h ) )
         }
+      }
+    }
+  }
+  
+  private Widget widgetFont( Obj? cell, Obj? col, Obj? row ) {
+    ConstraintPane {
+      minw = maxw = minh = maxh = 50
+      it.content = StyledButton {
+        onAction.add |e| {
+          overlay := BrushDialog( cell ) |result| {
+            if ( result == "" ) {
+              selectedStyles[ row ]->remove( col )
+              modifyState
+            } else if ( selectedStyles[ row ]->get( col ) != result ) {
+              selectedStyles[ row ]->set( col, result )
+              modifyState
+            }
+          }
+          OverlayContainer( e.widget, overlay ).display( e.widget, Point( 0, e.widget.size.h ) )
+        }
+        Label {
+          text = "Abc"
+          halign = Halign.center
+          try font = ( ( (Str) cell ).in.readObj as Font ) ?: null
+          catch ( Err e ) font = null
+        },
       }
     }
   }
