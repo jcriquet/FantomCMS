@@ -11,8 +11,17 @@ class AddUserOverlayPane : OverlayPane
   Text usernameBox := Text { }
   Text passwordBox := Text { it.password = true }
   TreeList groupList
+  App app
+  Bool isEdit := false
+  Str? originalName
 
-  new make(Str[] toAdd) : super(){
+  new make(App app, Str[] toAdd, Str? name := null) : super(){
+    this.app = app
+    if(name != null) isEdit = true
+    if(isEdit){
+      this.originalName = name
+      usernameBox.text = name
+    }
     this.content = BorderPane{
       it.border = Border.fromStr("1")
       it.bg = Color.white
@@ -56,6 +65,30 @@ class AddUserOverlayPane : OverlayPane
   }
   
   Void save(){
-    this.close
+    toSend := [:]
+    toSend["type"] = "user"
+    toSend["name"] = this.usernameBox.text
+    toSend["password"] = this.passwordBox.text
+    toSend["group"] = (Str)this.groupList.items[this.groupList.selectedIndex]
+    callType := `adduser`
+    if(this.isEdit){
+      callType = `edituser`
+      if(this.usernameBox.text != this.originalName){
+        app.apiCall( `deleteuser`, app.name ).post(originalName) |res| { }
+      }
+    }
+    this.app.apiCall(callType).postForm(toSend) |res| {
+      switch(res.status){
+      case 304:
+        Win.cur.alert("Error: User already exists. Please delete first.")
+        this.close
+      case 201:
+        Win.cur.alert("Saved.")
+        this.close
+      default:
+        Win.cur.alert("Internal error saving.")
+        this.close
+      }
+    }
   }
 }

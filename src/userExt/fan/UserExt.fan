@@ -20,8 +20,6 @@ const class UserExt : Ext, Weblet {
         data = DBConnector.cur.db[typeof.pod.toStr].group(["_id", "name"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"group"]]) as [Str:Obj?][]
         if ( data == null ) data = [,]
     }
-    echo(data.toStr)
-    echo("hi")
     out := JsonOutStream.writeJsonToStr(data)
     res.headers[ "Content-Type" ] = "application/json"
     res.headers[ "Content-Length" ] = out.size.toStr
@@ -36,8 +34,8 @@ const class UserExt : Ext, Weblet {
       // New Page
       case "adduser":
         map := req.form
-        if(map.containsKey("username") && map.containsKey("password") && map.containsKey("group")){
-          if(DBConnector.cur.db[typeof.pod.toStr].findAll(["username":map["username"]]).isEmpty){
+        if(map.containsKey("name") && map.containsKey("password") && map.containsKey("group") && map.containsKey("type")){
+          if(DBConnector.cur.db[typeof.pod.toStr].findAll(["name":map["name"]]).isEmpty){
             DBConnector.cur.db[typeof.pod.toStr].insert(map)
             res.statusCode = 201
           }else{
@@ -57,8 +55,12 @@ const class UserExt : Ext, Weblet {
       // edit
       case "edituser":
         map := req.form
-        if(map.containsKey("username") && map.containsKey("password") && map.containsKey("group")){
-          DBConnector.cur.db[typeof.pod.toStr].delete(["username":map["username"]])
+        if(map.containsKey("name") && map.containsKey("password") && map.containsKey("group") && map.containsKey("type")){
+          try{
+            DBConnector.cur.db[typeof.pod.toStr].delete(["name":map["name"]])
+          }catch{
+            // user didnt exist. oh well. we'll just add it
+          }
           DBConnector.cur.db[typeof.pod.toStr].insert(map)
           res.statusCode = 201
         }else{
@@ -74,7 +76,7 @@ const class UserExt : Ext, Weblet {
 
       // delete
       case "deleteuser":
-        Int i := DBConnector.cur.db[typeof.pod.toStr].delete(["username":req.in.readAllStr])
+        Int i := DBConnector.cur.db[typeof.pod.toStr].delete(["name":req.in.readAllStr])
         if(i > 0){
           res.statusCode = 200
         }else{

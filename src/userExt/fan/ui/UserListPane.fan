@@ -43,7 +43,7 @@ class UserListPane : UserPane {
       itemList.relayout
     }
   }
-
+  
   Void addUser(){
     Str[] toAdd := [,]
     app.apiCall( `groups`, app.name ).get |res| {
@@ -55,15 +55,38 @@ class UserListPane : UserPane {
           }
         }
       }
-    AddUserOverlayPane(toAdd).open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
+      AddUserOverlayPane(app,toAdd){
+        it.onClose.add { itemList.relayout }
+      }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
     }
   }
 
   Void removeUser(Str name){
-    return
+    app.apiCall( `deleteuser`, app.name ).post(this.itemList.items[this.itemList.selectedIndex]) |res| {
+      switch(res.status){
+        case 200:
+          Win.cur.alert("Deleted successfully.")
+        default:
+          Win.cur.alert("Failed to delete user.")
+      }
+    }
   }
 
   Void editUser(Str name){
+    Str[] toAdd := [,]
+    app.apiCall( `groups`, app.name ).get |res| {
+      json := JsonInStream( res.content.in ).readJson as [Str:Obj?][]
+      json.each |item| {
+        item.each |v, k| {
+          if(k == "name"){
+            toAdd.add((Str)v)
+          }
+        }
+      }
+      AddUserOverlayPane(app,toAdd, this.itemList.items[this.itemList.selectedIndex]){
+        it.onClose.add { itemList.relayout }
+      }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
+    }
     return
   }
 }
