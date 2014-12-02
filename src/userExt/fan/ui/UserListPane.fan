@@ -45,7 +45,18 @@ class UserListPane : UserPane {
   }
 
   Void addUser(){
-    AddOverlayPane.make.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
+    Str[] toAdd := [,]
+    app.apiCall( `groups`, app.name ).get |res| {
+      json := JsonInStream( res.content.in ).readJson as [Str:Obj?][]
+      json.each |item| {
+        item.each |v, k| {
+          if(k == "name"){
+            toAdd.add((Str)v)
+          }
+        }
+      }
+    AddUserOverlayPane(toAdd).open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
+    }
   }
 
   Void removeUser(Str name){

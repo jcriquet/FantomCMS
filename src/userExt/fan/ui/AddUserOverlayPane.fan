@@ -1,16 +1,18 @@
 using fwt
+using dom
 using gfx
 using webfwt
 using util
 using fui
 
 @Js
-class AddOverlayPane : OverlayPane
+class AddUserOverlayPane : OverlayPane
 {
   Text usernameBox := Text { }
   Text passwordBox := Text { it.password = true }
+  TreeList groupList
 
-  new make() : super(){
+  new make(Str[] toAdd) : super(){
     this.content = BorderPane{
       it.border = Border.fromStr("1")
       it.bg = Color.white
@@ -39,21 +41,21 @@ class AddOverlayPane : OverlayPane
         bottom = EdgePane{
           it.center = ScrollPane{
             it.content = TreeList{
-              Str[] apps := [,]
-              Fui.cur.appMap.each |v, k| { 
-                if(k == "loginExt") return
-                apps.add(k)
-              }
-              it.items = apps
+              it.items = toAdd
+              this.groupList = it
             }
           }
           it.bottom = GridPane{
             it.numCols = 2
-            Button { it.text = "Close" },
-            Button { it.text = "Save" },
+            Button { it.text = "Close" ; it.onAction.add { this.close }},
+            Button { it.text = "Save" ; it.onAction.add { this.save() }},
           }
         }
       }
     }
+  }
+  
+  Void save(){
+    this.close
   }
 }
