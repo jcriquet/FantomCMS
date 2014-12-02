@@ -25,6 +25,10 @@ const class UserExt : Ext, Weblet {
       case "getuser":
         data = DBConnector.cur.db[typeof.pod.toStr].findAll(["name":req.modRel.path[1],"type":"user"])
         if ( data == null ) data = [,]
+      default:
+        res.sendErr(404)
+        res.done
+        return
     }
     out := JsonOutStream.writeJsonToStr(data)
     res.headers[ "Content-Type" ] = "application/json"
@@ -167,6 +171,21 @@ const class UserExt : Ext, Weblet {
         out.close
         res.done
     }
+  }
+  
+  static Bool checkPerm(Str name, Str app){
+    data := DBConnector.cur.db["userExt"].findAll(["name":name,"type":"user"]) as [Str:Obj?][]
+    if(data == null) return false
+    group := data[0]["group"]
+    return checkGroupPerm(group, app)
+  }
+  
+  static Bool checkGroupPerm(Str name, Str app){
+    data := DBConnector.cur.db["userExt"].findAll(["name":name,"type":"group"]) as [Str:Obj?][]
+    if(data == null) return false
+    perm := Bool.fromStr(data[0][app])
+    if(perm == null) return false
+    return perm
   }
 
   static [Str:Obj?][]? getGroups(){
