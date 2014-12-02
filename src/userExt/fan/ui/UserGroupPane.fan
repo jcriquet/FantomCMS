@@ -52,7 +52,14 @@ class UserGroupPane : UserPane {
   }
 
   Void removeGroup(Str name){
-    return
+    app.apiCall( `deletegroup`, app.name ).post(this.itemList.items[this.itemList.selectedIndex]) |res| {
+      switch(res.status){
+        case 200:
+          Win.cur.alert("Deleted successfully.")
+        default:
+          Win.cur.alert("Failed to delete group.")
+      }
+    }
   }
 
   Void editGroup(Str name){
