@@ -56,6 +56,19 @@ class UserGroupPane : UserPane {
   }
 
   Void editGroup(Str name){
-    return
+    app.apiCall(`getgroup/` + Uri.fromStr(name)).get |res| {
+      map := JsonInStream(res.content.in).readJson as [Str:Obj?][]
+      Str:Bool toPass := [:]
+      map[0].each |v, k| {  
+        if(k == "_id" || k == "name" || k == "type") return
+        try{
+          toPass[k] = Bool.fromStr(v)
+        }catch{}
+      }
+      Win.cur.alert(toPass)
+      AddGroupOverlayPane(app, name, toPass){
+        it.onClose.add { itemList.relayout }
+      }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
+    }
   }
 }

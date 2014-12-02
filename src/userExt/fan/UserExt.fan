@@ -12,12 +12,18 @@ using afBson
 const class UserExt : Ext, Weblet {
   override Void onGet() {
     Obj? data
-    switch ( req.modRel ) {
-      case `list`:
+    switch ( req.modRel.path[0] ) {
+      case "list":
         data = DBConnector.cur.db[typeof.pod.toStr].group(["_id", "name"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"user"]]) as [Str:Obj?][]
         if ( data == null ) data = [,]
-      case `groups`:
+      case "groups":
         data = DBConnector.cur.db[typeof.pod.toStr].group(["_id", "name"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"group"]]) as [Str:Obj?][]
+        if ( data == null ) data = [,]
+      case "getgroup":
+        data = DBConnector.cur.db[typeof.pod.toStr].findAll(["name":req.modRel.path[1],"type":"group"])
+        if ( data == null ) data = [,]
+      case "getuser":
+        data = DBConnector.cur.db[typeof.pod.toStr].findAll(["name":req.modRel.path[1],"type":"user"])
         if ( data == null ) data = [,]
     }
     out := JsonOutStream.writeJsonToStr(data)

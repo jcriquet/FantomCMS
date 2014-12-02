@@ -39,7 +39,20 @@ class AddGroupOverlayPane : OverlayPane
           Fui.cur.appMap.each |v, k| { 
             if(v.name == "home" || v.name == "settings" || v.name == "login") return
             permPane.add(Label{ it.text = v.name })
-            permPane.add(Button{ it.mode = ButtonMode.check ; this.permMap[v.name] = it })
+            if(!this.isEdit){
+              permPane.add(Button{ it.mode = ButtonMode.check ; this.permMap[v.name] = it })
+            }else{
+              if(!editMap.containsKey(v.name)){
+                permPane.add(Button{ it.mode = ButtonMode.check ; this.permMap[v.name] = it })
+                return
+              }
+              if(editMap[v.name] == true){
+                permPane.add(Button{ it.mode = ButtonMode.check ; it.selected = true ; this.permMap[v.name] = it })
+              }else{
+                permPane.add(Button{ it.mode = ButtonMode.check ; this.permMap[v.name] = it })
+                
+              }
+            }
           }
         }
         it.bottom = GridPane{
