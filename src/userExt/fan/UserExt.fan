@@ -173,19 +173,45 @@ const class UserExt : Ext, Weblet {
     }
   }
   
-  static Bool checkPerm(Str name, Str app){
-    data := DBConnector.cur.db["userExt"].findAll(["name":name,"type":"user"]) as [Str:Obj?][]
-    if(data == null) return false
-    group := data[0]["group"]
+  static Bool checkPerm(Str? name, Str app){
+    data := getUserData(name)
+    group := data["group"]
     return checkGroupPerm(group, app)
   }
+
+  static Str[] getPerms(Str? name){
+    getGroup(getUserData(name)["group"]).findAll |v| { v == "true" }.keys
+  }
   
-  static Bool checkGroupPerm(Str name, Str app){
-    data := DBConnector.cur.db["userExt"].findAll(["name":name,"type":"group"]) as [Str:Obj?][]
-    if(data == null) return false
-    perm := Bool.fromStr(data[0][app])
+  static [Str:Obj?] getUserData(Str? name){
+    if(name == null){
+      name = "guest"
+    }
+    data := DBConnector.cur.db["userExt"].findOne(["name":name,"type":"user"], false) as [Str:Obj?]
+    if(data == null){
+      if(name != "guest") return [:]
+      data = DBConnector.cur.db[ "userExt" ].findAndUpdate( ["name":"guest","type":"user"], ["name":"guest", "password":null, "group":"guest", "type":"user"], true, ["upsert":true] )
+    }
+    return data
+  }
+  
+  static Bool checkGroupPerm(Str? name, Str app){
+    data := getGroup(name)
+    perm := Bool.fromStr(data[app] ?: "false")
     if(perm == null) return false
     return perm
+  }
+  
+  static Str:Obj? getGroup(Str? name){
+    if(name == null){
+      name = "guest"
+    }
+    data := DBConnector.cur.db["userExt"].findOne(["name":name,"type":"group"], false) as [Str:Obj?]
+    if(data == null){
+      if(name != "guest") return [:]
+      data = DBConnector.cur.db[ "userExt" ].findAndUpdate( ["name":"guest","type":"group"], ["name":"guest", "type":"group", "login":"true", "home":"true"], true, ["upsert":true] )
+    }
+    return data
   }
   
   static Bool checkPass(Str name, Str pass){

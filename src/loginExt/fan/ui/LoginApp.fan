@@ -3,7 +3,6 @@ using web
 using fwt
 using gfx
 using util
-using proj
 using dom
 
 @Js
@@ -56,7 +55,7 @@ class LoginApp : App {
     this.apiCall(`login`).postForm(creds) |res| {  
       switch(res.status){
         case 200:
-          Win.cur.alert("Login Successful")
+          Win.cur.hyperlink(Main.resolve(`fui://app/home/`))
         default:
           Win.cur.alert("Invalid username/password.")
       }

@@ -26,7 +26,14 @@ const class LoginExt : Ext, Weblet {
       if(UserExt.checkPass(req.form["username"], req.form["password"])){
         // login good
         session := SessionStorage.cur.get(req.form["username"])
-        res.cookies.add(Cookie.make("FCMS", session.toStr))
+        Cookie test := Cookie.make("test1", "test"){
+          it.domain = "localhost"
+          it.secure = true
+          it.val = "hi"
+        }
+        res.cookies.add(test)
+        res.cookies.add(Cookie.make("username", req.form["username"]))
+        res.cookies.add(Cookie.make("session", session.toStr))
         res.statusCode = 200
         data = "good"
       }else{
