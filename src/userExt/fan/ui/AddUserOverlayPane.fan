@@ -6,8 +6,7 @@ using util
 using fui
 
 @Js
-class AddUserOverlayPane : OverlayPane
-{
+class AddUserOverlayPane : OverlayPane {
   Text usernameBox := Text { }
   Text passwordBox := Text { it.password = true }
   TreeList groupList
@@ -64,31 +63,29 @@ class AddUserOverlayPane : OverlayPane
     }
   }
   
-  Void save(){
+  Void save() {
     toSend := [:]
     toSend["type"] = "user"
     toSend["name"] = this.usernameBox.text
     toSend["password"] = this.passwordBox.text
     toSend["group"] = (Str)this.groupList.items[this.groupList.selectedIndex]
-    callType := `adduser`
-    if(this.isEdit){
-      callType = `edituser`
-      if(this.usernameBox.text != this.originalName){
-        app.apiCall( `deleteuser`, app.name ).post(originalName) |res| { }
-      }
+    callType := `edit/new`
+    if ( isEdit ) {
+      callType = `edit`
+      if ( this.usernameBox.text != this.originalName )
+        app.apiCall( `delete/user` ).post(originalName) |res| { }
     }
-    this.app.apiCall(callType).postForm(toSend) |res| {
+    app.apiCall( callType ).postForm(toSend) |res| {
       switch(res.status){
-      case 304:
-        Win.cur.alert("Error: User already exists. Please delete first.")
-        this.close
-      case 201:
-        Win.cur.alert("Saved.")
-        this.close
-      default:
-        Win.cur.alert("Internal error saving.")
-        this.close
+        case 304:
+          Win.cur.alert("Error: User already exists. Please delete first.")
+        case 201:
+          Win.cur.alert("Saved.")
+        default:
+          Win.cur.alert("Internal error saving.")
       }
+      close
+      app.reload
     }
   }
 }

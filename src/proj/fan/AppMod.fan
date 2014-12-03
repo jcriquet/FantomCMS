@@ -5,6 +5,7 @@ using web
 
 const class AppMod : WebMod {
   const Str:AppSpec appMap
+  const Str:ExtMeta extMap
   const Pod[] podList
   static const Method? getThemeSettings := Type.find( "themesExt::ThemesExt" ).method( "getSettings" )
   static const Method? getTheme := Type.find( "themesExt::ThemesExt" ).method( "getTheme" )
@@ -15,12 +16,12 @@ const class AppMod : WebMod {
   
   new make( Str:Type exts ) {
     podList := Pod[,]
-    metas := (Str:ExtMeta) exts.map |ext->ExtMeta?| {
+    extMap = exts.map |ext->ExtMeta?| {
       podList.remove( ext.pod )
       podList.add( ext.pod )
       return ext.facets.find |f| { f is ExtMeta } as ExtMeta
     }.exclude |meta| { meta == null }
-    appMap = metas.map |meta, name| {
+    appMap = extMap.map |meta, name| {
       app := meta.app
       return app == null ? null : AppSpec( name, app.qname, meta.label ?: name.capitalize, meta.icon ?: "default-50.png" )
     }.exclude |app| { app == null }
@@ -33,7 +34,6 @@ const class AppMod : WebMod {
     
     notFound := !appMap.containsKey( appStr )// || queryRow == null
     if ( notFound ) { res.sendErr( 404 ); return }
-
     
     title := Env.cur.config( typeof.pod, "server.title" )
     if ( title == null ) {
@@ -43,31 +43,28 @@ const class AppMod : WebMod {
       file.create.writeProps( props[ "server.title" ] = title )
     }
     
-    
     clientData := [
       "fui.baseUri" : "/",
       "fui.title" : title,
       "fui.app" : appStr,
     ]
     
-    // Users
-    allowed := false
-    try if(checkUserPerm != null){
-      Str? user := Actor.locals["proj.curUser"]
-      allowed = (Bool)checkUserPerm.call(user, appStr)
-    }catch(Err e){}
-    if(!allowed) clientData["fui.app"] = "login"
+    // Permissions
+    curUser := Actor.locals["proj.curUser"] as Str
+    if ( curUser != null && curUser != "guest" ) clientData[ "fui.curUser" ] = curUser
     Str[]? userPerms
-    try if(getUserPerms != null){
-      userPerms = ((Str[])getUserPerms.call(Actor.locals["proj.curUser"]))
-    } catch ( Err e ) {}
-    if ( userPerms != null ) clientData[ "fui.perms" ] = userPerms.join(",")
+    try if ( getUserPerms != null ) userPerms = getUserPerms.call( curUser )
+    catch ( Err e ) { userPerms = ["login"] }
+    if ( userPerms == null ) userPerms = extMap.keys
+    if ( !userPerms.contains( appStr ) && appStr != "login" ) {
+      res.redirect( ( clientData[ "fui.baseUri" ] + "app/login" ).toUri )
+      return
+    } else clientData[ "fui.perms" ] = userPerms.join(",")
     
     // Apps
-    buf := StrBuf()
-    appMap := appMap.findAll |spec, name| { userPerms?.contains( name ) ?: false }
-    JsonOutStream( buf.out ).writeJson( appMap.map |spec| { spec.toMap } )
-    clientData["fui.apps"] = buf.toStr
+    apps := appMap.findAll |spec, name| { userPerms.contains( name ) }.map |spec| { spec.toMap }
+    clientData[ "fui.apps" ] = JsonOutStream.writeJsonToStr( apps )
+    clientData[ "fui.exts" ] = JsonOutStream.writeJsonToStr( extMap.keys.findAll |name| { !apps.containsKey( name ) && userPerms.contains( name ) } )
     
     // Layouts and Themes
     Str? layoutId
@@ -108,13 +105,27 @@ const class AppMod : WebMod {
 
 const class IndexMod : WebMod {
   const AppMod appMod
-  
-  new make( AppMod appMod ) : super() {
-    this.appMod = appMod
-  }
-  
+  new make( AppMod appMod ) : super() { this.appMod = appMod }
   override Void onGet() {
     req.mod = appMod
     appMod.onGet
+  }
+}
+
+const class LoginMod : WebMod {
+  const AppMod appMod
+  new make( AppMod appMod ) : super() { this.appMod = appMod }
+  override Void onGet() {
+    req.modBase = req.modBase[ 0..-2 ]
+    req.mod = appMod
+    appMod.onGet
+  }
+}
+
+const class LogoutMod : WebMod {
+  override Void onGet() {
+    curUser := Actor.locals["proj.curUser"] as Str
+    if ( curUser != null ) SessionStorage.cur.remove( curUser )
+    res.redirect( req.headers[ "Referer" ]?.toUri ?: `/` )
   }
 }

@@ -9,7 +9,7 @@ class Build : BuildGroup {
   new make() {
     srcDir := Env.cur.homeDir + `src/`
     childs := srcDir.listDirs.findAll |file| { ( file + `build.fan`  ).exists }.map |dir->Uri| { dir.uri + `build.fan` }
-	ordered := [ `db/`, `proj/`, `fui/`, `settingsExt/`, `layoutsExt/`, `themesExt/`, `homeExt/` ].map |dir->Uri| { srcDir.uri + dir + `build.fan` }
+	ordered := [ `db/`, `proj/`, `fui/`, `settingsExt/`, `layoutsExt/`, `themesExt/`, `homeExt/`, `userExt/`, `loginExt/` ].map |dir->Uri| { srcDir.uri + dir + `build.fan` }
 	ordered.eachr |dir| { if ( childs.remove( dir ) != null ) childs.insert( 0, dir ) }
     childrenScripts = childs
   }

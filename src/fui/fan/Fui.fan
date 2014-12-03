@@ -7,6 +7,8 @@ class Fui {
   fui::Main main { private set }
   Str? title
   [Str:AppSpec]? appMap
+  Str[]? exts
+  Str[]? permissions
   Uri? baseUri
   
   new make( fui::Main main ) {

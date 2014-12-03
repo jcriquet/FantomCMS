@@ -33,9 +33,11 @@ const class WebService : WispService {
     appMod := AppMod( exts )
     root = RootMod { it.routes = [
         "index" : IndexMod( appMod ),
-        "pod" : RouteMod { it.routes = podMap },
+        "login" : LoginMod( appMod ),
+        "logout" : LogoutMod(),
+        "app" : appMod,
         "api" : ApiMod( exts ),
-        "app" : appMod
+        "pod" : RouteMod { it.routes = podMap },
       ] }
   } ) {
   }
@@ -50,11 +52,7 @@ const class RootMod : RouteMod {
       cookie := Cookie.fromStr(str)
       cookies[ cookie.name ] = cookie.val
     }
-    if(cookies["username"] != null && SessionStorage.cur.get(cookies["username"]) == cookies["session"]?.toInt){
-      Actor.locals["proj.curUser"] = cookies["username"]
-    }else{
-      Actor.locals.remove("proj.curUser")
-    }
+    Actor.locals["proj.curUser"] = ( SessionStorage.cur[ cookies["username"] ] == cookies["session"]?.toInt ? cookies["username"] : null ) ?: "guest"
     super.onService
   }
 }

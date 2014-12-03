@@ -19,13 +19,17 @@ class SessionStorage {
   @Operator
   Int get(Str username) {
     Bool mod := false
-    toRet := sessionMap.getOrAdd(username) |->Session| { 
+    toRet := sessionMap.getOrAdd( username ) |->Session| { 
       mod = true
-      return Session() 
+      return Session()
     }.sessionID
-    if (mod) `cached/proj/session.props`.toFile.writeProps(sessionMap.map |session->Str| { session.toStr })
+    if ( mod ) updateFile
     return toRet
   }
+  
+  Void remove(Str username) { if ( sessionMap.remove(username) != null ) updateFile }
+  
+  private Void updateFile() { `cached/proj/session.props`.toFile.writeProps( sessionMap.map |session->Str| { session.toStr } ) }
   
   static SessionStorage cur() {
     ret := Actor.locals["sessionstorage.cur"] as SessionStorage

@@ -12,25 +12,16 @@ using afBson
 const class UserExt : Ext, Weblet {
   override Void onGet() {
     Obj? data
-    switch ( req.modRel.path[0] ) {
+    paths := req.modRel.path
+    switch ( paths[0] ) {
       case "list":
-        data = DBConnector.cur.db[typeof.pod.toStr].group(["_id", "name"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"user"]]) as [Str:Obj?][]
-        if ( data == null ) data = [,]
-      case "groups":
-        data = DBConnector.cur.db[typeof.pod.toStr].group(["_id", "name"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"group"]]) as [Str:Obj?][]
-        if ( data == null ) data = [,]
-      case "getgroup":
-        data = DBConnector.cur.db[typeof.pod.toStr].findAll(["name":req.modRel.path[1],"type":"group"])
-        if ( data == null ) data = [,]
-      case "getuser":
-        data = DBConnector.cur.db[typeof.pod.toStr].findAll(["name":req.modRel.path[1],"type":"user"])
-        if ( data == null ) data = [,]
-      default:
-        res.sendErr(404)
-        res.done
-        return
+        data = db.group( ["_id", "name"], [:], emptyCode, ["cond":["type":paths[1]]] )
+        if ( data->size == 0 ) data = null
+      case "get":
+        data = db.findOne( ["name":paths[2],"type":paths[1]], false )
     }
-    out := JsonOutStream.writeJsonToStr(data)
+    if ( data == null ) { res.sendErr(404); return }
+    out := JsonOutStream.writeJsonToStr( data )
     res.headers[ "Content-Type" ] = "application/json"
     res.headers[ "Content-Length" ] = out.size.toStr
     res.out.writeChars( out ).close
@@ -38,193 +29,66 @@ const class UserExt : Ext, Weblet {
   }
   
   override Void onPost() {
-    uri := req.modRel
-    switch(uri.pathOnly.toStr){
-      
-      // New Page
-      case "adduser":
-        map := req.form
-        if(map.containsKey("name") && map.containsKey("password") && map.containsKey("group") && map.containsKey("type")){
-          if(DBConnector.cur.db[typeof.pod.toStr].findAll(["name":map["name"],"type":"user"]).isEmpty){
-            DBConnector.cur.db[typeof.pod.toStr].insert(map)
-            res.statusCode = 201
-          }else{
-            res.statusCode = 304
-          }
-          res.headers[ "Content-Type" ] = "text/plain"
-          res.headers[ "Content-Length" ] = "2"
-          out := res.out
-          out.writeChar( '4' )
-          out.writeChar( '2' )
-          out.close
-          res.done
-        } else {
-          res.sendErr(500)
-        }
-      
-      // edit
-      case "edituser":
-        map := req.form
-        if(map.containsKey("name") && map.containsKey("password") && map.containsKey("group") && map.containsKey("type")){
-          try{
-            DBConnector.cur.db[typeof.pod.toStr].delete(["name":map["name"],"type":"user"])
-          }catch{
-            // group didnt exist. oh well. we'll just add it
-          }
-          DBConnector.cur.db[typeof.pod.toStr].insert(map)
-          res.statusCode = 201
-        }else{
-          res.statusCode = 500
-        }
-        res.headers[ "Content-Type" ] = "text/plain"
-        res.headers[ "Content-Length" ] = "2"
-        out := res.out
-        out.writeChar( '4' )
-        out.writeChar( '2' )
-        out.close
-        res.done
-
-      // delete
-      case "deleteuser":
-        Int i := DBConnector.cur.db[typeof.pod.toStr].delete(["name":req.in.readAllStr,"type":"user"])
-        if(i > 0){
-          res.statusCode = 200
-        }else{
-          res.statusCode = 500
-        }
-        res.headers[ "Content-Type" ] = "text/plain"
-        res.headers[ "Content-Length" ] = "2"
-        out := res.out
-        out.writeChar( '4' )
-        out.writeChar( '2' )
-        out.close
-        res.done
-      
-      // New Page
-      case "addgroup":
-        map := req.form
-        if(map.containsKey("name") && map.containsKey("type")){
-          if(DBConnector.cur.db[typeof.pod.toStr].findAll(["name":map["name"], "type":"group"]).isEmpty){
-            DBConnector.cur.db[typeof.pod.toStr].insert(map)
-            res.statusCode = 201
-          }else{
-            res.statusCode = 304
-          }
-          res.headers[ "Content-Type" ] = "text/plain"
-          res.headers[ "Content-Length" ] = "2"
-          out := res.out
-          out.writeChar( '4' )
-          out.writeChar( '2' )
-          out.close
-          res.done
-        } else {
-          res.sendErr(500)
-        }
-      
-      // edit
-      case "editgroup":
-        map := req.form
-        if(map.containsKey("name") && map.containsKey("type")){
-          try{
-            DBConnector.cur.db[typeof.pod.toStr].delete(["name":map["name"],"type":"group"])
-          }catch{
-            // user didnt exist. oh well. we'll just add it
-          }
-          DBConnector.cur.db[typeof.pod.toStr].insert(map)
-          res.statusCode = 201
-        }else{
-          res.statusCode = 500
-        }
-        res.headers[ "Content-Type" ] = "text/plain"
-        res.headers[ "Content-Length" ] = "2"
-        out := res.out
-        out.writeChar( '4' )
-        out.writeChar( '2' )
-        out.close
-        res.done
-
-      // delete
-      case "deletegroup":
-        Int i := DBConnector.cur.db[typeof.pod.toStr].delete(["name":req.in.readAllStr,"type":"group"])
-        if(i > 0){
-          res.statusCode = 200
-        }else{
-          res.statusCode = 500
-        }
-        res.headers[ "Content-Type" ] = "text/plain"
-        res.headers[ "Content-Length" ] = "2"
-        out := res.out
-        out.writeChar( '4' )
-        out.writeChar( '2' )
-        out.close
-        res.done
-      
-      
-      // default error
+    paths := req.modRel.path
+    switch( paths[0] ){
+      case "edit":
+        map := Str:Obj?[:].addAll( req.form )
+        if ( !map.containsKey( "name" ) ) { res.sendErr( 404 ); return }
+        if ( paths.getSafe( 1 ) == "new" && db.group( [,], [:], emptyCode, ["cond":["name":map["name"],"type":map["type"]]] ).size > 0 ) { res.sendErr( 304 ); return }
+        if ( map.containsKey( "permissions" ) ) map[ "permissions" ] = JsonInStream( map[ "permissions" ]->in ).readJson
+        db.update( ["name":map["name"],"type":map["type"]], map, false, true )
+      case "delete":
+        if ( paths.size < 3 ) { res.sendErr( 404 ); return }
+        i := db.delete( ["name":req.in.readAllStr,"type":paths[1]] )
+        if ( i > 0 ) { res.sendErr( 404 ); return }
       default:
-        res.statusCode = 500
-        res.headers[ "Content-Type" ] = "text/plain"
-        res.headers[ "Content-Length" ] = "2"
-        out := res.out
-        out.writeChar( '4' )
-        out.writeChar( '2' )
-        out.close
-        res.done
+        res.sendErr( 404 );
+        return
     }
+    res.headers[ "Content-Type" ] = "text/plain"
+    res.headers[ "Content-Length" ] = "0"
+    res.done
+  }
+  
+  // Returning null means all permissions
+  static Str[]? getPerms(Str? name){
+    group := getGroup( getUser( name )["group"] )
+    if ( group["permissions"] == true ) return null
+    return ( group["permissions"] as Str:Obj? )?.findAll |v| { v == true }?.keys ?: [:]
   }
   
   static Bool checkPerm(Str? name, Str app){
-    data := getUserData(name)
-    group := data["group"]
-    return checkGroupPerm(group, app)
-  }
-
-  static Str[] getPerms(Str? name){
-    getGroup(getUserData(name)["group"]).findAll |v| { v == "true" }.keys
+    checkGroupPerm( getUser( name )["group"], app )
   }
   
-  static [Str:Obj?] getUserData(Str? name){
-    if(name == null){
-      name = "guest"
-    }
-    data := DBConnector.cur.db["userExt"].findOne(["name":name,"type":"user"], false) as [Str:Obj?]
-    if(data == null){
-      if(name != "guest") return [:]
-      data = DBConnector.cur.db[ "userExt" ].findAndUpdate( ["name":"guest","type":"user"], ["name":"guest", "password":null, "group":"guest", "type":"user"], true, ["upsert":true] )
+  static Bool checkGroupPerm(Str? name, Str app){
+    if ( getGroup( name )["permissions"] == true ) return true
+    return app == "login" || ( ( getGroup( name )["permissions"] as Str:Obj? )?.get( app ) as Bool ?: false )
+  }
+  
+  static [Str:Obj?] getUser(Str? name){
+    if ( name == null ) name = "guest"
+    data := DBConnector.cur.db[ "userExt" ].findOne( ["name":name,"type":"user"], false ) as Str:Obj?
+    if ( data == null ) {
+      if ( name != "guest" ) return [:]
+      data = DBConnector.cur.db[ "userExt" ].findAndUpdate( ["name":"guest","type":"user"], ["name":"guest", "type":"user", "password":null, "group":"guest"], true, ["upsert":true] )
     }
     return data
   }
   
-  static Bool checkGroupPerm(Str? name, Str app){
-    data := getGroup(name)
-    perm := Bool.fromStr(data[app] ?: "false")
-    if(perm == null) return false
-    return perm
-  }
-  
   static Str:Obj? getGroup(Str? name){
-    if(name == null){
-      name = "guest"
-    }
-    data := DBConnector.cur.db["userExt"].findOne(["name":name,"type":"group"], false) as [Str:Obj?]
-    if(data == null){
-      if(name != "guest") return [:]
-      data = DBConnector.cur.db[ "userExt" ].findAndUpdate( ["name":"guest","type":"group"], ["name":"guest", "type":"group", "login":"true", "home":"true"], true, ["upsert":true] )
+    if ( name == null ) name = "guest"
+    data := DBConnector.cur.db[ "userExt" ].findOne( ["name":name,"type":"group"], false ) as Str:Obj?
+    if ( data == null ) {
+      if ( name != "guest" ) return [:]
+      data = DBConnector.cur.db[ "userExt" ].findAndUpdate( ["name":"guest","type":"group"], ["name":"guest", "type":"group", "permissions":["login":true, "home":true]], true, ["upsert":true] )
     }
     return data
   }
   
   static Bool checkPass(Str name, Str pass){
-    data := DBConnector.cur.db["userExt"].findAll(["name":name,"type":"user"]) as [Str:Obj?][]
+    data := DBConnector.cur.db[ "userExt" ].findAll(["name":name,"type":"user"]) as [Str:Obj?][]
     if(data == null) return false
     return pass == data[0]["password"]
-  }
-
-  static [Str:Obj?][]? getGroups(){
-    return DBConnector.cur.db["userExt"].group(["_id", "name"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"group"]]) as [Str:Obj?][]
-  }
-  
-  static [Str:Obj?][]? getUsers(){
-    return DBConnector.cur.db["userExt"].group(["_id", "name", "password"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"user"]]) as [Str:Obj?][]
   }
 }

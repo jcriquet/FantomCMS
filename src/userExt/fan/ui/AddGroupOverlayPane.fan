@@ -36,23 +36,14 @@ class AddGroupOverlayPane : OverlayPane
           it.valignPane = Valign.center
           it.add(Label { it.text = "Group Name:" })
           it.add(this.groupnameBox)
-          Fui.cur.appMap.each |v, k| { 
-            if(v.name == "home" || v.name == "settings" || v.name == "login") return
-            permPane.add(Label{ it.text = v.name })
-            if(!this.isEdit){
-              permPane.add(Button{ it.mode = ButtonMode.check ; this.permMap[v.name] = it })
-            }else{
-              if(!editMap.containsKey(v.name)){
-                permPane.add(Button{ it.mode = ButtonMode.check ; this.permMap[v.name] = it })
-                return
-              }
-              if(editMap[v.name] == true){
-                permPane.add(Button{ it.mode = ButtonMode.check ; it.selected = true ; this.permMap[v.name] = it })
-              }else{
-                permPane.add(Button{ it.mode = ButtonMode.check ; this.permMap[v.name] = it })
-                
-              }
-            }
+          Fui.cur.exts.union( Fui.cur.appMap.keys ).each |ext| { 
+            if ( ext == "home" || ext == "settings" || ext == "login") return
+            permPane.add( Label { it.text = ext } )
+            permPane.add( Button{
+              it.mode = ButtonMode.check;
+              it.selected = isEdit && ( editMap[ext] ?: false )
+              this.permMap[ext] = it
+            } )
           }
         }
         it.bottom = GridPane{
@@ -69,35 +60,27 @@ class AddGroupOverlayPane : OverlayPane
   }
   
   Void save(){
-    toSend := [:]
+    toSend := Str:Str[:]
     toSend["type"] = "group"
     toSend["name"] = this.groupnameBox.text
-    Fui.cur.appMap.each |v, k| { 
-      if(v.name == "home" || v.name == "settings" || v.name == "login"){
-        toSend[v.name] = true
-        return
-      }
-      toSend[v.name] = this.permMap[v.name].selected
+    toSend["permissions"] = State.valueToStr( permMap.map |button->Bool| { button.selected }.add( "home", true ).add( "login", true ).add( "settings", true ) )
+    callType := `edit/new`
+    if ( isEdit ) {
+      callType = `edit`
+      if ( this.groupnameBox.text != this.originalName )
+        app.apiCall( `delete/group` ).post(originalName) |res| { }
     }
-    callType := `addgroup`
-    if(this.isEdit){
-      callType = `editgroup`
-      if(this.groupnameBox.text != this.originalName){
-        app.apiCall( `deletegroup`, app.name ).post(originalName) |res| { }
-      }
-    }
-    this.app.apiCall(callType).postForm(toSend) |res| {
+    app.apiCall( callType ).postForm(toSend) |res| {
       switch(res.status){
-      case 304:
-        Win.cur.alert("Error: Group already exists. Please delete first.")
-        this.close
-      case 201:
-        Win.cur.alert("Saved.")
-        this.close
-      default:
-        Win.cur.alert("Internal error saving.")
-        this.close
+        case 304:
+          Win.cur.alert("Error: Group already exists. Please delete first.")
+        case 200:
+          Win.cur.alert("Saved.")
+        default:
+          Win.cur.alert("Internal error saving.")
       }
+      close
+      app.reload
     }
   }
 }

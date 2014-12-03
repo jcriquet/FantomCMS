@@ -22,65 +22,38 @@ class UserGroupPane : UserPane {
       center = itemList
       bottom = GridPane{
         it.numCols = 3
-        Button{ it.text = "Add Group" ; it.onAction.add { addGroup() }},
-        Button{ it.text = "Remove Group" ; it.onAction.add { removeGroup(itemList.items[itemList.selectedIndex]) }},
-        Button{ it.text = "Edit Group" ; it.onAction.add { editGroup(itemList.items[itemList.selectedIndex]) }},
+        Button{ it.text = "Add Group" ; it.onAction.add { addGroup() } },
+        Button{ it.text = "Remove Group" ; it.onAction.add { removeGroup( itemList.items[itemList.selectedIndex] ) } },
+        Button{ it.text = "Edit Group" ; it.onAction.add { editGroup( itemList.items[itemList.selectedIndex] ) } },
       }
     }
   }
 
   override Void onLoadState( State state ) {
-    refreshList
-  }
-  
-  Void refreshList(){
-    Str[] toAdd := [,]
-    app.apiCall( `groups`, app.name ).get |res| {
-      json := JsonInStream( res.content.in ).readJson as [Str:Obj?][]
-      json.each |item| {
-        item.each |v, k| {
-          if(k == "name"){
-            toAdd.add((Str)v)
-          }
-        }
-      }
-      itemList.items = toAdd
+    app.apiCall( `list/group` ).get |res| {
+      itemList.items = ( JsonInStream( res.content.in ).readJson as [Str:Obj?][] )?.map |item->Str| { item[ "name" ] ?: "" } ?: [,]
       itemList.relayout
     }
   }
   
-  Void addGroup(){
-    AddGroupOverlayPane(app){
-      it.onClose.add { refreshList }
-    }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
+  Void addGroup() { AddGroupOverlayPane( app ).open( this, Point( pos.x + size.w/2 - 100, pos.y + size.h/2 - 100 ) ) }
+
+  Void editGroup( Str name ) {
+    app.apiCall( `get/group/` + name.toUri ).get |res| {
+      perms := ( ( JsonInStream( res.content.in ).readJson as Str:Obj? )?.get( "permissions" ) as Str:Obj? )?.map |str->Bool| { str == true } ?: Str:Bool[:]
+      AddGroupOverlayPane( app, name, perms ).open( this, Point( pos.x + size.w/2 - 100, pos.y + size.h/2 - 100 ) )
+    }
   }
 
   Void removeGroup(Str name){
-    app.apiCall( `deletegroup`, app.name ).post(this.itemList.items[this.itemList.selectedIndex]) |res| {
+    app.apiCall( `delete/group` ).post( itemList.items[itemList.selectedIndex] ) |res| {
       switch(res.status){
         case 200:
           Win.cur.alert("Deleted successfully.")
         default:
           Win.cur.alert("Failed to delete group.")
       }
-    }
-    refreshList
-  }
-
-  Void editGroup(Str name){
-    app.apiCall(`getgroup/` + Uri.fromStr(name)).get |res| {
-      map := JsonInStream(res.content.in).readJson as [Str:Obj?][]
-      Str:Bool toPass := [:]
-      map[0].each |v, k| {  
-        if(k == "_id" || k == "name" || k == "type") return
-        try{
-          toPass[k] = Bool.fromStr(v)
-        }catch{}
-      }
-      Win.cur.alert(toPass)
-      AddGroupOverlayPane(app, name, toPass){
-        it.onClose.add { refreshList }
-      }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
+      app.reload
     }
   }
 }
