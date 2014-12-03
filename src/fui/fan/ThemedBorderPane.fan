@@ -12,7 +12,7 @@ class ThemedBorderPane : BorderPane {
   }
   
   Void checkStyles() {
-    bg = bgStyle != null ? FuiThemes.getBg( bgStyle ) : null
+    if ( bgStyle != null ) bg = FuiThemes.getBg( bgStyle )
   }
   
   // force peer

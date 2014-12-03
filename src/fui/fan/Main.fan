@@ -18,6 +18,8 @@ class Main : StatePane {
     fui := Fui( this ) {
       title = vars[ "fui.title" ] ?: ""
       appMap = ( (Str:Obj?) JsonInStream( vars[ "fui.apps" ].in ).readJson ).map |Str:Str map->AppSpec| { AppSpec.makeFromMap( map ) }
+      exts = ( (Obj?[]) JsonInStream( vars[ "fui.exts" ].in ).readJson ).map |str->Str| { str }
+      permissions = Env.cur.vars["fui.perms"].split(',')
       baseUri = vars[ "fui.baseUri" ].toUri
     }
 
@@ -44,7 +46,10 @@ class Main : StatePane {
     token := uri.scheme
     if ( token == "fui" ) {
       token = uri.host
-      if ( !keepApp || token != "app" ) return Fui.cur.baseUri + ( ( uri.auth ?: "" ) + uri.relToAuth.toStr ).toUri
+      if ( !keepApp || token != "app" ) {
+        if ( uri == `fui://app/home/` ) return Fui.cur.baseUri + ( ( uri.auth ?: "" ) + uri.relToAuth.toStr ).toUri[ 0..-3 ]
+        return Fui.cur.baseUri + ( ( uri.auth ?: "" ) + uri.relToAuth.toStr ).toUri
+      }
     }
     return uri
   }
@@ -54,6 +59,10 @@ class Main : StatePane {
     uri = resolve( uri, true )
     if ( uri.scheme == "fui" ) {
       token := uri.path[ 0 ]
+      if ( token != "login" && Fui.cur.permissions.index( token ) == null ) {
+        goto( `fui://app/login/` )
+        return
+      }
       newUri := token != "home" ? Fui.cur.appUri( token ) + uri[ 1..-1 ] : Fui.cur.baseUri
       if ( newUri.relTo( Win.cur.uri.pathOnly ).toStr != "" || Win.cur.uri.frag != newUri.frag ) Win.cur.hisPushState( token, newUri, [:] )
       _reload
@@ -63,7 +72,7 @@ class Main : StatePane {
   
   private Void _reload() {
     app := Fui.cur.curApp
-    if ( app == null ) return
+    if ( app == null ) goto( `fui://app/home/` )
     _setContent( app )
     curApp.reload
   }

@@ -28,8 +28,8 @@ abstract class App : StatePane {
   }
   */
   
-  HttpReq apiCall( Uri relPath, Str? app := null ) {
-    if ( app == null ) app = name
+  HttpReq apiCall( Uri relPath ) { apiCallApp( relPath, name ) }
+  static HttpReq apiCallApp( Uri relPath, Str app ) {
     fui := Fui.cur
     req := HttpReq { uri = fui.baseUri + "api/$app/".toUri + relPath }
     return req
