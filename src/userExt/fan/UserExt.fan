@@ -187,6 +187,12 @@ const class UserExt : Ext, Weblet {
     if(perm == null) return false
     return perm
   }
+  
+  static Bool checkPass(Str name, Str pass){
+    data := DBConnector.cur.db["userExt"].findAll(["name":name,"type":"user"]) as [Str:Obj?][]
+    if(data == null) return false
+    return pass == data[0]["password"]
+  }
 
   static [Str:Obj?][]? getGroups(){
     return DBConnector.cur.db["userExt"].group(["_id", "name"], [:], Code.makeCode( "function(){}" ), ["cond":["type":"group"]]) as [Str:Obj?][]

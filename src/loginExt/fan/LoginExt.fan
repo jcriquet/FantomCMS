@@ -1,4 +1,5 @@
 using proj
+using userExt
 using fui
 using util
 using web
@@ -12,19 +13,34 @@ using afBson
 }
 const class LoginExt : Ext, Weblet {
   
-  override Void onGet() {
-    /*
-    username := req.modRel
-    //Session session := SessionStorage.cur[username.toStr]
-    res.headers[ "Content-Type" ] = "text/plain"
-    res.headers[ "Content-Length" ] = session.toStr.size.toStr
-    out := res.out
-    res.cookies.add(Cookie("id", session.toStr.toBuf.toBase64){
-      it.domain = Fui.cur.baseUri.toStr
-      it.secure = false
-    })
-    out.writeChars( session.toStr )
-    out.close
-    res.done*/
-  }
+  override Void onPost() {
+    Obj? data
+    switch(req.modRel.path[0]){
+      case "login":
+      if(!req.form.containsKey("username") && !req.form.containsKey("password")){
+        // jacked up form
+        res.sendErr(500)
+        res.done
+        return
+      }
+      if(UserExt.checkPass(req.form["username"], req.form["password"])){
+        // login good
+        session := SessionStorage.cur.get(req.form["username"])
+        res.cookies.add(Cookie.make("FCMS", session.toStr))
+        res.statusCode = 200
+        data = "good"
+      }else{
+        // login bad
+        res.sendErr(500)
+        res.done
+        return
+      }
+    }
+    out := JsonOutStream.writeJsonToStr(data)
+    res.headers[ "Content-Type" ] = "application/json"
+    res.headers[ "Content-Length" ] = out.size.toStr
+    res.out.writeChars(out)
+    res.out.close
+    res.done
+    }
 }

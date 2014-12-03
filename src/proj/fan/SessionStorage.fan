@@ -5,9 +5,15 @@ class SessionStorage {
   Str:Session sessionMap := [:]
   
   new make() {
-    File f := `cached/proj/session.props`.toFile
-    props := f.readProps
-    sessionMap = props.map |v, k->Session| { Session.fromStr( k ) }
+    File? f
+    try{
+      f = `cached/proj/session.props`.toFile
+      props := f.readProps
+      sessionMap = props.map |v, k->Session| { Session.fromStr( k ) }
+    }catch{
+      if(f.exists) f.delete
+      f.create
+    }
   }
   
   @Operator
