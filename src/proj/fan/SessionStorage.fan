@@ -9,8 +9,8 @@ class SessionStorage {
     try{
       f = `cached/proj/session.props`.toFile
       props := f.readProps
-      sessionMap = props.map |v, k->Session| { Session.fromStr( k ) }
-    }catch{
+      sessionMap = props.map |v, k->Session| { Session.fromStr( v ) }
+    }catch(Err e){
       if(f.exists) f.delete
       f.create
     }
@@ -32,6 +32,7 @@ class SessionStorage {
     if ( ret == null ) Actor.locals["sessionstorage.cur"] = ret = SessionStorage()
     return ret
   }
+  
 }
 
 class Session {

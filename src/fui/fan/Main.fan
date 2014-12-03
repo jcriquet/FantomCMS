@@ -64,6 +64,10 @@ class Main : StatePane {
   private Void _reload() {
     app := Fui.cur.curApp
     if ( app == null ) return
+    if(app.name != "login" && Env.cur.vars["fui.perms"].split(',').index(app.name) == null){
+      goto(`fui://app/login`)
+      return
+    }
     _setContent( app )
     curApp.reload
   }

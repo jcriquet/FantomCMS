@@ -1,4 +1,5 @@
 using db
+using util
 using concurrent
 using wisp
 using web
@@ -30,12 +31,30 @@ const class WebService : WispService {
     try { DBConnector.cur.db } catch ( Err e ) { exts = exts.findAll |t, name| { name == "settings" || name == "login" || name == "home" } }
     
     appMod := AppMod( exts )
-    root = RouteMod { it.routes = [
+    root = RootMod { it.routes = [
         "index" : IndexMod( appMod ),
         "pod" : RouteMod { it.routes = podMap },
         "api" : ApiMod( exts ),
         "app" : appMod
       ] }
   } ) {
+  }
+}
+
+const class RootMod : RouteMod {
+  new make( |This|? f := null ) : super(f) {}
+  
+  override Void onService() {
+    cookies := Str:Str[:]
+    req.headers["Cookie"]?.split(';')?.each |str| {
+      cookie := Cookie.fromStr(str)
+      cookies[ cookie.name ] = cookie.val
+    }
+    if(cookies["username"] != null && SessionStorage.cur.get(cookies["username"]) == cookies["session"]?.toInt){
+      Actor.locals["proj.curUser"] = cookies["username"]
+    }else{
+      Actor.locals.remove("proj.curUser")
+    }
+    super.onService
   }
 }

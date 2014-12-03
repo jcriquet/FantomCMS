@@ -1,4 +1,5 @@
 using db
+using concurrent
 using util
 using web
 
@@ -9,6 +10,8 @@ const class AppMod : WebMod {
   static const Method? getTheme := Type.find( "themesExt::ThemesExt" ).method( "getTheme" )
   static const Method? getLayoutSettings := Type.find( "layoutsExt::LayoutsExt" ).method( "getSettings" )
   static const Method? getLayout := Type.find( "layoutsExt::LayoutsExt" ).method( "getLayout" )
+  static const Method? checkUserPerm := Type.find( "userExt::UserExt" ).method( "checkPerm" )
+  static const Method? getUserPerms := Type.find( "userExt::UserExt" ).method( "getPerms" )
   
   new make( Str:Type exts ) {
     podList := Pod[,]
@@ -30,6 +33,7 @@ const class AppMod : WebMod {
     
     notFound := !appMap.containsKey( appStr )// || queryRow == null
     if ( notFound ) { res.sendErr( 404 ); return }
+
     
     title := Env.cur.config( typeof.pod, "server.title" )
     if ( title == null ) {
@@ -39,14 +43,33 @@ const class AppMod : WebMod {
       file.create.writeProps( props[ "server.title" ] = title )
     }
     
-    buf := StrBuf()
-    JsonOutStream( buf.out ).writeJson( appMap.map |spec| { spec.toMap } )
+    
     clientData := [
       "fui.baseUri" : "/",
       "fui.title" : title,
       "fui.app" : appStr,
-      "fui.apps" : buf.toStr
     ]
+    
+    // Users
+    allowed := false
+    try if(checkUserPerm != null){
+      Str? user := Actor.locals["proj.curUser"]
+      allowed = (Bool)checkUserPerm.call(user, appStr)
+    }catch(Err e){}
+    if(!allowed) clientData["fui.app"] = "login"
+    Str[]? userPerms
+    try if(getUserPerms != null){
+      userPerms = ((Str[])getUserPerms.call(Actor.locals["proj.curUser"]))
+    } catch ( Err e ) {}
+    if ( userPerms != null ) clientData[ "fui.perms" ] = userPerms.join(",")
+    
+    // Apps
+    buf := StrBuf()
+    appMap := appMap.findAll |spec, name| { userPerms?.contains( name ) ?: false }
+    JsonOutStream( buf.out ).writeJson( appMap.map |spec| { spec.toMap } )
+    clientData["fui.apps"] = buf.toStr
+    
+    // Layouts and Themes
     Str? layoutId
     try if ( getThemeSettings != null && getTheme != null ) {
       Str:Str themeData := getTheme.call( getThemeSettings.call->get( "default" )->toStr )
