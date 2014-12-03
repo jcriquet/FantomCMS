@@ -30,6 +30,10 @@ class UserGroupPane : UserPane {
   }
 
   override Void onLoadState( State state ) {
+    refreshList
+  }
+  
+  Void refreshList(){
     Str[] toAdd := [,]
     app.apiCall( `groups`, app.name ).get |res| {
       json := JsonInStream( res.content.in ).readJson as [Str:Obj?][]
@@ -47,7 +51,7 @@ class UserGroupPane : UserPane {
   
   Void addGroup(){
     AddGroupOverlayPane(app){
-      it.onClose.add { itemList.relayout }
+      it.onClose.add { refreshList }
     }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
   }
 
@@ -60,6 +64,7 @@ class UserGroupPane : UserPane {
           Win.cur.alert("Failed to delete group.")
       }
     }
+    refreshList
   }
 
   Void editGroup(Str name){
@@ -74,7 +79,7 @@ class UserGroupPane : UserPane {
       }
       Win.cur.alert(toPass)
       AddGroupOverlayPane(app, name, toPass){
-        it.onClose.add { itemList.relayout }
+        it.onClose.add { refreshList }
       }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
     }
   }

@@ -29,6 +29,10 @@ class UserListPane : UserPane {
   }
   
   override Void onLoadState( State state ) {
+    refreshList()
+  }
+  
+  Void refreshList(){
     Str[] toAdd := [,]
     app.apiCall( `list`, app.name ).get |res| {
       json := ([Str:Obj?][]) JsonInStream( res.content.in ).readJson
@@ -56,7 +60,7 @@ class UserListPane : UserPane {
         }
       }
       AddUserOverlayPane(app,toAdd){
-        it.onClose.add { itemList.relayout }
+        it.onClose.add { refreshList() }
       }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
     }
   }
@@ -69,6 +73,7 @@ class UserListPane : UserPane {
         default:
           Win.cur.alert("Failed to delete user.")
       }
+      refreshList()
     }
   }
 
@@ -84,7 +89,7 @@ class UserListPane : UserPane {
         }
       }
       AddUserOverlayPane(app,toAdd, this.itemList.items[this.itemList.selectedIndex]){
-        it.onClose.add { itemList.relayout }
+        it.onClose.add { refreshList() }
       }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
     }
     return
