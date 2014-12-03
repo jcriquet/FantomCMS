@@ -38,10 +38,10 @@ class LoginApp : App {
               text = "Password"
             },
             field_password,
-            Button {
+            /*Button {
               mode = ButtonMode.check;
               text = "Remember me";
-            },
+            },*/
           },
         },  
       },
