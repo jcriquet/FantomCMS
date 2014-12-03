@@ -11,7 +11,8 @@ using webfwt
 class GalleryApp : App {
 //  ContentPane contentPane := ContentPane()
 // 
-  GridPane pane := GridPane{}
+  GridPane pane
+  Int maxCols := 5
   
 //  new make() : super() {
 //    content = BorderPane {
@@ -55,24 +56,34 @@ class GalleryApp : App {
 //  }
 
   new make() : super() {
-    this.content = GridPane {
-      this.pane = it
-      it.halignCells = Halign.center
-      it.valignCells = Valign.center
-      it.halignPane = Halign.center
-      it.valignPane = Valign.center
-      this.apiCall(`getAll`, "image").get |res| {
-        echo ("api call")
-        Buf b := res.content.toBuf
-        [Str:Uri]? map := b.readObj as Str:Uri
-        map.each |uri, filename| {
-          this.pane.numCols++
-          this.pane.add( Label{ it.image = Image(Fui.cur.baseUri + uri + "?tb".toUri) } )
+    this.content = ScrollPane{
+      it.content = GridPane {
+        it.numCols = 0
+        this.pane = it
+        it.halignCells = Halign.center
+        it.valignCells = Valign.center
+        it.halignPane = Halign.center
+        it.valignPane = Valign.center
+        this.apiCall(`getAll`, "image").get |res| {
+          Buf b := res.content.toBuf
+          [Str:Uri]? map := b.readObj as Str:Uri
+          100.times{
+            map.each |uri, filename| {
+              if(this.pane.numCols < 5) this.pane.numCols++
+              this.pane.add( Label{ it.image = Image(Fui.cur.baseUri + uri + "?tb".toUri) ; it.onMouseDown.add { makeLB(Image( Fui.cur.baseUri + uri)) }} )
+            }
+          }
+          this.pane.relayout
         }
-//        this.pane.relayout
       }
     }
   } 
+  
+  Void makeLB(Image img){
+    Image[] list := [,]
+    5.times{ list.add(img) }
+    Slider(this, list).display
+  }
   
 //  Void doTheThing(){
 //    this.apiCall(`getAll`, "image").get |res| {
