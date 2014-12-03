@@ -11,6 +11,7 @@ class Build : build::BuildPod {
                  "db 1.0",
                  "fui 1.0",
                  "fwt 1.0",
+                 "userExt 1.0",
                  "gfx 1.0",
                  "proj 1.0",
                  "sql 1.0",

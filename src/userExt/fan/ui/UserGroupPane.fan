@@ -1,91 +1,81 @@
 using fui
+using dom
 using fwt
 using gfx
 using util
+using webfwt
 
 @Js
 class UserGroupPane : UserPane {
-  GridTablePane table := GridTablePane {
-    halignCells = Halign.fill
-    valignCells = Valign.fill
-    hgap = vgap = 0
+  TreeList itemList := TreeList(){
+    it.items = [,]
   }
   
   new make( UserApp app ) : super( app ) {
     content = EdgePane {
       top = EdgePane {
         left = Label {
-          text = "MANAGE USER GROUPS"
+          it.text = "Manage User Groups"
         }
       }
-      center = table
+
+      center = itemList
+      bottom = GridPane{
+        it.numCols = 3
+        Button{ it.text = "Add Group" ; it.onAction.add { addGroup() }},
+        Button{ it.text = "Remove Group" ; it.onAction.add { removeGroup(itemList.items[itemList.selectedIndex]) }},
+        Button{ it.text = "Edit Group" ; it.onAction.add { editGroup(itemList.items[itemList.selectedIndex]) }},
+      }
+    }
+  }
+
+  override Void onLoadState( State state ) {
+    Str[] toAdd := [,]
+    app.apiCall( `groups`, app.name ).get |res| {
+      json := JsonInStream( res.content.in ).readJson as [Str:Obj?][]
+      json.each |item| {
+        item.each |v, k| {
+          if(k == "name"){
+            toAdd.add((Str)v)
+          }
+        }
+      }
+      itemList.items = toAdd
+      itemList.relayout
     }
   }
   
-  override Void onLoadState( State state ) {
-    /*permissionArray := Bool[true, true, true]
-    permissionArray[0] = false
-    permissionArray.add(false)
-    echo(permissionArray)*/
-    
-    //Build state of data from checkboxes into map
-    permissionMap := [Str:Map][:]
-    
-    /*adminPerm := [Str:Bool][:]
-    permissionMap.add("admins", adminPerm)
-    adminPerm.add("Pages", true)
-    echo(permissionMap)
-    echo(permissionMap["admins"])
-    echo(adminPerm)
-    permissionMap.add("cat1", true)
-    permissionMap.add("cat2", false)
-    permissionMap.set("cat1", false)
-    echo(permissionMap)
-    echo(permissionMap["cat1"])
-    echo(permissionMap["cat2"])*/
-    
-    currCol := "na"
-    tempMap := [Str:Bool][:]
-    
-    app.apiCall( `groups`, app.name ).get |res| {
-      json := ([Str:Obj?][]) JsonInStream( res.content.in ).readJson
-      insets := Insets( 7 )
-      table.populate( json ) |cell, col, row| {
-        if ( cell == null ) {
-          if ( row == null ) return BorderPane {
-            border = Border( "1 solid #000000" )
-            it.insets = insets
-            if(col != "name") {
-              tempMap.add(col, false)
-            }
-            Label { text = col.toStr.capitalize },
-          }
-          else return BorderPane {
-            border = Border( "1 solid #000000" )
-            it.insets = insets
-          }
-        }
-        return BorderPane {
-          border = Border( "1 solid #000000" )
-          it.insets = insets
-          if(col == "name") {
-            currCol = cell
-            permissionMap.add(cell, tempMap)
-            tempMap = [Str:Bool][:]
-            Label { it.text = cell.toStr },
-          } else {
-            Button {
-              mode = ButtonMode.check
-              onAction.add {
-                echo(currCol)
-                permissionMap[currCol][col] = true
-                echo(permissionMap)
-              }
-            },
-          }
-        }
+  Void addGroup(){
+    AddGroupOverlayPane(app){
+      it.onClose.add { itemList.relayout }
+    }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
+  }
+
+  Void removeGroup(Str name){
+    app.apiCall( `deletegroup`, app.name ).post(this.itemList.items[this.itemList.selectedIndex]) |res| {
+      switch(res.status){
+        case 200:
+          Win.cur.alert("Deleted successfully.")
+        default:
+          Win.cur.alert("Failed to delete group.")
       }
-      echo(permissionMap);
+    }
+  }
+
+  Void editGroup(Str name){
+    app.apiCall(`getgroup/` + Uri.fromStr(name)).get |res| {
+      map := JsonInStream(res.content.in).readJson as [Str:Obj?][]
+      Str:Bool toPass := [:]
+      map[0].each |v, k| {  
+        if(k == "_id" || k == "name" || k == "type") return
+        try{
+          toPass[k] = Bool.fromStr(v)
+        }catch{}
+      }
+      Win.cur.alert(toPass)
+      AddGroupOverlayPane(app, name, toPass){
+        it.onClose.add { itemList.relayout }
+      }.open(this, Point(this.pos.x+this.size.w/2-100, this.pos.y+this.size.h/2-100))
     }
   }
 }

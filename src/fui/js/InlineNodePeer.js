@@ -6,7 +6,23 @@ fan.fui.InlineNodePeer.prototype.$ctor = function( self ) {
   fan.fwt.PanePeer.prototype.$ctor.call( this, self );
 }
 
-fan.fui.InlineNodePeer.prototype.m_styles = null;
+fan.fui.InlineNodePeer.prototype.m_fg = null;
+fan.fui.InlineNodePeer.prototype.fg = function( self ) { return this.m_fg; }
+fan.fui.InlineNodePeer.prototype.fg$ = function( self, val ) {
+  if ( this.m_fg == val ) return;
+  this.m_fg = val;
+  if ( this.elem != null ) this.sync( self );
+}
+
+fan.fui.InlineNodePeer.prototype.m_font = null;
+fan.fui.InlineNodePeer.prototype.font = function( self ) { return this.m_font; }
+fan.fui.InlineNodePeer.prototype.font$ = function( self, val ) {
+  if ( this.m_font == val ) return;
+  this.m_font = val;
+  if ( this.elem != null ) this.sync( self );
+}
+
+fan.fui.InlineNodePeer.prototype.m_styles = fan.sys.Map.make(fan.sys.Str.$type,fan.sys.Str.$type);
 fan.fui.InlineNodePeer.prototype.styles = function( self ) { return this.m_styles; }
 fan.fui.InlineNodePeer.prototype.styles$ = function( self, val ) {
   if ( this.m_styles == val ) return;
@@ -14,7 +30,9 @@ fan.fui.InlineNodePeer.prototype.styles$ = function( self, val ) {
   if ( this.elem != null ) this.sync( self );
 }
 
-fan.fui.InlineNodePeer.prototype.sizeOf = function( self, w, h ) {
+fan.fui.InlineNodePeer.prototype.sizeOf = function( self, hints ) {
+  return fan.gfx.Size.m_defVal;
+  return fan.fwt.WidgetPeer.prototype.prefSize.call( this, self, hints );
   if ( this.elem == null ) return fan.gfx.Size.m_defVal;
   if ( w == null ) return fan.gfx.Size.m_defVal;
   return fan.gfx.Size.make( this.elem.offsetWidth, this.elem.offsetHeight );
@@ -44,6 +62,10 @@ fan.fui.InlineNodePeer.prototype.sync = function( self, w, h ) {
   this.syncEvents( self )
   
   // styles
+  if ( this.m_font == null ) this.m_styles.remove( "font" );
+  else this.m_styles.set( "font", fan.fwt.WidgetPeer.fontToCss( this.m_font ) );
+  if ( this.m_fg == null ) this.m_styles.remove( "color" );
+  else this.m_styles.set( "color", this.m_fg.toStr() );
   this.elem.removeAttribute( "style" );
   fan.fwt.WidgetPeer.applyStyle( this.elem, this.m_styles );
 }

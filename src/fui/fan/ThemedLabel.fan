@@ -1,9 +1,9 @@
-using fwt
 using gfx
+using webfwt
 
 @Js
 @Serializable
-class ThemedLabel : Label {
+class ThemedLabel : WebLabel {
   const Str? bgStyle
   const Str? fgStyle
   const Str? fontStyle
