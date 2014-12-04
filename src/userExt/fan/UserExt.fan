@@ -81,7 +81,7 @@ const class UserExt : Ext, Weblet {
     data := DBConnector.cur.db[ "userExt" ].findOne( ["name":name,"type":"group"], false ) as Str:Obj?
     if ( data == null ) {
       if ( name != "guest" ) return [:]
-      data = DBConnector.cur.db[ "userExt" ].findAndUpdate( ["name":"guest","type":"group"], ["name":"guest", "type":"group", "permissions":["login":true, "home":true]], true, ["upsert":true] )
+      data = DBConnector.cur.db[ "userExt" ].findAndUpdate( ["name":"guest","type":"group"], ["name":"guest", "type":"group", "permissions":["login":true, "home":true, "settings":true]], true, ["upsert":true] )
     }
     return data
   }
