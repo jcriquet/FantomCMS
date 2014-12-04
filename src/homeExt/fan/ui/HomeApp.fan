@@ -11,7 +11,7 @@ class HomeApp : App {
 
   new make() : super() {
     content = BorderPane{
-      it.content = HomeAppPane(Fui.cur.appMap.size-1){
+      it.content = HomeAppPane( Fui.cur.appMap.size - 2 ){
         it.halignCells = Halign.center
         it.valignCells = Valign.center
         it.halignPane = Halign.center
@@ -19,12 +19,11 @@ class HomeApp : App {
         it.hgap = 10
         it.vgap = 10
         gridPane := it
-        Fui.cur.appMap.keys.sort.each |Str appName| {  
-          if(appName == "home") return
-          appSpec := Fui.cur.appMap[ appName ]
-          gridPane.add(HomeAppIcon(appSpec.label, Fui.cur.baseUri + `pod/fui/res/img/` + Uri.fromStr(appSpec.icon)){
-            it.onMouseDown.add { Fui.cur.main.goto("fui://app/$appName".toUri) }
-          })
+        Fui.cur.appMap.vals.sort.each |app| {
+          if ( app.name == "home" || app.name == "login" ) return
+          gridPane.add( HomeAppIcon( app.label, Fui.cur.baseUri + `pod/fui/res/img/` + app.icon.toUri ) {
+            it.onMouseDown.add { Fui.cur.main.goto( "fui://app/$app.name".toUri ) }
+          } )
         }
       }
     }

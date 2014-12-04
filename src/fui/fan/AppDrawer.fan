@@ -32,7 +32,23 @@ class AppDrawer : OverlayPane {
       it.insets = Insets(10,5)
       it.bg = Color.white
       it.content = EdgePane {
+        appMap := Fui.cur.appMap.dup
+        appMap.remove( "login" )
+        homeApp := appMap.remove( "home" )
         it.top = EdgePane {
+          if ( homeApp != null ) it.left = GotoButton( `fui://app/home/` ) {
+            bg = bgPressed = null
+            border = null
+            dropShadow = innerShadow = innerShadowPressed = null
+            onAction.add { close }
+            FlowPane {
+              ConstraintPane {
+                maxw = maxh = 30
+                Label { image = Image( Fui.cur.baseUri + `pod/fui/res/img/` + homeApp.icon.toUri ) },
+              },
+              Label { text = "Home" },
+            },
+          }
           it.right = Label { 
             it.text = "X"
             it.onMouseDown.add { close }
@@ -43,19 +59,16 @@ class AppDrawer : OverlayPane {
           it.halignCells = Halign.center
           it.halignPane = Halign.center
           it.hgap = 10
-          appMap := Fui.cur.appMap
-          if(appMap.size >= 4) it.numCols = 4
+          if ( appMap.size >= 4 ) it.numCols = 4
           else it.numCols = appMap.size
           gridPane := it
-          Fui.cur.appMap.keys.sort.each |Str appName| {  
-            appSpec := Fui.cur.appMap[ appName ]
-            appIcon := null
-            gridPane.add(AppIcon(appSpec.label, Fui.cur.baseUri + `pod/fui/res/img/` + Uri.fromStr(appSpec.icon)){
+          appMap.vals.sort.each |app| {
+            gridPane.add( AppIcon( app.label, Fui.cur.baseUri + `pod/fui/res/img/` + app.icon.toUri ) {
               it.onMouseDown.add { 
-                Fui.cur.main.goto("fui://app/$appName".toUri) 
+                Fui.cur.main.goto( "fui://app/$app.name".toUri )
                 close
               }
-            })
+            } )
           }
         }
       }

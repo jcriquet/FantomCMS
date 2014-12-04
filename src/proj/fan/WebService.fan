@@ -52,7 +52,7 @@ const class RootMod : RouteMod {
       cookie := Cookie.fromStr(str)
       cookies[ cookie.name ] = cookie.val
     }
-    Actor.locals["proj.curUser"] = ( SessionStorage.cur[ cookies["username"] ] == cookies["session"]?.toInt ? cookies["username"] : null ) ?: "guest"
+    Actor.locals["proj.curUser"] = ( cookies["username"] != null && SessionStorage.cur[ cookies["username"] ] == cookies["session"]?.toInt ? cookies["username"] : null ) ?: "guest"
     super.onService
   }
 }
