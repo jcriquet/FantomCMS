@@ -18,12 +18,12 @@ class GalleryApp : App {
     apiCallApp(`getAll`, "image").get |res| {
       Buf b := res.content.toBuf
       map := b.readObj as Str:Uri
-      100.times{
-        map.each |uri, filename| {
-          if(this.pane.numCols < 5) this.pane.numCols++
-          this.pane.add( Label{ it.image = Image(Fui.cur.baseUri + uri + "?tb".toUri) ; it.onMouseDown.add { makeLB(Image( Fui.cur.baseUri + uri)) }} )
-        }
+
+      map.each |uri, filename| {
+        if(this.pane.numCols < 5) this.pane.numCols++
+        this.pane.add( Label{ it.image = Image(Fui.cur.baseUri + uri + "?tb".toUri) ; it.onMouseDown.add { makeLB(Image( Fui.cur.baseUri + uri)) }} )
       }
+
       this.pane.relayout
     }
   }
