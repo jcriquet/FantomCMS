@@ -10,7 +10,7 @@ using webfwt
 class ThemesApp : App {
   ThemesList sideList := ThemesList {
     prefw = 300
-    onSelect.add |e| { apiCall( Uri( ( (Str:Obj?) e.data )[ "_id" ] ), name ).get |res| { load( res ) } }
+    onSelect.add |e| { apiCall( Uri( ( (Str:Obj?) e.data )[ "_id" ] ) ).get |res| { load( res ) } }
   }
   StyledButton newButton := StyledButton { onAction.add { newTheme }; Label { it.text = "New" }, }
   StyledButton deleteButton := StyledButton { onAction.add { delete }; Label { it.text = "Delete" }, }
@@ -27,7 +27,7 @@ class ThemesApp : App {
     onModify.add |e| {
       newLayout := ( layoutSelector.selected as Str:Obj? )?.get( "_id" )
       if ( newLayout == selectedLayoutId || newLayout == null ) return
-      apiCall( ( selectedId + "?layout=" + newLayout ).toUri, name ).get |res| { load( res ) }
+      apiCall( ( selectedId + "?layout=" + newLayout ).toUri ).get |res| { load( res ) }
     }
   }
   Str myTheme := ""
@@ -115,11 +115,11 @@ class ThemesApp : App {
     selectedStyles = json[ "styles" ] ?: [:]
     modifyState
   }
-  Void revert() { apiCall( selectedId.toUri, name ).get |res| { load( res ) } }
+  Void revert() { apiCall( selectedId.toUri ).get |res| { load( res ) } }
   
   Void save() {
     json := State.valueToStr( ["title":selectedTitle.text, "layout":selectedLayoutId, "styles":selectedStyles] )
-    apiCall( selectedId.toUri, name ).post( json ) |res| { load( res ) }
+    apiCall( selectedId.toUri ).post( json ) |res| { load( res ) }
   }
   
   Void newTheme() {
@@ -129,11 +129,11 @@ class ThemesApp : App {
     modifyState
   }
   
-  Void delete() { apiCall( selectedId.toUri + `?delete`, name).get |res| { load( res ) } }
+  Void delete() { apiCall( selectedId.toUri + `?delete` ).get |res| { load( res ) } }
   
-  Void setDefault() { apiCall( "$selectedId?default&layout=$selectedLayoutId".toUri, name).get |res| { load( res ) } }
+  Void setDefault() { apiCall( "$selectedId?default&layout=$selectedLayoutId".toUri ).get |res| { load( res ) } }
   
-  override Void onGoto() { apiCall( ``, name ).get |res| { _updateList( JsonInStream( res.content.in ).readJson ) } }
+  override Void onGoto() { apiCall( `` ).get |res| { _updateList( JsonInStream( res.content.in ).readJson ) } }
   
   override Void onSaveState( State state ) {
     state[ "sideListItems" ] = sideList.items

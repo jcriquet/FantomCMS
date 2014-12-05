@@ -26,7 +26,7 @@ class PagesApp : App {
     if ( data == null ) {
       uri := Win.cur.uri
       uri = uri.pathOnly.relTo( Fui.cur.appUri( name ) ) + ( "?" + ( uri.queryStr ?: "" ) ).toUri
-      apiCall( uri, name ).get |res| {
+      apiCall( uri ).get |res| {
         data = res.content
         if ( res.status != 200 ) data = "fui::HtmlPaneSerial\n{\nsavedHtml=\"" + data.replace( "\\", "\\\\" ).replace( "\"", "\\\"" ) + "\"\nsavedWidth=960\n}"
         else {

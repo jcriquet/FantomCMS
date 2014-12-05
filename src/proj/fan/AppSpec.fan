@@ -18,4 +18,6 @@ const class AppSpec {
   }
   
   Str:Str toMap() { [ "name" : name, "qname" : qname, "label" : label, "icon" : icon ] }
+  
+  override Int compare( Obj that ) { ( that as AppSpec )?.label?.compare( label ) ?: super.compare( that ) }
 }

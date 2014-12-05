@@ -10,7 +10,7 @@ using webfwt
 class LayoutsApp : App {
   LayoutsList sideList := LayoutsList {
     prefw = 300
-    onSelect.add |e| { apiCall( Uri( ( (Str:Obj?) e.data )[ "_id" ] ), name ).get |res| { load( res ) } }
+    onSelect.add |e| { apiCall( Uri( ( (Str:Obj?) e.data )[ "_id" ] ) ).get |res| { load( res ) } }
   }
   StyledButton newButton := StyledButton { onAction.add { newLayout }; Label { it.text = "New" }, }
   StyledButton deleteButton := StyledButton { onAction.add { delete }; Label { it.text = "Delete" }, }
@@ -96,11 +96,11 @@ class LayoutsApp : App {
     selectedRight.text = json[ "paneRight" ] ?: "null"
     modifyState
   }
-  Void revert() { apiCall( selectedId.toUri, name ).get |res| { load( res ) } }
+  Void revert() { apiCall( selectedId.toUri ).get |res| { load( res ) } }
   
   Void save() {
     json := State.valueToStr( ["title":selectedTitle.text, "paneTop":selectedTop.text, "paneBottom":selectedBottom.text, "paneLeft":selectedLeft.text, "paneRight":selectedRight.text] )
-    apiCall( selectedId.toUri, name ).post( json ) |res| { load( res ) }
+    apiCall( selectedId.toUri ).post( json ) |res| { load( res ) }
   }
   
   Void newLayout() {
@@ -110,11 +110,11 @@ class LayoutsApp : App {
     modifyState
   }
   
-  Void delete() { apiCall( selectedId.toUri + `?delete`, name).get |res| { load( res ) } }
+  Void delete() { apiCall( selectedId.toUri + `?delete` ).get |res| { load( res ) } }
   
-  Void setDefault() { apiCall( selectedId.toUri + `?default`, name).get |res| { load( res ) } }
+  Void setDefault() { apiCall( selectedId.toUri + `?default` ).get |res| { load( res ) } }
   
-  override Void onGoto() { echo( "onGoto" ); apiCall( ``, name ).get |res| { _updateList( JsonInStream( res.content.in ).readJson ) } }
+  override Void onGoto() { apiCall( `` ).get |res| { _updateList( JsonInStream( res.content.in ).readJson ) } }
   
   override Void onSaveState( State state ) {
     state[ "sideListItems" ] = sideList.items
