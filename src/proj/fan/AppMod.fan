@@ -54,7 +54,13 @@ const class AppMod : WebMod {
     if ( curUser != null && curUser != "guest" ) clientData[ "fui.curUser" ] = curUser
     Str[]? userPerms
     try if ( getUserPerms != null ) userPerms = getUserPerms.call( curUser )
-    catch ( Err e ) { userPerms = ["login"] }
+    catch ( Err e ) {
+      userPerms = ["settings"]
+      if ( appStr != "settings" ) {
+        res.redirect( ( clientData[ "fui.baseUri" ] + "app/settings" ).toUri )
+        return
+      }
+    }
     if ( userPerms == null ) userPerms = extMap.keys
     if ( !userPerms.contains( appStr ) && appStr != "login" ) {
       res.redirect( ( clientData[ "fui.baseUri" ] + "app/login" ).toUri )

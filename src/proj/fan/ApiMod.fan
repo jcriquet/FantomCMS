@@ -17,13 +17,13 @@ const class ApiMod : WebMod {
     if ( notFound ) { res.sendErr( 404 ); return }
     
     allowed := false
-    try if(AppMod.checkUserPerm != null){
+    try if( AppMod.checkUserPerm != null ) {
       Str? user := Actor.locals["proj.curUser"]
       allowed = (Bool)AppMod.checkUserPerm.call(user, appStr)
-    }catch(Err e){echo(e)}
+    } catch( Err e ) if ( appStr == "settings" ) allowed = true
 
-    if(!allowed){
-      res.sendErr(403)
+    if ( !allowed ) {
+      res.sendErr( 403 )
       return
     }
 
