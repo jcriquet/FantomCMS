@@ -85,4 +85,30 @@ const class ImageExt : Ext, Weblet {
     }
     return toReturn
   }
+
+  static Void addTag(ObjectId id, Str tag){
+    data := DBConnector.cur.db[ "imageExt" ].group( ["_id", "filename", "tags"], [:], Code.makeCode( "function(){}" ),["cond":["_id":id]]) as [Str:Obj?][]
+    Str? tags
+    if(data.isEmpty) throw Err("File not found")
+    if(!data[0].containsKey("_id") || !data[0].containsKey("filename")) throw Err("Malformed DB entry.")
+    tags = data[0]["tags"]
+    tagList := tags.split(',')
+    if(tagList.contains(tag)) return
+    if(tagList == null || tagList.isEmpty){
+      tagList.add(tag)
+    }
+    DBConnector.cur.db[ "imageExt" ].update(["_id":id], [""])
+  }
+
+  static Str[] getByTag(Str tag){
+    toReturn := [,]
+    data := DBConnector.cur.db[ "imageExt" ].group( ["filename", "tags"], [:], Code.makeCode( "function(){}" )) as [Str:Obj?][]
+    data.each |row| { 
+      if(!row.containsKey("tags") || !row.containsKey("filename")) return
+      Str tags := row["tags"]
+      tagList := tags.split(',')
+      if(tagList.contains(tag)) toReturn.add(row["filename"])
+    }
+    return toReturn
+  }
 }
