@@ -1,0 +1,36 @@
+Fantom CMS Problems Tracker
+-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Issue 1:  Serialized Code
+Desc:     Currently, there are no checks in place to ensure that serialized code is being input correctly. This includes code
+            that is manually entered by the user. If this code has errors, no error message will be displayed, and the 
+            functionality of the program will be erratic.
+Sol:      We could implement checks when the information is read. A major goal in the future of this project is to create a
+            WYSIWYG editor, which will remove the user from the position of manually entering serialized data, and as such 
+            reduce the possibility of creating errors.
+
+Issue 2:  Database Storage
+Desc:     Currently, there are no checks in place to ensure that information stored in the database is being stored/retrieved
+            correctly. If the information stored in the database is corrupted, or not as expected by the program, functionality
+            will be erratic.
+Sol:      We need to implement checks when information is retrieved from the database.
+
+Issue 3:  Database Connection
+Desc:     If the server's communication to the database is cutoff, the server will stop functioning until restarted.
+Sol:      We need to implement keepalives with the database and have a connection re-established if required.
+
+Issue 4:  Gallery Lightboxes
+Desc:     Lightboxes/Sliders occasionally do not fully load in time for the box to appear, and as such cause the box to pop 
+            up as a small rectangle. This is due to the fact that images are loaded from the database/server to the page in 
+            the background by an AJAX call, and if they are not loaded in time for the page to determine the size of the 
+            image, it will default to a size of (0,0). If the image is clicked on again, it will open properly.
+Sol:      Find out how to "preload" images, or implement JS onComplete events.
+
+Issue 5:  Home Button
+Desc:     Currently, the "Home" button is displayed improperly.
+Sol:      Resize the "Home" button, or implement an Image object that allows for Resize functionality.
+
+Issue 6:  Database Authentication
+Desc:     Currently, access to the database is established using no username/password. Preliminary username/password
+            access is supported, but untested.
+Sol:      Test/implement database authentication.
