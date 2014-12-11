@@ -34,3 +34,8 @@ Issue 6:  Database Authentication
 Desc:     Currently, access to the database is established using no username/password. Preliminary username/password
             access is supported, but untested.
 Sol:      Test/implement database authentication.
+
+Issue 7:  Gallery Page
+Desc:     Occasioanlly, navigating to the Gallery app, leaving, and then returning will cause the gallery app to not correctly
+            redisplay the files. This is likely due to a bug with the implementation of relayout.
+Sol:      Find which method is not correctly calling relayout, and modify it to call the method as required.
