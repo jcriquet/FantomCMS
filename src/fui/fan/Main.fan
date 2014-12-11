@@ -39,7 +39,8 @@ class Main : StatePane {
     catch ( Err e ) { windowEdgePane.left = Label { text = "Error: $e" } }
     try { windowEdgePane.right = ( Actor.locals[ "layouts.paneRight" ] as Str ?: "null" ).in.readObj as Widget }
     catch ( Err e ) { windowEdgePane.right = Label { text = "Error: $e" } }
-    content.relayout
+    try { content.relayout }
+    catch ( Err e ) { windowEdgePane.each |widget| { try { widget.relayout } catch {} } }
   }
   
   static Uri resolve( Uri uri, Bool keepApp := false ) {
