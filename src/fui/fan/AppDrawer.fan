@@ -42,9 +42,9 @@ class AppDrawer : OverlayPane {
             dropShadow = innerShadow = innerShadowPressed = null
             onAction.add { close }
             FlowPane {
-              ConstraintPane {
-                maxw = maxh = 30
-                Label { image = Image( Fui.cur.baseUri + `pod/fui/res/img/` + homeApp.icon.toUri ) },
+              WebLabel {
+                image = Image( Fui.cur.baseUri + `pod/fui/res/img/` + homeApp.icon.toUri )
+                imageSize = Size( 30, 30 )
               },
               Label { text = "Home" },
             },
