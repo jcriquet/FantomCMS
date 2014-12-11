@@ -1,6 +1,7 @@
 /**
  * AudioPlayerPeer.
  */
+    /*
 fan.audioExt.AudioPlayerPeer = fan.sys.Obj.$extend( fan.fwt.PanePeer );
 fan.audioExt.AudioPlayerPeer.prototype.$ctor = function( self ) {}
 
@@ -11,13 +12,13 @@ fan.audioExt.AudioPlayerPeer.prototype.create = function( parentElem ) {
   return fan.fwt.PanePeer.prototype.create.call( this, parentElem );
 }
 
-/*
+    *//*
 fan.audioExt.AudioPlayerPeer.prototype.toPng = function(self)
 {
   if (!this.hasAudio) return null;
   return this.elem.firstChild.toDataURL("image/png");
 }
-*/
+    *//*
 
 //fan.audioExt.AudioPlayerPeer.prototype.clearOnRepaint = function() { return true; }
 
@@ -32,13 +33,10 @@ fan.audioExt.AudioPlayerPeer.prototype.sync = function( self ) {
     var a = div.firstChild;
     
     // remove old audio if size is different
-    /*
-    if (c != null && (c.width != size.m_w || c.height != size.m_h))
-    {
-      div.removeChild(c);
-      c = null;
+    if (a != null && (a.width != size.m_w || a.height != size.m_h)) {
+      div.removeChild(a);
+      a = null;
     }
-    */
     
     // create new audio if null
     if ( a == null ) {
@@ -56,12 +54,12 @@ fan.audioExt.AudioPlayerPeer.prototype.sync = function( self ) {
       //a.height = size.m_h;
       div.appendChild( a );
     }
-    /*
+    *//*
     // repaint canvas using Canvas.onPaint callback
     var g = new fan.fwt.FwtGraphics();
     g.widget = self;
     g.paint(c, self.bounds(), function() { self.onPaint(g) })
-    */
+    *//*
   }
 
   fan.fwt.PanePeer.prototype.sync.call( this, self );
@@ -77,3 +75,4 @@ fan.audioExt.AudioPlayerPeer.prototype.getPlayerSize = function( self ) {
   }
   return fan.gfx.Size.make( a.clientWidth, a.clientHeight );
 }
+    */

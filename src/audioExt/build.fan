@@ -9,7 +9,9 @@ class Build : build::BuildPod {
     outPodDir = Env.cur.homeDir.uri + `lib/fan/`
     depends   = ["sys 1.0",
                  "afBson 0+",
+                 "concurrent 1.0",
                  "db 1.0",
+                 "dom 1.0",
                  "fui 1.0",
                  "fwt 1.0",
                  "gfx 1.0",
